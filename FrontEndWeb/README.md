@@ -1,12 +1,92 @@
-# React + Vite
+# MyPetSync - FrontEndWeb
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
 
-Currently, two official plugins are available:
+Sobre o Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+O MyPetSync - FrontEndWeb é a aplicação web do projeto MyPetSync, construída para gerenciar e interagir com serviços de pets. Este projeto é a interface Front-end, desenvolvida com foco em performance, escalabilidade e modernidade.
 
-## Expanding the ESLint configuration
+Ele utiliza React com Vite para criação rápida do projeto e Tailwind CSS para estilização moderna e responsiva.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Tecnologias Utilizadas
+
+React
+– Biblioteca JavaScript para construção de interfaces.
+
+Vite
+– Ferramenta de build rápida para projetos web modernos.
+
+Tailwind CSS
+– Framework CSS utilitário para estilização rápida e responsiva.
+
+PostCSS
+– Ferramenta de processamento de CSS utilizada pelo Tailwind.
+
+Autoprefixer
+– Adiciona prefixos automáticos para compatibilidade com navegadores.
+
+Configurações do Projeto
+
+Estrutura de Pastas
+
+FrontEndWeb/
+├─ node_modules/
+├─ public/
+├─ src/
+│ ├─ assets/ # Imagens, ícones e fontes
+│ ├─ components/ # Componentes React reutilizáveis
+│ ├─ pages/ # Páginas da aplicação
+│ ├─ App.jsx # Componente principal
+│ └─ main.jsx # Entrada da aplicação
+├─ index.html
+├─ package.json
+├─ tailwind.config.js
+└─ postcss.config.js
+
+Tailwind CSS
+
+Arquivo de configuração: tailwind.config.js
+
+Arquivo de estilos: src/index.css
+
+Inclusão padrão:
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+Scripts principais do package.json
+
+{
+"scripts": {
+"dev": "vite",
+"build": "vite build",
+"preview": "vite preview"
+}
+}
+
+🚀 Como Rodar a Aplicação
+
+Siga os passos abaixo para rodar o projeto localmente:
+
+Clone o repositório
+
+git clone https://github.com/SEU_USUARIO/MyPetSync-FrontEnd.git
+
+Entre na pasta FrontEndWeb
+
+cd MyPetSync-FrontEnd/FrontEndWeb
+
+Instale as dependências
+
+npm install
+
+Inicie o servidor de desenvolvimento
+
+npm run dev
+
+Abra a aplicação no navegador
+
+O Vite irá fornecer a URL local, geralmente:
+
+http://localhost:5173
