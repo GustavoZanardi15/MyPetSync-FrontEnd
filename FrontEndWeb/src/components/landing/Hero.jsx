@@ -1,3 +1,6 @@
+import React from "react";
+import dogAndCat from "../../assets/dogAndCat.png";
+
 const Hero = () => {
   return (
     <div className="bg-gray-100 flex items-center justify-center p-8">
@@ -11,7 +14,16 @@ const Hero = () => {
             lugar.
           </p>
         </div>
+        <div className="md:w-1/2 flex justify-center">
+          <img
+            src={dogAndCat}
+            alt="Cachorro e gato juntos"
+            className="rounded-lg shandow-lg"
+          />
+        </div>
       </div>
     </div>
   );
 };
+
+export default Hero;
