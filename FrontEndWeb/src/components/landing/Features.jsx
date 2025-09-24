@@ -65,24 +65,25 @@ const Features = () => {
   return (
     <div className="bg-[#A8E6CF] py-20 px-4">
       <div className="container mx-auto">
-        <div className="mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-center text-teal-800 mb-4">
+        <div className="mb-20">
+          <h2 className="text-4xl md:text-5xl font-bold text-center text-teal-800 mb-8">
             Aplicativo
           </h2>
-          <p className="text-lg font-bold text-center text-teal-800 mb-12">
-            O aplicativo foi desenvolvido especialmente para os donos de pets
-            que precisam de praticidade e organização no dia a dia.
+          <p className="text-xl font-semibold text-center text-teal-800 mb-16">
+            O aplicativo foi desenvolvido especialmente para os <br></br>
+            donos de pets que precisam de praticidade e <br></br>organização no
+            dia a dia.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 justify-items-center">
             {AppFeatures.map((item, index) => (
               <div
                 key={index}
-                className="bg-[#058789] p-6 rounded-3xl shadow-md text-center"
+                className="bg-[#058789] p-6 rounded-3xl shadow-md text-center w-64"
               >
                 <img
                   src={item.icon}
                   alt={item.title}
-                  className="mx-auto mb-4 h-20 w-25"
+                  className="mx-auto mb-4 h-20 w-20"
                 />
                 <h3 className="font-bold mb-5 text-slate-50 text-left">
                   {item.title}
@@ -95,26 +96,31 @@ const Features = () => {
           </div>
         </div>
         <div>
-          <h2 className="text-4xl md:text-5xl font-bold text-center text-teal-800 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-center text-teal-800 mb-8">
             Portal Web
           </h2>
-          <p className="text-lg font-bold text-center text-teal-800 mb-12">
-            O portal web foi desenvolvido para empresas e profissionais
-            autônomos que desejam oferecer serviços no setor pet.
+          <p className="text-xl font-semibold text-center text-teal-800 mb-16">
+            O portal web foi desenvolvido para empresas e <br></br>
+            profissionais autônomos que desejam oferecer serviços <br></br>no
+            setor pet.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-center">
+          <div className="flex flex-wrap gap-8 justify-center">
             {PortalFeatures.map((item, index) => (
               <div
                 key={index}
-                className="bg-[#058789] p-6 rounded-lg shadow-md text-center"
+                className="bg-[#058789] p-6 rounded-3xl shadow-md text-center w-72"
               >
                 <img
                   src={item.icon}
                   alt={item.title}
-                  className="mx-auto mb-4 h-16 w-16"
+                  className="mx-auto mb-4 h-20 w-20"
                 />
-                <h3 className="font-bold mb-2">{item.title}</h3>
-                <p className="text-sm">{item.description}</p>
+                <h3 className="font-bold text-slate-50 text-left mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-slate-50 text-left">
+                  {item.description}
+                </p>
               </div>
             ))}
           </div>
