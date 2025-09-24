@@ -1,11 +1,11 @@
-// src/components/Features.jsx
-
-import React from "react";
 import cadastroPet from "../../assets/cadastroPet.png";
 import agendaCompromisso from "../../assets/agendaCompromisso.png";
 import servicos from "../../assets/servicos.png";
 import dashboardInterativo from "../../assets/dashboardInterativo.png";
 import gestaoCuidadosMedicamentos from "../../assets/gestaoCuidadosMedicamentos.png";
+import gerenciamentoPerfil from "../../assets/gerenciamentoPerfil.png";
+import avaliacaoCliente from "../../assets/avaliacaoCliente.png";
+import agendaExclusiva from "../../assets/agendaExclusiva.png";
 
 const AppFeatures = [
   {
@@ -40,6 +40,26 @@ const AppFeatures = [
   },
 ];
 
+const PortalFeatures = [
+  {
+    title: "Gerenciamento do Perfil",
+    description:
+      "Crie e gerencie o perfil da empresa ou do profissional autônomo, adicionando descrição, serviços oferecidos, formas de contato, etc.",
+    icon: gerenciamentoPerfil,
+  },
+  {
+    title: "Avaliação de Clientes",
+    description:
+      "Os clientes podem avaliar a qualidade do serviço para aumentar a credibilidade do profissional.",
+    icon: avaliacaoCliente,
+  },
+  {
+    title: "Agenda Exclusiva",
+    description:
+      "Acompanhe e gerencie agendamentos em uma agenda exclusiva, podendo aceitar, recusar ou reagendar serviços.",
+    icon: agendaExclusiva,
+  },
+];
 const Features = () => {
   return (
     <div>
@@ -52,6 +72,22 @@ const Features = () => {
           </p>
           <div>
             {AppFeatures.map((item, index) => (
+              <div key={index}>
+                <img src={item.icon} alt={item.title} />
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h2>Portal Web</h2>
+          <p>
+            O portal web foi desenvolvido para empresas e profissionais
+            autônomos que desejam oferecer serviços no setor pet.
+          </p>
+          <div>
+            {PortalFeatures.map((item, index) => (
               <div key={index}>
                 <img src={item.icon} alt={item.title} />
                 <h3>{item.title}</h3>
