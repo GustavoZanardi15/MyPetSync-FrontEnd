@@ -2,7 +2,7 @@ const About = () => {
   return (
     <div
       style={{ backgroundColor: "#058789" }}
-      className="py-10 px-4  min-h-[600px] flex items-center justify-center px-4"
+      className="py-10 px-4  min-h-[600px] flex items-center justify-center"
     >
       <div className="container mx-auto text-center text-white">
         <h2 className="text-4xl md:text-5xl font-bold mb-4">
