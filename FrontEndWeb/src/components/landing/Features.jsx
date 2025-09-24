@@ -60,38 +60,61 @@ const PortalFeatures = [
     icon: agendaExclusiva,
   },
 ];
+
 const Features = () => {
   return (
-    <div>
-      <div>
-        <div>
-          <h2>Aplicativo</h2>
-          <p>
+    <div className="bg-[#A8E6CF] py-20 px-4">
+      <div className="container mx-auto">
+        <div className="mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-center text-teal-800 mb-4">
+            Aplicativo
+          </h2>
+          <p className="text-lg font-bold text-center text-teal-800 mb-12">
             O aplicativo foi desenvolvido especialmente para os donos de pets
             que precisam de praticidade e organização no dia a dia.
           </p>
-          <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
             {AppFeatures.map((item, index) => (
-              <div key={index}>
-                <img src={item.icon} alt={item.title} />
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
+              <div
+                key={index}
+                className="bg-[#058789] p-6 rounded-3xl shadow-md text-center"
+              >
+                <img
+                  src={item.icon}
+                  alt={item.title}
+                  className="mx-auto mb-4 h-20 w-25"
+                />
+                <h3 className="font-bold mb-5 text-slate-50 text-left">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-slate-50 text-left">
+                  {item.description}
+                </p>
               </div>
             ))}
           </div>
         </div>
         <div>
-          <h2>Portal Web</h2>
-          <p>
+          <h2 className="text-4xl md:text-5xl font-bold text-center text-teal-800 mb-4">
+            Portal Web
+          </h2>
+          <p className="text-lg font-bold text-center text-teal-800 mb-12">
             O portal web foi desenvolvido para empresas e profissionais
             autônomos que desejam oferecer serviços no setor pet.
           </p>
-          <div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-center">
             {PortalFeatures.map((item, index) => (
-              <div key={index}>
-                <img src={item.icon} alt={item.title} />
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
+              <div
+                key={index}
+                className="bg-[#058789] p-6 rounded-lg shadow-md text-center"
+              >
+                <img
+                  src={item.icon}
+                  alt={item.title}
+                  className="mx-auto mb-4 h-16 w-16"
+                />
+                <h3 className="font-bold mb-2">{item.title}</h3>
+                <p className="text-sm">{item.description}</p>
               </div>
             ))}
           </div>
