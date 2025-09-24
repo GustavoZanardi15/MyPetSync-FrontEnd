@@ -1,7 +1,3 @@
-// src/components/About.jsx
-
-import React from "react";
-
 const About = () => {
   return (
     <div style={{ backgroundColor: "#058789" }} className="py-20 px-4">

@@ -4,11 +4,13 @@ import "./index.css";
 import Header from "./components/shared/Header.jsx";
 import Hero from "./components/landing/Hero.jsx";
 import About from "./components/landing/About.jsx";
+import Features from "./components/landing/Features.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Header />
     <Hero />
     <About />
+    <Features />
   </StrictMode>
 );
