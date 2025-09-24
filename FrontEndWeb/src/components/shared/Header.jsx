@@ -24,7 +24,7 @@ const Header = () => {
                 <li key={index}>
                   <a
                     href={item.href}
-                    className="text-white hover:text-gray-200"
+                    className="text-white font-bold hover:text-gray-400"
                   >
                     {item.label}
                   </a>
