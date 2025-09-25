@@ -56,10 +56,10 @@ export default function LoginScreen() {
 
         <View style={styles.socialContainer}>
           <TouchableOpacity style={styles.socialButton}>
-            <Ionicons name="logo-apple" size={28} color="black" />
+            <Ionicons name="logo-apple" size={28} color="#2F8B88" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.socialButton}>
-            <AntDesign name="google" size={28} color="red" />
+            <Image source={require("../../assets/images/IconGoogle.png")} size={28}/>
           </TouchableOpacity>
         </View>
       </View>
