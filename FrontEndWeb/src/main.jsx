@@ -6,6 +6,7 @@ import Hero from "./components/landing/Hero.jsx";
 import About from "./components/landing/About.jsx";
 import Features from "./components/landing/Features.jsx";
 import Providers from "./components/landing/Providers.jsx";
+import Footer from "./components/shared/Footer.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -14,5 +15,6 @@ createRoot(document.getElementById("root")).render(
     <About />
     <Features />
     <Providers />
+    <Footer />
   </StrictMode>
 );
