@@ -115,7 +115,7 @@ const Features = () => {
                   alt={item.title}
                   className="mx-auto mb-4 h-20 w-20"
                 />
-                <h3 className="font-bold text-slate-50 text-left mb-2">
+                <h3 className="font-bold text-slate-50 text-left mb-16">
                   {item.title}
                 </h3>
                 <p className="text-sm text-slate-50 text-left">
