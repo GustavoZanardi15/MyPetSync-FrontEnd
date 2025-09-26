@@ -3,39 +3,49 @@ import { View, Text, Image, StyleSheet } from "react-native";
 
 export default function WelcomeHeader() {
     return (
-        <View style={styles.welcomeRow}>
-            <View>
-                <Text style={styles.welcome}>
-                    Seja bem-vindo <Text style={styles.highlight}>pet lover...</Text>
-                </Text>
+        <View style={styles.container}>
+            <Text style={styles.welcome}>
+                Seja bem-vindo{"\n"}
+                <Text style={styles.highlight}>pet lover...</Text>
+            </Text>
+            <View style={styles.iconContainer}>
+                <Image source={require("../../assets/images/Logo.png")} style={styles.logo} />
             </View>
-            <Image source={require("../../assets/images/Logo.png")} style={styles.logo} />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    welcomeRow: {
+    container: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 40,
+        justifyContent: "flex-start",
+        marginBottom: 32,
         gap: 12,
-        width: '100%',
-        maxWidth: 327, 
-        justifyContent: 'space-between',
+    },
+    iconContainer: {
+        backgroundColor: "#2F8B88",
+        borderRadius: 17,
+        padding: 8,
+        justifyContent: "center",
+        alignItems: "center",
+        marginLeft: 8,
     },
     logo: {
-        width: 48,
-        height: 48,
+        width: 76,
+        height: 76,
+        resizeMode: "contain",
     },
     welcome: {
-        fontSize: 20,
+        fontSize: 28,
         color: "#2F8B88",
-        maxWidth: 180,
-        lineHeight: 25,
+        fontWeight: "400",
+        lineHeight: 34,
     },
     highlight: {
-        color: "#00695c",
+        color: "#2F8B88",
         fontWeight: "bold",
+        fontSize: 32,
+        lineHeight: 38,
     },
 });

@@ -27,16 +27,16 @@ export default function LoginForm({ email, setEmail, senha, setSenha }) {
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
+        width: 327,
         alignItems: 'center',
+        gap: 20
     },
     input: {
         borderWidth: 0,
-        borderRadius: 10,
+        borderRadius: 16,
         padding: 15,
-        marginBottom: 15,
         width: '100%',
-        maxWidth: MAX_WIDTH, 
+        maxWidth: 327, 
         backgroundColor: '#fff',
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     forgot: {
-        color: "#2F8B88",
+        color: "#89CFF0",
         textAlign: "right",
         fontSize: 14,
     },

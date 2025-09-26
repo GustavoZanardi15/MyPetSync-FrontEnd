@@ -17,7 +17,7 @@ export default function LoginScreen() {
             <Image 
                 source={require("../../assets/images/ilustracao_fundo.png")}
                 style={[styles.illustration, {height: screenHeight * 0.7}]} 
-                resizeMode="contain"
+                resizeMode="cover"
             />
 
             <View style={styles.tabs}>
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         paddingTop: 40,
         paddingBottom: 8,
-        backgroundColor: "#fff",
+        backgroundColor: "#F7F7F7",
         gap: 16,
         zIndex: 10,
     },
@@ -79,8 +79,12 @@ const styles = StyleSheet.create({
     contentContainer: {
         flex: 1,
         paddingHorizontal: 24,
+        justifyContent: "space-between",
         alignItems: "center",
-        paddingTop: 40,
+        paddingTop: 17.5,
+        paddingRight: 16,
+        paddingLeft: 16,
+        paddingBottom: 17.5,
         zIndex: 5,
     }
 });

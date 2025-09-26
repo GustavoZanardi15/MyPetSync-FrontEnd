@@ -2,23 +2,15 @@ import React from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const THEME_COLOR = "#2F8B88";
-const MAX_WIDTH = 327; 
-
-export default function BottomActions() {
-    const handleLogin = () => console.log('Login Pressed');
+export default function BottomActions({onPress}) {
     
     return (
         <View style={styles.bottomButtonsContainer}>
             <View style={styles.horizontalBottomRow}>
-                
-                <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                    <Text style={styles.buttonText}>Entrar</Text>
-                </TouchableOpacity>
 
                 <View style={styles.socialIconsGroup}>
                     <TouchableOpacity style={styles.socialButton}>
-                        <Ionicons name="logo-apple" size={28} color={THEME_COLOR} />
+                        <Ionicons name="logo-apple" size={33.6} color={"#2F8B88"} />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.socialButton}>
@@ -26,6 +18,10 @@ export default function BottomActions() {
                             source={require("../../assets/images/IconGoogle.png")} 
                             style={styles.logoGoogle} 
                         />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.button} onPress={onPress}>
+                    <Text style={styles.buttonText}>Entrar</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -37,37 +33,25 @@ const styles = StyleSheet.create({
     bottomButtonsContainer: {
         flex: 1, 
         justifyContent: 'flex-end',
-        width: '100%',
-        maxWidth: MAX_WIDTH,
+        width: 327,
         paddingBottom: 20,
     },
     horizontalBottomRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '100%'
+        width: 327,
+        alignSelf: 'center',
     },
     socialIconsGroup: {
         flexDirection: 'row',
         gap: 16,
     },
-    button: {
-        backgroundColor: THEME_COLOR,
-        padding: 10,
-        height: 56,
-        borderRadius: 12,
-        gap: 10,
-        justifyContent: "center",
-        alignItems: "center",
-        width: 183,
-    },
-    buttonText: {
-        color: "#fff",
-        fontSize: 18,
-    },
     socialButton: {
-        backgroundColor: '#fff',
+        backgroundColor: "#E8F6F6",
         padding: 10,
+        width: 56,
+        height: 56,
         borderRadius: 50,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
@@ -76,7 +60,21 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     logoGoogle: {
-        width: 28,
-        height: 28,
+        width: 33.6,
+        height: 33.6,
+    }
+    ,
+    button: {
+        backgroundColor: "#2F8B88",
+        height: 56,
+        borderRadius: 16,
+        justifyContent: "center",
+        alignItems: "center",
+        width: 183,
     },
+    buttonText: {
+        color: "#fff",
+        fontSize: 15,
+        fontWeight: "700"
+    }
 });
