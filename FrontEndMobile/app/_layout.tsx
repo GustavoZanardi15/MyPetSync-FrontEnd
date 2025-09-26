@@ -1,5 +1,12 @@
-import { Stack } from "expo-router";
+import { Drawer } from "expo-router/drawer";
 
 export default function Layout() {
-  return <Stack />;
+  return (
+    <Drawer>
+      <Drawer.Screen
+        name="index"
+        options={{ headerShown: false, drawerItemStyle: { display: 'none' } }}
+      />
+    </Drawer>
+  );
 }
