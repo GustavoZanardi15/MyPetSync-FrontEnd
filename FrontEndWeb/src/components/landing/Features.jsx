@@ -78,7 +78,7 @@ const Features = () => {
             {AppFeatures.map((item, index) => (
               <div
                 key={index}
-                className="bg-[#058789] p-6 rounded-3xl shadow-md text-center w-64"
+                className="bg-[#058789] p-6 rounded-3xl shadow-2xl text-center w-64"
               >
                 <img
                   src={item.icon}
@@ -108,7 +108,7 @@ const Features = () => {
             {PortalFeatures.map((item, index) => (
               <div
                 key={index}
-                className="bg-[#058789] p-6 rounded-3xl shadow-md text-center w-72"
+                className="bg-[#058789] p-6 rounded-3xl shadow-2xl text-center w-72"
               >
                 <img
                   src={item.icon}
