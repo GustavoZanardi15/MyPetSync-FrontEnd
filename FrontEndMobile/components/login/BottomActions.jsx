@@ -6,27 +6,21 @@ const THEME_COLOR = "#2F8B88";
 const MAX_WIDTH = 327; 
 
 export default function BottomActions() {
-    // Lógica de ação pode ser passada via props ou definida aqui
     const handleLogin = () => console.log('Login Pressed');
     
     return (
-        // Contêiner que empurra o conteúdo para o fundo da tela (flex: 1)
         <View style={styles.bottomButtonsContainer}>
             <View style={styles.horizontalBottomRow}>
                 
-                {/* Botão Entrar */}
                 <TouchableOpacity style={styles.button} onPress={handleLogin}>
                     <Text style={styles.buttonText}>Entrar</Text>
                 </TouchableOpacity>
 
-                {/* Ícones Sociais */}
                 <View style={styles.socialIconsGroup}>
-                    {/* Apple Icon */}
                     <TouchableOpacity style={styles.socialButton}>
                         <Ionicons name="logo-apple" size={28} color={THEME_COLOR} />
                     </TouchableOpacity>
 
-                    {/* Google Icon */}
                     <TouchableOpacity style={styles.socialButton}>
                         <Image 
                             source={require("../../assets/images/IconGoogle.png")} 
@@ -40,7 +34,6 @@ export default function BottomActions() {
 }
 
 const styles = StyleSheet.create({
-    // 4. Contêiner que usa o espaço restante
     bottomButtonsContainer: {
         flex: 1, 
         justifyContent: 'flex-end',
@@ -58,7 +51,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 16,
     },
-    // 5. Estilos do Botão "Entrar"
     button: {
         backgroundColor: THEME_COLOR,
         padding: 10,
@@ -73,7 +65,6 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 18,
     },
-    // Estilos dos Botões Sociais
     socialButton: {
         backgroundColor: '#fff',
         padding: 10,

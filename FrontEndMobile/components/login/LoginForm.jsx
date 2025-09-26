@@ -1,8 +1,6 @@
 import React from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 
-const MAX_WIDTH = 327; 
-
 export default function LoginForm({ email, setEmail, senha, setSenha }) {
     return (
         <View style={styles.container}>
@@ -32,7 +30,6 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
     },
-    // Inputs
     input: {
         borderWidth: 0,
         borderRadius: 10,
@@ -47,10 +44,9 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 3,
     },
-    // Link "Esqueceu a senha?"
     forgotContainer: {
         width: '100%',
-        maxWidth: MAX_WIDTH,
+        maxWidth: 327,
         alignItems: 'flex-end',
         marginBottom: 20,
     },

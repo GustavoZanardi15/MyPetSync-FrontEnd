@@ -1,8 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
-const MAX_WIDTH = 327; // Constante para alinhamento
-
 export default function WelcomeHeader() {
     return (
         <View style={styles.welcomeRow}>
@@ -23,7 +21,7 @@ const styles = StyleSheet.create({
         marginBottom: 40,
         gap: 12,
         width: '100%',
-        maxWidth: MAX_WIDTH, 
+        maxWidth: 327, 
         justifyContent: 'space-between',
     },
     logo: {
