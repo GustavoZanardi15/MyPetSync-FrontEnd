@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
-export default function WelcomeHeader() {
+export default function LoginHeader() {
     return (
         <View style={styles.container}>
             <Text style={styles.welcome}>
