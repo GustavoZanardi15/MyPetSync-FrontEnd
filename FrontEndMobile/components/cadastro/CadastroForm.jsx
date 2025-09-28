@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
         width: "100%",
         maxWidth: 327,
         marginBottom: 24,
+        gap: 20,
     },
     input: {
         color: "#808080",
@@ -52,6 +53,5 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.07,
         shadowRadius: 8,
         elevation: 2,
-        marginBottom: 16,
     },
 });

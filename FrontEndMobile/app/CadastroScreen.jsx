@@ -32,15 +32,16 @@ export default function CadastroScreens() {
             </View>
 
             <View style={styles.contentContainer}>
-                <CadastroHeader />
                 <View style={styles.formWrapper}>
+                <CadastroHeader />
+                </View>
+                
                     <CadastroForm
                         nome={nome} setNome={setNome}
                         email={email} setEmail={setEmail}
                         celular={celular} setCelular={setCelular}
                         senha={senha} setSenha={setSenha}
                     />
-                </View>
                 <BottomActions />
             </View>
         </View>
