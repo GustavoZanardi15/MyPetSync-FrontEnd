@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     width: '100%', 
     zIndex: -1,
     resizeMode: 'cover',
-},
+    },
     tabs: {
         flexDirection: "row",
         justifyContent: "flex-start",
