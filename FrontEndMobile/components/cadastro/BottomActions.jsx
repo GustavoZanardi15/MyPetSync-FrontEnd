@@ -18,7 +18,7 @@ export default function BottomActions({onPress}) {
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity style={styles.button} onPress={onPress}>
-                    <Text style={styles.buttonText}>Entrar</Text>
+                    <Text style={styles.buttonText}>Criar Conta</Text>
                 </TouchableOpacity>
             </View>
         </View>

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from "react-native";
-
-import WelcomeHeader from "../../components/login/WelcomeHeader";
-import LoginForm from "../../components/login/LoginForm";
-import BottomActions from "../../components/login/BottomActions";
+import { useRouter } from "expo-router"; 
+import LoginHeader from "../components/login/LoginHeader";
+import LoginForm from "../components/login/LoginForm";
+import BottomActions from "../components/login/BottomActions";
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -11,11 +11,12 @@ export default function LoginScreen() {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [aba, setAba] = useState("entrar");
+    const router = useRouter(); 
 
     return (
         <View style={styles.fullScreen}>
             <Image 
-                source={require("../../assets/images/ilustracao_fundo.png")}
+                source={require("../assets/images/ilustracao_fundo.png")}
                 style={[styles.illustration, {height: screenHeight * 0.7}]} 
                 resizeMode="cover"
             />
@@ -24,13 +25,16 @@ export default function LoginScreen() {
                 <TouchableOpacity onPress={() => setAba("entrar")}>
                     <Text style={[styles.tabText, aba === "entrar" && styles.activeTab]}>Entrar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setAba("novaConta")}>
+                <TouchableOpacity onPress={() => {
+                    setAba("novaConta");
+                    router.push("/CadastroScreen"); 
+                }}>
                     <Text style={[styles.tabText, aba === "novaConta" && styles.activeTab]}>Nova Conta</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.contentContainer}>
-                <WelcomeHeader />
+                <LoginHeader />
                 <LoginForm email={email} setEmail={setEmail} senha={senha} setSenha={setSenha}
                 />
                 <BottomActions />
@@ -45,19 +49,20 @@ const styles = StyleSheet.create({
         backgroundColor: "#F7F7F7",
     },
     illustration: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0, 
-        width: '100%',
-        zIndex: 1,
-        resizeMode: 'contain',
+    position: 'absolute',
+    bottom: 0, 
+    left: 0,  
+    width: '100%', 
+    zIndex: -1,
+    resizeMode: 'cover',
     },
     tabs: {
         flexDirection: "row",
         justifyContent: "flex-start",
         alignItems: "flex-end",
+        width: 202,
         paddingHorizontal: 24,
-        paddingTop: 40,
+        paddingTop: 64,
         paddingBottom: 8,
         backgroundColor: "#F7F7F7",
         gap: 16,
@@ -78,13 +83,9 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flex: 1,
-        paddingHorizontal: 24,
         justifyContent: "space-between",
         alignItems: "center",
-        paddingTop: 17.5,
-        paddingRight: 16,
-        paddingLeft: 16,
-        paddingBottom: 17.5,
-        zIndex: 5,
+        paddingTop: 257,
+        paddingBottom: 20
     }
 });

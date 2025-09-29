@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
-export default function WelcomeHeader() {
+export default function LoginHeader() {
     return (
         <View style={styles.container}>
             <Text style={styles.welcome}>
@@ -17,19 +17,23 @@ export default function WelcomeHeader() {
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        marginBottom: 32,
-        gap: 12,
-    },
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start", 
+    width: "100%",
+    maxWidth: 327,               
+    alignSelf: "center",        
+    marginBottom: 32,
+    gap: 18,
+},
     iconContainer: {
         backgroundColor: "#2F8B88",
         borderRadius: 17,
-        padding: 8,
         justifyContent: "center",
         alignItems: "center",
         marginLeft: 8,
+        width: 76,
+        height: 76
     },
     logo: {
         width: 76,
@@ -39,7 +43,7 @@ const styles = StyleSheet.create({
     welcome: {
         fontSize: 28,
         color: "#2F8B88",
-        fontWeight: "400",
+        fontWeight: "regular",
         lineHeight: 34,
     },
     highlight: {
