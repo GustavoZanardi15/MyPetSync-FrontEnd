@@ -8,6 +8,7 @@ import Features from "./components/landing/Features.jsx";
 import Providers from "./components/landing/Providers.jsx";
 import Footer from "./components/shared/Footer.jsx";
 import Login from "./components/auth/Login.jsx";
+import RegisterCompany from "./components/auth/RegisterCompany.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -17,6 +18,6 @@ createRoot(document.getElementById("root")).render(
     <Features />
     <Providers />
     <Footer />
-    <Login />
+    <RegisterCompany />
   </StrictMode>
 );
