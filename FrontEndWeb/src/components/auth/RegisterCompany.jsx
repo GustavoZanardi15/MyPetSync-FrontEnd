@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Logo from "../../assets/Logo.png";
+import InputWithIcon from "../../components/common/InputWithIcon";
 import {
   VscLock,
   VscMail,
@@ -80,38 +81,14 @@ const RegisterCompany = () => {
             </button>
           </div>
           <form className="space-y-4">
-            <div className="relative">
-              <VscMail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full p-3 pl-10 rounded-lg border-none bg-gray-200 text-gray-800 placeholder-gray-500"
-              />
-            </div>
-            <div className="relative">
-              <VscLock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                type="password"
-                placeholder="Senha"
-                className="w-full p-3 pl-10 rounded-lg border-none bg-gray-200 text-gray-800 placeholder-gray-500"
-              />
-            </div>
-            <div className="relative">
-              <VscHome className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Nome da Empresa"
-                className="w-full p-3 pl-10 rounded-lg border-none bg-gray-200 text-gray-800 placeholder-gray-500"
-              />
-            </div>
-            <div className="relative">
-              <VscNotebook className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                type="text"
-                placeholder="CNPJ"
-                className="w-full p-3 pl-10 rounded-lg border-none bg-gray-200 text-gray-800 placeholder-gray-500"
-              />
-            </div>
+            <InputWithIcon Icon={VscMail} type="email" placeholder="Email" />
+            <InputWithIcon Icon={VscLock} type="password" placeholder="Senha" />
+            <InputWithIcon
+              Icon={VscHome}
+              type="text"
+              placeholder="Nome da Empresa"
+            />
+            <InputWithIcon Icon={VscNotebook} type="text" placeholder="CNPJ" />
             <div className="relative pt-2">
               <button
                 type="button"

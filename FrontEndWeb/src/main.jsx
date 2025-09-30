@@ -18,6 +18,5 @@ createRoot(document.getElementById("root")).render(
     <Features />
     <Providers />
     <Footer />
-    <RegisterCompany />
   </StrictMode>
 );
