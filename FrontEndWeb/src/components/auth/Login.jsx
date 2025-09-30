@@ -6,9 +6,9 @@ const Login = () => {
     <div className="flex w-full min-h-screen">
       <div className="w-full lg:w-1/2 bg-[#058789] p-8 sm:p-12 md:p-20 flex flex-col justify-center">
         <div className="mb-10 text-white">
-          <p className="text-sm font-light">Portal</p>
+          <p className="text-4xl font-bold mb-4">Portal</p>
           <h1 className="text-3xl font-bold mb-4">Prestador de Serviço</h1>
-          <img src={Logo} alt="Logo" className="w-12 h-12" />
+          <img src={Logo} alt="Logo" className="w-24 h-24" />
         </div>
         <div className="area-formulario">
           <h2 className="text-white text-2xl font-semibold mb-6">
