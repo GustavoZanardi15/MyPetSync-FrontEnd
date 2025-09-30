@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from "react-native";
+import { View, Text, Pressable, StyleSheet, Image, Dimensions } from "react-native";
 import { useRouter } from "expo-router"; 
 import LoginHeader from "../components/login/LoginHeader";
 import LoginForm from "../components/login/LoginForm";
@@ -22,15 +22,15 @@ export default function LoginScreen() {
             />
 
             <View style={styles.tabs}>
-                <TouchableOpacity onPress={() => setAba("entrar")}>
+                <Pressable onPress={() => setAba("entrar")}>
                     <Text style={[styles.tabText, aba === "entrar" && styles.activeTab]}>Entrar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
+                </Pressable>
+                <Pressable onPress={() => {
                     setAba("novaConta");
                     router.push("/CadastroScreen"); 
                 }}>
                     <Text style={[styles.tabText, aba === "novaConta" && styles.activeTab]}>Nova Conta</Text>
-                </TouchableOpacity>
+                </Pressable>
             </View>
 
             <View style={styles.contentContainer}>

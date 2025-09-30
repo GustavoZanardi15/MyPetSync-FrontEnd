@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from "react-native";
+import { View, Text, Pressable, StyleSheet, Image, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import CadastroHeader from "../components/cadastro/CadastroHeader";
 import CadastroForm from "../components/cadastro/CadastroForm";
@@ -20,15 +20,15 @@ export default function CadastroScreens() {
         <View style={styles.fullScreen}>
 
             <View style={styles.tabs}>
-                <TouchableOpacity onPress={() => {
+                <Pressable onPress={() => {
                     setAba("entrar");
                     router.push("LoginScreen");
                 }}>
                     <Text style={[styles.tabText, aba === "entrar" && styles.activeTab]}>Entrar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setAba("novaConta")}>
+                </Pressable>
+                <Pressable onPress={() => setAba("novaConta")}>
                     <Text style={[styles.tabText, aba === "novaConta" && styles.activeTab]}>Nova Conta</Text>
-                </TouchableOpacity>
+                </Pressable>
             </View>
 
             <View style={styles.contentContainer}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
@@ -8,9 +8,9 @@ export default function RecuperarSenhaHeader() {
 
     return (
         <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Pressable onPress={() => router.back()} style={styles.backButton}>
                 <Ionicons name="arrow-back" size={28} color="#2F8B88" />
-            </TouchableOpacity>
+            </Pressable>
             <Text style={styles.headerTitle}>Esqueceu a Senha</Text>
             <View style={styles.backButton} />
         </View>

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, Pressable, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function BottomActions({onPress}) {
@@ -7,19 +7,19 @@ export default function BottomActions({onPress}) {
         <View style={styles.bottomButtonsContainer}>
             <View style={styles.horizontalBottomRow}>
                 <View style={styles.socialIconsGroup}>
-                    <TouchableOpacity style={styles.socialButton}>
+                    <Pressable style={styles.socialButton}>
                         <Ionicons name="logo-apple" size={33.6} color={"#2F8B88"} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.socialButton}>
+                    </Pressable>
+                    <Pressable style={styles.socialButton}>
                         <Image 
                             source={require("../../assets/images/IconGoogle.png")} 
                             style={styles.logoGoogle} 
                         />
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={onPress}>
+                <Pressable style={styles.button} onPress={onPress}>
                     <Text style={styles.buttonText}>Entrar</Text>
-                </TouchableOpacity>
+                </Pressable>
             </View>
         </View>
     );

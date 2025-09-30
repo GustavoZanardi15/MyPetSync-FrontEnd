@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 
 export default function LoginForm({ email, setEmail, senha, setSenha, router }) {
     return (
@@ -18,12 +18,12 @@ export default function LoginForm({ email, setEmail, senha, setSenha, router }) 
                 onChangeText={setSenha}
             />
 
-            <TouchableOpacity 
+            <Pressable 
                 style={styles.forgotContainer} 
                 onPress={() => { router.push("/RecuperarSenhaScreen") }}
             >
                 <Text style={styles.forgot}>Esqueceu a senha?</Text>
-            </TouchableOpacity>
+            </Pressable>
         </View>
     );
 }
