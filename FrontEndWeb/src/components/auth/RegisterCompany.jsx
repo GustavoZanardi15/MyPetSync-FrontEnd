@@ -8,6 +8,9 @@ import {
   VscChevronDown,
 } from "react-icons/vsc";
 
+const COLOR_TEAL = "#058789";
+const COLOR_BUTTON_BG = "#003637";
+
 const COMPANY_SERVICES = [
   "Clínica Veterinária",
   "Pet Shop",
@@ -18,30 +21,42 @@ const COMPANY_SERVICES = [
 const RegisterCompany = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+
   const handleToggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
   const handleSelectService = (service) => {
     setSelectedService(service);
     setIsDropdownOpen(false);
   };
-
   return (
-    <div className="">
-      <div className="">
-        <div className="">
-          <div className="">
-            <p>Portal</p>
-            <h1>Prestador de Serviço</h1>
+    <div className="flex w-full min-h-screen">
+      <div
+        className="w-full lg:w-1/3 p-8 sm:p-12 md:p-16 flex flex-col justify-center"
+        style={{
+          backgroundColor: COLOR_TEAL,
+          borderTopRightRadius: "70px",
+          borderBottomRightRadius: "70px",
+        }}
+      >
+        <div className="mb-12 text-center" style={{ color: COLOR_BUTTON_BG }}>
+          <div className="mb-10 text-white">
+            <p className="text-4xl font-bold">Portal</p>
+            <h1 className="text-4xl font-bold">Prestador de Serviço</h1>
           </div>
-          <img src={Logo} alt="Logo" className="" />
+          <img src={Logo} alt="Logo" className="w-44 h-48 mb-10 mx-auto" />
         </div>
-        <div className="">
-          <h2>Bem-vindo de volta! </h2>
-          <p>Acesse sua conta agora mesmo.</p>
-          <form className="">
-            <button type="submit" className="">
+        <div className="area-formulario text-center text-[#003637]">
+          <h2 className="text-4xl font-bold mb-3">Bem-vindo de volta! </h2>
+          <p className="text-base font-semibold mb-8">
+            Acesse sua conta agora mesmo.
+          </p>
+          <form className="flex justify-center">
+            <button
+              type="submit"
+              style={{ backgroundColor: COLOR_BUTTON_BG }}
+              className="w-60 p-3 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md"
+            >
               ENTRAR
             </button>
           </form>
