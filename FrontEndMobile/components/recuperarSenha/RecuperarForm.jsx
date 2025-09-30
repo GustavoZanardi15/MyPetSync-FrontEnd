@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import React from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 
@@ -20,7 +21,7 @@ export default function RecuperarSenhaForm({ telefone, setTelefone, onPress }) {
                     onChangeText={setTelefone}
                 />
             </View>
-            <Pressable style={styles.button} onPress={onPress}>
+            <Pressable style={styles.button} onPress={() => {router.push("/VerificacaoScreen")}}>
                 <Text style={styles.buttonText}>Enviar</Text>
             </Pressable>
 
