@@ -6,10 +6,6 @@ import RecuperarSenhaForm from "../components/recuperarSenha/RecuperarForm";
 export default function RecuperarSenhaScreen() {
     const [telefone, setTelefone] = useState("");
 
-    const handleEnviar = () => {
-        console.log("Enviando telefone para recuperação:", telefone);
-    };
-
     return (
         <View style={styles.fullScreen}>
             <RecuperarSenhaHeader />
@@ -17,7 +13,6 @@ export default function RecuperarSenhaScreen() {
                 <RecuperarSenhaForm 
                     telefone={telefone}
                     setTelefone={setTelefone}
-                    handleEnviar={handleEnviar}
                 />
             </View>
         </View>
