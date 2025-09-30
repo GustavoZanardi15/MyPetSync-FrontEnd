@@ -35,7 +35,12 @@ export default function LoginScreen() {
 
             <View style={styles.contentContainer}>
                 <LoginHeader />
-                <LoginForm email={email} setEmail={setEmail} senha={senha} setSenha={setSenha}
+                <LoginForm 
+                    email={email} 
+                    setEmail={setEmail} 
+                    senha={senha} 
+                    setSenha={setSenha}
+                    router={router} 
                 />
                 <BottomActions />
             </View>
