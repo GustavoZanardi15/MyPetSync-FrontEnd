@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native"
+import { View, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
 import VerificacaoHeader from "../components/verificacao/VerificacaoHeader"
 import VerificacaoForm from "../components/verificacao/VerificacaoForm"
 import VerificacaoBottomAction from "../components/verificacao/BottomActions"
