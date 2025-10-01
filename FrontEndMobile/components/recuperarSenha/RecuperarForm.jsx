@@ -19,6 +19,7 @@ export default function RecuperarSenhaForm({ telefone, setTelefone, onPress }) {
                     keyboardType="phone-pad"
                     value={telefone}
                     onChangeText={setTelefone}
+                    placeholderTextColor="#A0A0A0"
                 />
             </View>
             <Pressable style={styles.button} onPress={() => {router.push("/VerificacaoScreen")}}>
@@ -54,10 +55,11 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 56,
         backgroundColor: "#fff",
-        color: "#808080", 
+        color: "#2F8B88", 
         borderRadius: 16,
         paddingHorizontal: 15,
-        fontSize: 16,
+        fontSize: 15,
+        fontWeight: "bold",
         maxWidth: 327, 
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
