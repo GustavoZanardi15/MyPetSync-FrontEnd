@@ -6,6 +6,13 @@ import AuthSidebar from "./AuthSidebar";
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
 
+const COMPANY_SERVICES = [
+  "Clínica Veterinária",
+  "Pet Shop",
+  "Hotel para Pets",
+  "Banho e Tosa",
+];
+
 const RegisterCompany = () => {
   return (
     <div className="flex w-full min-h-screen">
@@ -52,7 +59,9 @@ const RegisterCompany = () => {
               placeholder="Nome da Empresa"
             />
             <InputWithIcon Icon={VscNotebook} type="text" placeholder="CNPJ" />
-            <ServiceDropdown />
+
+            <ServiceDropdown services={COMPANY_SERVICES} />
+
             <button
               type="submit"
               style={{ backgroundColor: COLOR_TEAL }}
