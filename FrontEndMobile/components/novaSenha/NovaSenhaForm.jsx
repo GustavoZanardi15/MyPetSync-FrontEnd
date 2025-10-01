@@ -1,5 +1,3 @@
-// components/novaSenha/NovaSenhaForm.jsx
-
 import React, { useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,11 +21,7 @@ export default function NovaSenhaForm({ password, setPassword, confirmPassword, 
           placeholderTextColor="#A0A0A0"
         />
         <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.iconContainer}>
-          <Ionicons 
-            name={showPassword ? "eye-off" : "eye"} 
-            size={20} 
-            color="#A0A0A0" 
-          />
+          <Ionicons name={showPassword ? "eye-off" : "eye"} size={20} color="#2F8B88" />
         </Pressable>
       </View>
       <View style={styles.inputWrapper}>
@@ -40,11 +34,7 @@ export default function NovaSenhaForm({ password, setPassword, confirmPassword, 
           placeholderTextColor="#A0A0A0"
         />
         <Pressable onPress={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.iconContainer}>
-          <Ionicons 
-            name={showConfirmPassword ? "eye-off" : "eye"} 
-            size={20} 
-            color="#A0A0A0" 
-          />
+          <Ionicons name={showPassword ? "eye-off" : "eye"} size={20} color="#2F8B88" />
         </Pressable>
       </View>
     </View>
@@ -53,34 +43,39 @@ export default function NovaSenhaForm({ password, setPassword, confirmPassword, 
 
 const styles = StyleSheet.create({
   formContainer: {
-    width: '100%',
-    paddingHorizontal: 0,
+    width: "100%",
+    paddingHorizontal: 20,
     paddingTop: 10,
   },
   instruction: {
     textAlign: "center",
-    fontSize: 16,
-    color: "#606060",
+    fontSize: 18,
+    fontWeight: "regular",
+    color: "#2F8B88",
     marginBottom: 30,
   },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    borderRadius: 12, 
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderRadius: 12,
     marginBottom: 15,
-    height: 55,
+    height: 56,
+    paddingHorizontal: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    color: "#2F8B88", 
+    fontWeight: "bold",
+    fontSize: 15,
     height: "100%",
-    paddingHorizontal: 15, 
   },
   iconContainer: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingHorizontal: 8,
   },
 });
