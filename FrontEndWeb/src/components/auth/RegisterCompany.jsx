@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Logo from "../../assets/Logo.png";
 import InputWithIcon from "../../components/common/InputWithIcon";
 import {
   VscLock,
@@ -8,6 +7,7 @@ import {
   VscNotebook,
   VscChevronDown,
 } from "react-icons/vsc";
+import AuthSidebar from "./AuthSidebar";
 
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
@@ -32,21 +32,7 @@ const RegisterCompany = () => {
   };
   return (
     <div className="flex w-full min-h-screen">
-      <div
-        className="w-full lg:w-1/3 p-8 sm:p-12 md:p-16 flex flex-col justify-center"
-        style={{
-          backgroundColor: COLOR_TEAL,
-          borderTopRightRadius: "70px",
-          borderBottomRightRadius: "70px",
-        }}
-      >
-        <div className="mb-12 text-center" style={{ color: COLOR_BUTTON_BG }}>
-          <div className="mb-10 text-white">
-            <p className="text-4xl font-bold">Portal</p>
-            <h1 className="text-4xl font-bold">Prestador de Serviço</h1>
-          </div>
-          <img src={Logo} alt="Logo" className="w-44 h-48 mb-10 mx-auto" />
-        </div>
+      <AuthSidebar widthClass="lg:w-1/3">
         <div className="area-formulario text-center text-[#003637]">
           <h2 className="text-4xl font-bold mb-3">Bem-vindo de volta! </h2>
           <p className="text-lg font-semibold mb-8">
@@ -62,7 +48,7 @@ const RegisterCompany = () => {
             </button>
           </form>
         </div>
-      </div>
+      </AuthSidebar>
       <div className="w-full lg:w-3/5 p-16 flex justify-center items-center">
         <div className="w-full max-w-md">
           <h2 className="text-4xl font-bold text-center text-[#003637] mb-2">
