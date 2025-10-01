@@ -2,7 +2,7 @@ import dogAndCat from "../../assets/dogAndCat.png";
 
 const Hero = () => {
   return (
-    <div className="flex items-center justify-center px-8">
+    <div id="home" className="flex items-center justify-center px-8">
       <div className="container mx-auto flex flex-col md:flex-row items-center">
         <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
           <h1 className="text-4xl md:text-5xl font-bold text-teal-800 mb-4">

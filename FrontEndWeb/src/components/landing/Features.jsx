@@ -63,7 +63,7 @@ const PortalFeatures = [
 
 const Features = () => {
   return (
-    <div className="bg-[#A8E6CF] py-20 px-4">
+    <div id="funcionalidades" className="bg-[#A8E6CF] py-20 px-4">
       <div className="container mx-auto">
         <div className="mb-20">
           <h2 className="text-4xl md:text-5xl font-bold text-center text-teal-800 mb-8">
