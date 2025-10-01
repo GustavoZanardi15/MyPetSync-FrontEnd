@@ -9,6 +9,7 @@ import Providers from "./components/landing/Providers.jsx";
 import Footer from "./components/shared/Footer.jsx";
 import Login from "./components/auth/Login.jsx";
 import RegisterCompany from "./components/auth/RegisterCompany.jsx";
+import RegisterAutonomo from "./components/auth/RegisterAutonomo.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -20,5 +21,6 @@ createRoot(document.getElementById("root")).render(
     <Footer />
     <Login />
     <RegisterCompany />
+    <RegisterAutonomo />
   </StrictMode>
 );
