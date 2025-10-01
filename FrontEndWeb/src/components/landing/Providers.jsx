@@ -2,7 +2,7 @@ import check from "../../assets/check.png";
 
 const Providers = () => {
   return (
-    <div className="bg-white py-20 px-4">
+    <div id="prestadores" className="bg-white py-20 px-4">
       <div className="container mx-auto text-center">
         <h2 className="text-4xl md:text-5xl font-bold text-teal-800 mb-12">
           Prestadores de Serviço

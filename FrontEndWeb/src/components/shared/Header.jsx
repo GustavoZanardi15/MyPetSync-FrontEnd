@@ -1,10 +1,11 @@
+import { Link } from "react-router-dom";
 import logo from "../../assets/Logo.png";
 
 const navItems = [
-  { label: "Home", href: "#" },
-  { label: "Sobre o sistema", href: "#" },
-  { label: "Funcionalidades", href: "#" },
-  { label: "Prestadores de Serviços", href: "#" },
+  { label: "Home", href: "#home" },
+  { label: "Sobre o sistema", href: "#sobre-o-sistema" },
+  { label: "Funcionalidades", href: "#funcionalidades" },
+  { label: "Prestadores de Serviços", href: "#prestadores" },
 ];
 
 const Header = () => {
@@ -32,14 +33,12 @@ const Header = () => {
               ))}
             </ul>
           </div>
-          <div>
-            <a
-              href="#"
-              className="bg-teal-900 text-white py-2 px-4 rounded-md hover:bg-teal-800"
-            >
-              Acessar Portal WEB
-            </a>
-          </div>
+          <Link
+            to="/registerCompany"
+            className="bg-teal-900 text-white py-2 px-4 rounded-md hover:bg-teal-800"
+          >
+            Acessar Portal WEB
+          </Link>
         </div>
       </div>
     </nav>

@@ -1,6 +1,7 @@
 const About = () => {
   return (
     <div
+      id="sobre-o-sistema"
       style={{ backgroundColor: "#058789" }}
       className="py-10 px-4  min-h-[600px] flex items-center justify-center"
     >

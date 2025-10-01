@@ -1,19 +1,14 @@
-import InputWithIcon from "../../components/common/InputWithIcon";
-import ServiceDropdown from "../../components/common/ServiceDropdown";
-import { VscLock, VscMail, VscHome, VscNotebook } from "react-icons/vsc";
+import InputWithIcon from "../common/InputWithIcon";
+import ServiceDropdown from "../common/ServiceDropdown";
+import { VscLock, VscMail, VscAccount, VscNotebook } from "react-icons/vsc";
 import AuthSidebar from "./AuthSidebar";
 
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
 
-const COMPANY_SERVICES = [
-  "Clínica Veterinária",
-  "Pet Shop",
-  "Hotel para Pets",
-  "Banho e Tosa",
-];
+const AUTONOMO_SERVICES = ["Pet Sitter", "Veterinário Autônomo", "Adestrador"];
 
-const RegisterCompany = () => {
+const RegisterAutonomo = () => {
   return (
     <div className="flex w-full min-h-screen">
       <AuthSidebar widthClass="lg:w-1/3">
@@ -40,13 +35,13 @@ const RegisterCompany = () => {
           </h2>
           <p className="text-[#003637] text-center mb-8">Preencha seus dados</p>
           <div className="flex bg-gray-200 rounded-lg p-1 mb-8">
+            <button className="w-1/2 p-3 text-sm font-semibold rounded-lg text-gray-500">
+              EMPRESA
+            </button>
             <button
               className="w-1/2 p-3 text-sm font-semibold rounded-lg text-white"
               style={{ backgroundColor: COLOR_TEAL }}
             >
-              EMPRESA
-            </button>
-            <button className="w-1/2 p-3 text-sm font-semibold rounded-lg text-gray-500">
               PROFISSIONAL AUTÔNOMO
             </button>
           </div>
@@ -54,14 +49,12 @@ const RegisterCompany = () => {
             <InputWithIcon Icon={VscMail} type="email" placeholder="Email" />
             <InputWithIcon Icon={VscLock} type="password" placeholder="Senha" />
             <InputWithIcon
-              Icon={VscHome}
+              Icon={VscAccount}
               type="text"
-              placeholder="Nome da Empresa"
+              placeholder="Nome do Profissional"
             />
-            <InputWithIcon Icon={VscNotebook} type="text" placeholder="CNPJ" />
-
-            <ServiceDropdown services={COMPANY_SERVICES} />
-
+            <InputWithIcon Icon={VscNotebook} type="text" placeholder="CPF" />
+            <ServiceDropdown services={AUTONOMO_SERVICES} />
             <button
               type="submit"
               style={{ backgroundColor: COLOR_TEAL }}
@@ -76,4 +69,4 @@ const RegisterCompany = () => {
   );
 };
 
-export default RegisterCompany;
+export default RegisterAutonomo;
