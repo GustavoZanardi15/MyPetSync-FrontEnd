@@ -1,29 +1,19 @@
 import React, { useState } from "react"
-import { View, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Keyboard } from "react-native"
-import { useRouter } from "expo-router"
+import { View, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
 import VerificacaoHeader from "../components/verificacao/VerificacaoHeader"
 import VerificacaoForm from "../components/verificacao/VerificacaoForm"
 import VerificacaoBottomAction from "../components/verificacao/BottomActions"
 
 export default function VerificacaoScreen() {
-  const [code, setCode] = useState(["", "", "", "", ""])
-  const router = useRouter()
-
-  const fullCode = code.join("")
+  const [code, setCode] = useState(Array(5).fill(""));
 
   return (
-    <KeyboardAvoidingView
-      style={styles.fullScreen}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <KeyboardAvoidingView style={styles.fullScreen} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <VerificacaoHeader />
-
-      <Pressable style={styles.flexible} onPress={Keyboard.dismiss}>
         <View style={styles.contentContainer}>
           <VerificacaoForm code={code} setCode={setCode} />
-          <VerificacaoBottomAction onPress/>
+          <VerificacaoBottomAction/>
         </View>
-      </Pressable>
     </KeyboardAvoidingView>
   )
 }

@@ -25,11 +25,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingTop: 50, 
         paddingBottom: 20,
-        backgroundColor: '#F7F7F7', // Fundo cinza consistente
+        backgroundColor: '#F7F7F7', 
         width: '100%',
     },
     backButton: {
-        width: 40, // Largura fixa para manter o título centralizado
+        width: 40,
         alignItems: 'flex-start',
     },
     headerTitle: {
