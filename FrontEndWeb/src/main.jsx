@@ -18,6 +18,7 @@ createRoot(document.getElementById("root")).render(
     <Features />
     <Providers />
     <Footer />
+    <Login />
     <RegisterCompany />
   </StrictMode>
 );
