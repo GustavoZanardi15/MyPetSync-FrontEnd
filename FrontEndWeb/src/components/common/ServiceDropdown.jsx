@@ -3,14 +3,10 @@ import { VscChevronDown } from "react-icons/vsc";
 
 const COLOR_TEAL = "#058789";
 
-const COMPANY_SERVICES = [
-  "Clínica Veterinária",
-  "Pet Shop",
-  "Hotel para Pets",
-  "Banho e Tosa",
-];
-
-const ServiceDropdown = () => {
+const ServiceDropdown = ({
+  services,
+  placeholder = "Selecione o Tipo de Serviço",
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
 
@@ -30,7 +26,8 @@ const ServiceDropdown = () => {
         className="relative w-full p-3 rounded-lg border-none text-white font-semibold flex justify-between items-center hover:opacity-90 transition"
         style={{ backgroundColor: COLOR_TEAL }}
       >
-        {selectedService || "Selecione o Tipo de Serviço"}
+        {selectedService || placeholder}
+
         <VscChevronDown
           className={`w-5 h-5 transition-transform ${
             isDropdownOpen ? "transform rotate-180" : ""
@@ -39,7 +36,7 @@ const ServiceDropdown = () => {
       </button>
       {isDropdownOpen && (
         <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto">
-          {COMPANY_SERVICES.map((service) => (
+          {services.map((service) => (
             <li
               key={service}
               onClick={() => handleSelectService(service)}
