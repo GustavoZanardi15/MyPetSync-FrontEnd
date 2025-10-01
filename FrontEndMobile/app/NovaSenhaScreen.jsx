@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native"
 import NovaSenhaHeader from "../components/novaSenha/NovaSenhaHeader"
 import NovaSenhaForm from "../components/novaSenha/NovaSenhaForm"
-import NovaSenhaBottomAction from "../components/novaSenha/BottomActions" 
+import BottomActions from "../components/novaSenha/BottomActions" 
 
 
 export default function NovaSenhaScreen() {
@@ -23,7 +23,7 @@ export default function NovaSenhaScreen() {
           confirmPassword={confirmPassword}
           setConfirmPassword={setConfirmPassword}
         />
-        <NovaSenhaBottomAction />
+        <BottomActions />
         
       </View>
     </KeyboardAvoidingView>
