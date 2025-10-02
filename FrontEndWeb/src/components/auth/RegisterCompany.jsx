@@ -2,6 +2,7 @@ import InputWithIcon from "../../components/common/InputWithIcon";
 import ServiceDropdown from "../../components/common/ServiceDropdown";
 import { VscLock, VscMail, VscHome, VscNotebook } from "react-icons/vsc";
 import AuthSidebar from "./AuthSidebar";
+import { Link } from "react-router-dom";
 
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
@@ -22,15 +23,13 @@ const RegisterCompany = () => {
           <p className="text-lg font-semibold mb-8">
             Acesse sua conta agora mesmo.
           </p>
-          <form className="flex justify-center">
-            <button
-              type="submit"
-              style={{ backgroundColor: COLOR_BUTTON_BG }}
-              className="w-60 p-3 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md"
-            >
-              ENTRAR
-            </button>
-          </form>
+          <Link
+            to="/login"
+            style={{ backgroundColor: COLOR_BUTTON_BG }}
+            className="w-60 p-3 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md inline-block"
+          >
+            ENTRAR
+          </Link>
         </div>
       </AuthSidebar>
       <div className="w-full lg:w-3/5 p-16 flex justify-center items-center">
