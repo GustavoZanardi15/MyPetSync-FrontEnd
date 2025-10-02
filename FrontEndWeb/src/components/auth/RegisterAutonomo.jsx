@@ -18,15 +18,13 @@ const RegisterAutonomo = () => {
           <p className="text-lg font-semibold mb-8">
             Acesse sua conta agora mesmo.
           </p>
-          <form className="flex justify-center">
-            <button
-              type="submit"
-              style={{ backgroundColor: COLOR_BUTTON_BG }}
-              className="w-60 p-3 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md"
-            >
-              ENTRAR
-            </button>
-          </form>
+          <Link
+            to="/login"
+            style={{ backgroundColor: COLOR_BUTTON_BG }}
+            className="w-60 p-3 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md inline-block"
+          >
+            ENTRAR
+          </Link>
         </div>
       </AuthSidebar>
       <div className="w-full lg:w-3/5 p-16 flex justify-center items-center">
