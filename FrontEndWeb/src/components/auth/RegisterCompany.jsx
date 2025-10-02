@@ -13,7 +13,6 @@ const COMPANY_SERVICES = [
   "Hotel para Pets",
   "Banho e Tosa",
 ];
-
 const RegisterCompany = () => {
   return (
     <div className="flex w-full min-h-screen">
@@ -45,9 +44,12 @@ const RegisterCompany = () => {
             >
               EMPRESA
             </button>
-            <button className="w-1/2 p-3 text-sm font-semibold rounded-lg text-gray-500">
+            <Link
+              to="/registerAutonomo"
+              className="w-1/2 p-3 text-sm font-semibold rounded-lg text-gray-500 text-center"
+            >
               PROFISSIONAL AUTÔNOMO
-            </button>
+            </Link>
           </div>
           <form className="space-y-4">
             <InputWithIcon Icon={VscMail} type="email" placeholder="Email" />

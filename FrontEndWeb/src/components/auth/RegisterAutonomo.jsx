@@ -2,6 +2,7 @@ import InputWithIcon from "../common/InputWithIcon";
 import ServiceDropdown from "../common/ServiceDropdown";
 import { VscLock, VscMail, VscAccount, VscNotebook } from "react-icons/vsc";
 import AuthSidebar from "./AuthSidebar";
+import { Link } from "react-router-dom";
 
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
@@ -35,9 +36,12 @@ const RegisterAutonomo = () => {
           </h2>
           <p className="text-[#003637] text-center mb-8">Preencha seus dados</p>
           <div className="flex bg-gray-200 rounded-lg p-1 mb-8">
-            <button className="w-1/2 p-3 text-sm font-semibold rounded-lg text-gray-500">
+            <Link
+              to="/registerCompany"
+              className="w-1/2 p-3 text-sm font-semibold rounded-lg text-gray-500 text-center"
+            >
               EMPRESA
-            </button>
+            </Link>
             <button
               className="w-1/2 p-3 text-sm font-semibold rounded-lg text-white"
               style={{ backgroundColor: COLOR_TEAL }}
