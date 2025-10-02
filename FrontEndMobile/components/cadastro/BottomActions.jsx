@@ -1,8 +1,11 @@
 import React from "react";
 import { View, Text, Pressable, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router"; // ⬅️ IMPORTANTE
 
-export default function BottomActions({onPress}) {
+export default function BottomActions({ onPress }) {
+    const router = useRouter(); // ⬅️ INSTANCIA O ROUTER
+
     return (
         <View style={styles.bottomButtonsContainer}>
             <View style={styles.horizontalBottomRow}>
@@ -21,6 +24,12 @@ export default function BottomActions({onPress}) {
                     <Text style={styles.buttonText}>Criar Conta</Text>
                 </Pressable>
             </View>
+
+            <Pressable style={styles.loginWrapper} onPress={() => router.push("/LoginScreen")}>
+                <Text style={styles.loginText}>
+                    Já possui uma conta? Faça login
+                </Text>
+            </Pressable>
         </View>
     );
 }
@@ -31,13 +40,13 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         width: 327,
         paddingBottom: 20,
+        alignSelf: "center"
     },
     horizontalBottomRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: 327,
-        alignSelf: 'center',
+        width: "100%",
     },
     socialIconsGroup: {
         flexDirection: 'row',
@@ -54,6 +63,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 2,
         elevation: 3,
+        justifyContent: "center",
+        alignItems: "center",
     },
     logoGoogle: {
         width: 33.6,
@@ -77,5 +88,14 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 15,
         fontWeight: "700"
+    },
+    loginWrapper: {
+        marginTop: 16,
+        alignItems: "flex-end",
+    },
+    loginText: {
+        fontSize: 15,
+        fontWeight: "regular",
+        color: "#89CFF0",
     }
 });

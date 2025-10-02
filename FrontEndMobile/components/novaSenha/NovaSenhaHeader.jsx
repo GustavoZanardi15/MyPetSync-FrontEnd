@@ -5,13 +5,14 @@ import { useRouter } from "expo-router";
 
 export default function NovaSenhaHeader() {
   const router = useRouter();
+
   return (
     <View style={styles.header}>
-      <Pressable onPress={() => router.back()}>
-        <Ionicons name="arrow-back" size={24} color="#2F8B88" /> 
+      <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={28} color="#2F8B88" />
       </Pressable>
       <Text style={styles.headerTitle}>Redefinir senha</Text>
-      <View style={{ width: 24 }} /> 
+      <View style={styles.backButton} /> 
     </View>
   );
 }
@@ -22,13 +23,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 0, 
-    paddingBottom: 20, 
-    backgroundColor: "#F7F7F7", 
+    paddingTop: 50,   
+    paddingBottom: 20,
+    backgroundColor: "#F7F7F7",
+    width: "100%",
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#2F8B88",
+  },
+  backButton: {
+    width: 40, 
+    alignItems: "flex-start",
   },
 });

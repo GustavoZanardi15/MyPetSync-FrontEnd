@@ -1,11 +1,8 @@
-// app/NovaSenhaScreen.jsx
-
 import React, { useState } from "react"
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native"
-import { useRouter } from "expo-router"
 import NovaSenhaHeader from "../components/novaSenha/NovaSenhaHeader"
 import NovaSenhaForm from "../components/novaSenha/NovaSenhaForm"
-import NovaSenhaBottomAction from "../components/novaSenha/BottomActions" 
+import BottomActions from "../components/novaSenha/BottomActions" 
 
 
 export default function NovaSenhaScreen() {
@@ -14,10 +11,8 @@ export default function NovaSenhaScreen() {
 
 
   return (
-    <KeyboardAvoidingView
-      style={styles.fullScreen}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <KeyboardAvoidingView style={styles.fullScreen} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+
       <NovaSenhaHeader />
       
       <View style={styles.contentContainer}>
@@ -28,7 +23,7 @@ export default function NovaSenhaScreen() {
           confirmPassword={confirmPassword}
           setConfirmPassword={setConfirmPassword}
         />
-        <NovaSenhaBottomAction />
+        <BottomActions />
         
       </View>
     </KeyboardAvoidingView>
