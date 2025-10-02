@@ -36,7 +36,9 @@ const RegisterCompany = () => {
           <h2 className="text-4xl font-bold text-center text-[#003637] mb-2">
             Crie sua conta
           </h2>
-          <p className="text-[#003637] text-center mb-8">Preencha seus dados</p>
+          <p className="text-[#003637] font-medium text-center mb-8">
+            Preencha seus dados
+          </p>
           <div className="flex bg-gray-200 rounded-lg p-1 mb-8">
             <button
               className="w-1/2 p-3 text-sm font-semibold rounded-lg text-white"
@@ -63,13 +65,13 @@ const RegisterCompany = () => {
 
             <ServiceDropdown services={COMPANY_SERVICES} />
 
-            <button
-              type="submit"
+            <Link
+              to="/login"
               style={{ backgroundColor: COLOR_TEAL }}
-              className="w-full p-3 mt-8 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md"
+              className="w-full p-3 mt-8 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md text-center inline-block"
             >
               CRIAR CONTA
-            </button>
+            </Link>
           </form>
         </div>
       </div>
