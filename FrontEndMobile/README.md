@@ -17,15 +17,17 @@ Ele utiliza React Native com Expo, permitindo um desenvolvimento rápido e efici
 FrontEndMobile/
 ├─ .cursor/
 ├─ .vscode/
-├─ app/              # Arquivos principais do Expo
-├─ assets/           # Imagens, ícones e fontes
-├─ components/       # Componentes React Native reutilizáveis
-├─ constants/        # Variáveis e constantes globais
-├─ hooks/            # Hooks personalizados
+├─ app/                        # Arquivos principais do Expo e configuração de rotas
+│   └─ screens/                 # Telas principais da aplicação
+│       ├─ addPetScreens/       # Fluxo de cadastro de pets (Nome, Gênero, etc.)
+│       └─ telaInicialScreens/  # Fluxo de Autenticação (Login, Cadastro, Recuperação de Senha)
+├─ assets/                      # Imagens, ícones e fontes estáticas
+├─ components/                  # Componentes React Native reutilizáveis
+│   └─ telaInicial/              # Componentes específicos dos fluxos de autenticação
 ├─ node_modules/
 ├─ scripts/
 ├─ .gitignore
-├─ app.json          # Configurações do Expo
+├─ app.json                     # Configurações do Expo
 ├─ eslint.config.js
 ├─ package-lock.json
 ├─ package.json
@@ -64,4 +66,4 @@ npm start
 
 * **Para Android**: escaneie o QR code no app Expo Go do seu dispositivo.
 * **Para iOS**: escaneie o QR code no app Expo Go do seu dispositivo ou use o simulador.
-* **Para Web**: por padrão temos: https://http://localhost:8081.
+* **Para Web**: acesse via navegador em [http://localhost:8081](http://localhost:8081).
