@@ -18,6 +18,7 @@ const Header = () => {
           iconClassName="text-gray-500"
         />
       </div>
+
       <div className="flex items-center space-x-4">
         <button className="p-2 rounded-full hover:bg-teal-800 transition-colors relative">
           <VscBell className="w-7 h-7 text-white" />
