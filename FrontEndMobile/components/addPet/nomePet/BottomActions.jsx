@@ -1,8 +1,10 @@
+import React from "react";
+import { router } from "expo-router";
 import { Pressable, Text, StyleSheet } from "react-native";
 
 export default function BottomActions({ }) {
     return (
-        <Pressable style={styles.button} onPress={() => router.push("GeneroPetScreen")}>
+        <Pressable style={styles.button} onPress={() => router.push("/screens/addPetScreens/EspeciePetScreen")}>
             <Text style={styles.buttonText}>Próximo</Text>
         </Pressable>
     );

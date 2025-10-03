@@ -1,8 +1,9 @@
+import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { View, Pressable, Text, StyleSheet } from "react-native";
 
-export default function NomePetHeader({ step, progress }) {
+export default function NomePetHeader({ }) {
     const router = useRouter();
 
     return (

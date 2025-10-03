@@ -1,18 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import BottomActions from "../../../components/addPet/nomePet/BottomActions";
 import NomePetHeader from "../../../components/addPet/nomePet/NomePetHeader";
 import NomePetForm from "../../../components/addPet/nomePet/NomePetForm";
 
 export default function NomePetScreen() {
-    const [petNome, setPetNome] = useState("");
 
     return (
         <View style={styles.container}>
             <View>
                 <NomePetHeader />
                 <Text style={styles.title}>Informe o nome do seu pet?</Text>
-                <NomePetForm value={petNome} onChangeText={setPetNome} />
+                <NomePetForm />
             </View>
             
             <BottomActions />
