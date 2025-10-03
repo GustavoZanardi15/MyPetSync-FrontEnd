@@ -1,17 +1,27 @@
 # MyPetSync - FrontEndMobile
 
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
+![React Native](https://img.shields.io/badge/React%20Native-0.71-blue?logo=react)
+![Expo](https://img.shields.io/badge/Expo-49-purple?logo=expo)
+
+---
+
 ## Sobre o Projeto
 
-O MyPetSync - FrontEndMobile é a aplicação mobile do projeto MyPetSync, construída para gerenciar e interagir com serviços de pets. Este projeto é a interface Front-end para dispositivos móveis, desenvolvida com foco em performance, experiência do usuário e compatibilidade entre plataformas.
+O **MyPetSync - FrontEndMobile** é a aplicação mobile do projeto **MyPetSync**, construída para **gerenciar e interagir com serviços de pets**. Este projeto é a interface **Front-end** para dispositivos móveis, desenvolvida com foco em performance, experiência do usuário e compatibilidade entre plataformas.
 
-Ele utiliza React Native com Expo, permitindo um desenvolvimento rápido e eficiente para iOS e Android.
+Ele utiliza **React Native** com **Expo**, permitindo um desenvolvimento rápido e eficiente para **iOS e Android**.
 
-## Tecnologias Utilizadas
+---
 
-* **React Native** – Biblioteca JavaScript para construção de interfaces mobile.
-* **Expo** – Ferramenta para acelerar o desenvolvimento e deploy de aplicativos React Native.
+## 🛠️ Tecnologias Utilizadas
 
-## Estrutura de Pastas
+* ⚛️ **React Native** – Biblioteca JavaScript para construção de interfaces mobile.
+* ⚡ **Expo** – Ferramenta para acelerar o desenvolvimento e deploy de aplicativos React Native.
+
+---
+
+## 📂 Estrutura de Pastas
 
 ```
 FrontEndMobile/
@@ -33,6 +43,8 @@ FrontEndMobile/
 ├─ package.json
 └─ tsconfig.json
 ```
+
+---
 
 ## 🚀 Como Rodar a Aplicação
 
