@@ -10,8 +10,6 @@ const Header = () => {
   return (
     <header className="flex justify-between items-center h-20 px-6 bg-[#058789] w-full sticky top-0 z-10 text-white shadow-lg">
       <div className="flex items-center flex-grow">
-        {" "}
-        {/* REMOVIDO mx-10 */}
         <InputWithIcon
           Icon={VscSearch}
           placeholder="Buscar por pet ou tutor"
@@ -20,7 +18,6 @@ const Header = () => {
           iconClassName="text-gray-500"
         />
       </div>
-
       <div className="flex items-center space-x-4">
         <button className="p-2 rounded-full hover:bg-teal-800 transition-colors relative">
           <VscBell className="w-7 h-7 text-white" />
