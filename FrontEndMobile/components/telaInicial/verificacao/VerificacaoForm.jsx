@@ -51,7 +51,7 @@ export default function VerificacaoForm({ code, setCode }) {
         ))}
       </View>
 
-      <Pressable style={styles.resendContainer} onPress={() => router.push("/RecuperarSenhaScreen")}>
+      <Pressable style={styles.resendContainer} onPress={() => router.push("/screens/telaInicialScreens/RecuperarSenhaScreen")}>
         <Text style={styles.resendText}>Envie o código novamente</Text>
       </Pressable>
     </View>

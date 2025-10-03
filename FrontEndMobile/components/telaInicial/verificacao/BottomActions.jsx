@@ -2,10 +2,10 @@ import { router } from "expo-router";
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 
-export default function VerificacaoBottomAction({ onPress }) {
+export default function VerificacaoBottomAction({ }) {
     return (
         <View style={styles.container}>
-            <Pressable style={styles.button} onPress={() => {router.push("/NovaSenhaScreen")}} >
+            <Pressable style={styles.button} onPress={() => {router.push("/screens/telaInicialScreens/NovaSenhaScreen")}} >
                 <Text style={styles.buttonText}>Próximo</Text>
             </Pressable>
         </View>

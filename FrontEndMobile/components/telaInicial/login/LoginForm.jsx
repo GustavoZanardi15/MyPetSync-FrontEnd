@@ -30,7 +30,8 @@ export default function LoginForm({ email, setEmail, senha, setSenha, router }) 
                 </Pressable>
             </View>
 
-            <Pressable style={styles.forgotContainer} onPress={() => { router.push("/RecuperarSenhaScreen") }}>
+            <Pressable style={styles.forgotContainer} 
+                onPress={() => { router.push("/screens/telaInicialScreens/RecuperarSenhaScreen") }}>
                 <Text style={styles.forgot}>Esqueceu a senha?</Text>
             </Pressable>
         </View>

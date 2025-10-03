@@ -22,7 +22,7 @@ export default function RecuperarSenhaForm({ telefone, setTelefone, onPress }) {
                     placeholderTextColor="#A0A0A0"
                 />
             </View>
-            <Pressable style={styles.button} onPress={() => {router.push("/VerificacaoScreen")}}>
+            <Pressable style={styles.button} onPress={() => {router.push("/screens/telaInicialScreens/VerificacaoScreen")}}>
                 <Text style={styles.buttonText}>Enviar</Text>
             </Pressable>
 

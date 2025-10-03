@@ -5,7 +5,7 @@ import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 export default function BottomActions({ }) {
   return (
     <View style={styles.container}>
-      <Pressable style={styles.button} onPress={() => {router.push("/SenhaAlteradaScreen")}}>
+      <Pressable style={styles.button} onPress={() => {router.push("/screens/telaInicialScreens/SenhaAlteradaScreen")}}>
         <Text style={styles.buttonText}>Alterar senha</Text>
       </Pressable>
     </View>
