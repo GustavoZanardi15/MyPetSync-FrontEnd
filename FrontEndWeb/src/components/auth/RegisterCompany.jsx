@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
-
 const COMPANY_SERVICES = [
   "Clínica Veterinária",
   "Pet Shop",
@@ -62,9 +61,7 @@ const RegisterCompany = () => {
               placeholder="Nome da Empresa"
             />
             <InputWithIcon Icon={VscNotebook} type="text" placeholder="CNPJ" />
-
             <ServiceDropdown services={COMPANY_SERVICES} />
-
             <Link
               to="/login"
               style={{ backgroundColor: COLOR_TEAL }}

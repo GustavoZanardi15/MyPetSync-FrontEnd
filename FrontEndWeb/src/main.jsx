@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import LandingPage from "./components/landing/LandingPage.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
 import RegisterCompany from "./components/auth/RegisterCompany.jsx";
 import RegisterAutonomo from "./components/auth/RegisterAutonomo.jsx";
 import Login from "./components/auth/Login.jsx";

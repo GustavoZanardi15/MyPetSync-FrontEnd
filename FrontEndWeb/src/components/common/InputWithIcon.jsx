@@ -1,5 +1,3 @@
-import React from "react";
-
 const InputWithIcon = ({ Icon, placeholder, type, ...rest }) => {
   return (
     <div className="relative">
