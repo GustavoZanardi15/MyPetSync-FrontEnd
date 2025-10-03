@@ -6,8 +6,7 @@ import LandingPage from "./pages/LandingPage.jsx";
 import RegisterCompany from "./components/auth/RegisterCompany.jsx";
 import RegisterAutonomo from "./components/auth/RegisterAutonomo.jsx";
 import Login from "./components/auth/Login.jsx";
-import Header from "./components/common/Header.jsx";
-import Sidebar from "./components/common/Sidebar.jsx";
+import HomePage from "./pages/HomePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -26,12 +25,14 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+  {
+    path: "/homePage",
+    element: <HomePage />,
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router} />
-    <Header />
-    <Sidebar />
   </StrictMode>
 );
