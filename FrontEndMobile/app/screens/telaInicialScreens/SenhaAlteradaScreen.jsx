@@ -11,18 +11,18 @@ export default function SenhaAlteradaScreen() {
         <View style={styles.container}>
             
             <Image 
-                source={require("../assets/images/ilustracao_fundo.png")}
+                source={require("../../../assets/images/ilustracao_fundo.png")}
                 style={[styles.illustration, {height: screenHeight * 0.7}]} 
                 resizeMode="cover"
             />
             
             <View style={styles.contentWrapper}>
-                <Image source={require("../assets/images/Logo.png")} style={styles.logo} />
+                <Image source={require("../../../assets/images/Logo.png")} style={styles.logo} />
                 <Text style={styles.text}>
                     Sua senha foi alterada com sucesso!
                 </Text>
 
-                <Pressable style={styles.button} onPress={() => router.push("/LoginScreen")}>
+                <Pressable style={styles.button} onPress={() => router.push("/screens/telaInicialScreens/LoginScreen")}>
                     <Text style={styles.buttonText}>Entrar</Text>
                 </Pressable>
             </View>

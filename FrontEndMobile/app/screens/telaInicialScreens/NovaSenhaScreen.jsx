@@ -1,8 +1,8 @@
 import React, { useState } from "react"
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native"
-import NovaSenhaHeader from "../components/novaSenha/NovaSenhaHeader"
-import NovaSenhaForm from "../components/novaSenha/NovaSenhaForm"
-import BottomActions from "../components/novaSenha/BottomActions" 
+import NovaSenhaHeader from "../../../components/telaInicial/novaSenha/NovaSenhaHeader"
+import NovaSenhaForm from "../../../components/telaInicial/novaSenha/NovaSenhaForm"
+import BottomActions from "../../../components/telaInicial/novaSenha/BottomActions" 
 
 
 export default function NovaSenhaScreen() {

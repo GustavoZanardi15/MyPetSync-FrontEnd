@@ -1,8 +1,8 @@
 import React, { useState } from "react"
-import { View, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
-import VerificacaoHeader from "../components/verificacao/VerificacaoHeader"
-import VerificacaoForm from "../components/verificacao/VerificacaoForm"
-import VerificacaoBottomAction from "../components/verificacao/BottomActions"
+import { View, StyleSheet, KeyboardAvoidingView, Platform} from "react-native"
+import VerificacaoHeader from "../../../components/telaInicial/verificacao/VerificacaoHeader"
+import VerificacaoForm from "../../../components/telaInicial/verificacao/VerificacaoForm"
+import VerificacaoBottomAction from "../../../components/telaInicial/verificacao/BottomActions"
 
 export default function VerificacaoScreen() {
   const [code, setCode] = useState(Array(5).fill(""));

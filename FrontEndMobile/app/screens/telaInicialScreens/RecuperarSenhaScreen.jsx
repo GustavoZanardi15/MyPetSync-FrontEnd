@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import RecuperarSenhaHeader from "../components/recuperarSenha/RecuperarHeader"; 
-import RecuperarSenhaForm from "../components/recuperarSenha/RecuperarForm"; 
+import RecuperarSenhaHeader from "../../../components/telaInicial/recuperarSenha/RecuperarHeader"; 
+import RecuperarSenhaForm from "../../../components/telaInicial/recuperarSenha/RecuperarForm"; 
 
 export default function RecuperarSenhaScreen() {
     const [telefone, setTelefone] = useState("");

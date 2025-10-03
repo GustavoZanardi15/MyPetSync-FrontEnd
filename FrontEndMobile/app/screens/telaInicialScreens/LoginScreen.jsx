@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, Pressable, StyleSheet, Image, Dimensions } from "react-native";
 import { useRouter } from "expo-router"; 
-import LoginHeader from "../components/login/LoginHeader";
-import LoginForm from "../components/login/LoginForm";
-import BottomActions from "../components/login/BottomActions";
+import LoginHeader from "../../../components/telaInicial/login/LoginHeader";
+import LoginForm from "../../../components/telaInicial/login/LoginForm";
+import BottomActions from "../../../components/telaInicial/login/BottomActions";
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -16,7 +16,7 @@ export default function LoginScreen() {
     return (
         <View style={styles.fullScreen}>
             <Image 
-                source={require("../assets/images/ilustracao_fundo.png")}
+                source={require("../../../assets/images/ilustracao_fundo.png")}
                 style={[styles.illustration, {height: screenHeight * 0.7}]} 
                 resizeMode="cover"
             />
@@ -27,7 +27,7 @@ export default function LoginScreen() {
                 </Pressable>
                 <Pressable onPress={() => {
                     setAba("novaConta");
-                    router.push("/CadastroScreen"); 
+                    router.push("/screens/telaInicialScreens/CadastroScreen"); 
                 }}>
                     <Text style={[styles.tabText, aba === "novaConta" && styles.activeTab]}>Nova Conta</Text>
                 </Pressable>
