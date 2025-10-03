@@ -9,7 +9,9 @@ const clinicData = {
 const Header = () => {
   return (
     <header className="flex justify-between items-center h-20 px-6 bg-[#058789] w-full sticky top-0 z-10 text-white shadow-lg">
-      <div className="flex items-center w-5/12">
+      <div className="flex items-center flex-grow">
+        {" "}
+        {/* REMOVIDO mx-10 */}
         <InputWithIcon
           Icon={VscSearch}
           placeholder="Buscar por pet ou tutor"
