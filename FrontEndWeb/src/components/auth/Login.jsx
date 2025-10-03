@@ -2,6 +2,7 @@ import dogAndCatLogin from "../../assets/dogAndCatLogin.png";
 import { VscLock, VscMail } from "react-icons/vsc";
 import InputWithIcon from "../../components/common/InputWithIcon";
 import AuthSidebar from "./AuthSidebar";
+import { Link } from "react-router-dom";
 
 const COLOR_BUTTON_BG = "#003637";
 
@@ -31,13 +32,13 @@ const Login = () => {
           >
             Esqueceu sua senha?
           </a>
-          <button
-            type="submit"
+          <Link
+            to="/HomePage"
             style={{ backgroundColor: COLOR_BUTTON_BG }}
-            className="w-80 p-3 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md mt-6 mx-auto block"
+            className="w-72 p-3 text-center text-white font-bold rounded-lg hover:opacity-90 transition shadow-md mt-6 mx-auto block"
           >
             ENTRAR
-          </button>
+          </Link>
         </form>
         <div className="mt-4 text-center">
           <p className="text-[#003637] text-sm font-semibold">
