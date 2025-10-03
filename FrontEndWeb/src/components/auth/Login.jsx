@@ -7,14 +7,24 @@ const COLOR_BUTTON_BG = "#003637";
 
 const Login = () => {
   return (
-    <div className="flex text-center w-full min-h-screen">
-      <AuthSidebar widthClass="lg:w-2/5">
-        <h2 className="text-[#003637] text-4xl font-bold mb-10 text-center">
+    <div className="flex w-full min-h-screen">
+      <AuthSidebar widthClass="lg:w-1/3">
+        <h2 className="text-[#003637] text-4xl font-bold mb-8 text-center">
           Entre na sua conta
         </h2>
-        <form className="space-y-4">
-          <InputWithIcon Icon={VscMail} type="email" placeholder="Email" />
-          <InputWithIcon Icon={VscLock} type="password" placeholder="Senha" />
+        <form className="space-y-4 ">
+          <InputWithIcon
+            Icon={VscMail}
+            type="email"
+            placeholder="Email"
+            name="email"
+          />
+          <InputWithIcon
+            Icon={VscLock}
+            type="password"
+            placeholder="Senha"
+            name="senha"
+          />
           <a
             href="#"
             className="relative top-0 mt-2 text-[#003637] text-base font-semibold hover:underline block text-left"
@@ -38,11 +48,11 @@ const Login = () => {
           </p>
         </div>
       </AuthSidebar>
-      <div className="hidden lg:block lg:w-3/5 relative">
+      <div className="hidden lg:flex lg:w-3/5 relative flex-col justify-center items-center">
         <img
           src={dogAndCatLogin}
           alt="Cachorro e gato"
-          className="object-cover w-full h-full"
+          className="w-3/4 h-auto object-contain"
         />
       </div>
     </div>
