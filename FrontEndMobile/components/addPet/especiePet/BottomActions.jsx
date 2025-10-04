@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, StyleSheet, Pressable, View } from "react-native";
+import { router } from "expo-router";
 
 export default function BottomActions() {
   return (
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
     fontWeight: "regular",
     color: "#89CFF0",
     textAlign: "center",
-    marginTop: 15
+    marginTop: 15,
+    marginBottom: 15
   },
 });
