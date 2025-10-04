@@ -1,7 +1,7 @@
 import Header from "../components/common/Header";
 import Sidebar from "../components/common/Sidebar";
 
-const LandingPage = () => {
+const HomePage = () => {
   return (
     <>
       <Header />
@@ -10,4 +10,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default HomePage;
