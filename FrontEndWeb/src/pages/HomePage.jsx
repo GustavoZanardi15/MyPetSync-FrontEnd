@@ -1,6 +1,7 @@
 import Header from "../components/common/Header";
 import Sidebar from "../components/common/Sidebar";
 import DashboardStats from "../components/home/DashboardStats";
+import WelcomeBanner from "../components/home/WelcomeBanner";
 
 const HomePage = () => {
   return (
@@ -9,6 +10,7 @@ const HomePage = () => {
       <div className="flex flex-col flex-grow">
         <Header />
         <main className="p-8 bg-gray-100 flex-grow"></main>
+        <WelcomeBanner />
         <DashboardStats />
       </div>
     </div>
