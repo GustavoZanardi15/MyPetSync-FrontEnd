@@ -1,4 +1,5 @@
-import { FiCheckCircle, FiUsers, FiDollarSign, FiStar } from "react-icons/fi";
+import { BsCashCoin } from "react-icons/bs";
+import { FiCheckCircle, FiUsers, FiStar } from "react-icons/fi";
 
 const statsData = [
   {
@@ -22,7 +23,7 @@ const statsData = [
     title: "Faturamento do Mês",
     value: "R$ 4.560",
     subText: "+8% do mês passado",
-    icon: FiDollarSign,
+    icon: BsCashCoin,
     iconColor: "text-indigo-600",
   },
   {
