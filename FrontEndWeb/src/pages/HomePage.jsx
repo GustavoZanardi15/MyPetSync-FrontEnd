@@ -9,9 +9,10 @@ const HomePage = () => {
       <Sidebar />
       <div className="flex flex-col flex-grow">
         <Header />
-        <main className="p-8 bg-gray-100 flex-grow"></main>
-        <WelcomeBanner />
-        <DashboardStats />
+        <main className="px-8 pt-4 pb-8 bg-gray-100 flex-grow">
+          <WelcomeBanner />
+          <DashboardStats />
+        </main>
       </div>
     </div>
   );
