@@ -2,6 +2,7 @@ import Header from "../components/common/Header";
 import Sidebar from "../components/common/Sidebar";
 import DashboardStats from "../components/home/DashboardStats";
 import WelcomeBanner from "../components/home/WelcomeBanner";
+import NextAppointments from "../components/home/NextAppointments";
 
 const HomePage = () => {
   return (
@@ -12,6 +13,7 @@ const HomePage = () => {
         <main className="px-8 pt-4 pb-8 bg-gray-100 flex-grow">
           <WelcomeBanner />
           <DashboardStats />
+          <NextAppointments />
         </main>
       </div>
     </div>
