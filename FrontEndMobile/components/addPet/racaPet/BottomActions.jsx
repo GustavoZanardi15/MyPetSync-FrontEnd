@@ -1,13 +1,14 @@
 import React from "react";
+import { router } from "expo-router";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 
-export default function BottomActions({ onNext }) {
+export default function BottomActions({ }) {
   return (
     <View style={styles.container}>
-      <Pressable style={styles.button} onPress={onNext}>
+      <Pressable style={styles.button} onPress={() => {router.push("/screens/addPetScreens/GeneroPetScreen")}}>
         <Text style={styles.buttonText}>Próximo</Text>
       </Pressable>
-      <Text style={styles.secondaryText}>Não sei!</Text>
+      <Text style={styles.secondaryText} onPress={() => {router.push("/screens/addPetScreens/GeneroPetScreen")}}>Não sei!</Text>
     </View>
   );
 }
