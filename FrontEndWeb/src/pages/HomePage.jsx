@@ -7,9 +7,9 @@ import HomeSidePanel from "../components/home/HomeSidePanel";
 
 const HomePage = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen"> 
       <Sidebar />
-      <div className="flex flex-col flex-grow">
+       <div className="flex flex-col flex-grow overflow-y-auto"> 
         <Header />
         <main className="px-8 pt-4 pb-8 bg-gray-100 flex-grow">
           <WelcomeBanner />

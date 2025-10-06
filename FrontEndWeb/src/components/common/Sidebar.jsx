@@ -12,7 +12,7 @@ const Sidebar = () => {
   const [active, setActive] = useState("Home");
 
   return (
-    <div className="hidden lg:flex flex-col h-screen w-72 bg-[#A5E5D9] flex-shrink-0"> 
+     <div className="hidden lg:flex flex-col h-screen w-72 bg-[#A5E5D9] flex-shrink-0"> 
       <div className="flex items-center gap-8 bg-[#058789] p-8 text-white">
         <img src={Logo} alt="Logo My Pet Sync" className="w-14 h-14" />
         <div>
