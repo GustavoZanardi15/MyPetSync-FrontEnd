@@ -4,7 +4,7 @@ const AppointmentItem = ({ petName, tutorName, date, time, phone, status }) => {
       case "Confirmado":
         return "bg-teal-700 hover:bg-teal-600";
       case "Agendado":
-        return "bg-blue-600 hover:bg-blue-500";
+        return "bg-gray-400 hover:bg-gray-300";
       case "Pendente":
         return "bg-yellow-600 hover:bg-yellow-500";
       default:
