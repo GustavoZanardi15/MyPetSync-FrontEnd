@@ -46,6 +46,6 @@ const styles = StyleSheet.create({
     progress: {
         height: 4,
         backgroundColor: "#89CFF0",
-        width: 140.14
+        width: "42.84%"
     }
 });
