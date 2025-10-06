@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
 
-const AUTONOMO_SERVICES = ["Pet Sitter", "Veterinário Autônomo", "Adestrador"];
+const AUTONOMO_SERVICES = ["Pet Sistter", "Veterinário Autônomo", "Adestrador"];
 
 const RegisterAutonomo = () => {
   return (
