@@ -52,13 +52,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1.5,
-    borderColor: "#2F8B88",
+    borderColor: "#CCCCCC",
   },
   selectedButton: {
     backgroundColor: "#C8E7E6",
-    borderColor: "#2F8B88",
+    borderColor: "#89CFF0",
     width: 86,
     height: 86,
+    borderWidth: 2,
+    padding: 2
   },
   skipText: {
     marginTop: 20,

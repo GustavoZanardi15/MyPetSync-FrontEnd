@@ -51,10 +51,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 3,
-    borderColor: "transparent"
+    borderColor: "#CCCCCC"
   },
   selected: {
     borderColor: "#89CFF0",
+    borderWidth: 2,
+    padding: 2    
   },
   image: {
     width: 50,
