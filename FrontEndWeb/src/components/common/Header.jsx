@@ -8,7 +8,7 @@ const clinicData = {
 
 const Header = () => {
   return (
-    <header className="flex justify-between items-center h-20 px-6 bg-[#058789] w-full sticky top-0 z-10 text-white ">
+    <header className="flex justify-between items-center h-20 px-6 pb-4 pt-4 bg-[#058789] w-full sticky top-0 z-10 text-white ">
       <div className="flex items-center flex-grow">
         <InputWithIcon
           Icon={VscSearch}
