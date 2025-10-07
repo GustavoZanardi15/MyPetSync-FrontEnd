@@ -7,28 +7,23 @@ import RegisterCompany from "./components/auth/RegisterCompany.jsx";
 import RegisterAutonomo from "./components/auth/RegisterAutonomo.jsx";
 import Login from "./components/auth/Login.jsx";
 import HomePage from "./pages/HomePage.jsx";
+import AgendaPage from "./pages/AgendaPage.jsx";
+import MainLayout from "./layouts/MainLayout.jsx";
+
+const LayoutWrapper = ({ children }) => (
+    <MainLayout>
+        {children}
+    </MainLayout>
+);
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LandingPage />,
-  },
-  {
-    path: "/registerCompany",
-    element: <RegisterCompany />,
-  },
-  {
-    path: "/registerAutonomo",
-    element: <RegisterAutonomo />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/homePage",
-    element: <HomePage />,
-  },
+
+  { path: "/", element: <LandingPage />, },
+  { path: "/registerCompany", element: <RegisterCompany />, },
+  { path: "/registerAutonomo", element: <RegisterAutonomo />, },
+  { path: "/login", element: <Login />, },
+  { path: "/homePage", element: <LayoutWrapper><HomePage /></LayoutWrapper>, },
+  { path: "/agenda", element: <LayoutWrapper><AgendaPage /></LayoutWrapper>, }, 
 ]);
 
 createRoot(document.getElementById("root")).render(
