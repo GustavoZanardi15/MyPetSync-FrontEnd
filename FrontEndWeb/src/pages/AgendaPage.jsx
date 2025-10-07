@@ -1,6 +1,7 @@
 import { VscAdd } from "react-icons/vsc";
 import AgendaCalendar from "../components/agenda/AgendaCalendar";
 import DailySchedule from "../components/agenda/DailySchedule";
+import DailySummary from "../components/agenda/DailySummary";
 
 const AgendaPage = () => {
   return (
@@ -22,12 +23,7 @@ const AgendaPage = () => {
           <AgendaCalendar />
           <DailySchedule />
         </div>
-        <div className="w-80 bg-white p-6 rounded-xl shadow-lg h-96">
-          <h2 className="text-xl font-semibold text-gray-700 mb-3">
-            Resumo do Dia
-          </h2>
-          <div className="h-full bg-gray-50 flex items-center justify-center rounded-lg text-gray-500 border border-dashed"></div>
-        </div>
+        <DailySummary />
       </div>
     </div>
   );
