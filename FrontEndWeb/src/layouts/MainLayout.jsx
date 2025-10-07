@@ -4,9 +4,9 @@ import Sidebar from '../components/common/Sidebar';
 
 const MainLayout = ({ children }) => {
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100"> 
       <Sidebar />
-      <div className="flex flex-col flex-grow">
+      <div className="flex flex-col flex-grow overflow-y-auto"> 
         <Header />
         <main className="flex-grow">
             {children}
