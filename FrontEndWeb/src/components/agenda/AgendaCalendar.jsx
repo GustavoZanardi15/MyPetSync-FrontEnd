@@ -105,7 +105,7 @@ const AgendaCalendar = () => {
           </button>
           <button
             onClick={goToToday}
-            className="bg-teal-600 hover:bg-teal-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors"
+            className="bg-[#058789] hover:bg-teal-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors"
           >
             Hoje
           </button>
