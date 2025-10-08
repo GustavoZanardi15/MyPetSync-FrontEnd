@@ -1,54 +1,53 @@
 import {
   VscClose,
   VscCalendar,
-  VscWatch,
   VscTag,
   VscInfo,
   VscPerson,
   VscMail,
-  VscLock,
-  VscHeart,
 } from "react-icons/vsc";
+import { MdOutlinePets, MdOutlineWatchLater } from "react-icons/md";
+import { FiPhoneCall } from "react-icons/fi";
 
 const NewAppointmentModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
-
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center p-4"
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white shadow-lg w-full max-w-4xl max-h-[90vh] mt-10"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-4 border-b flex justify-between items-center bg-gray-100">
+        <div className="p-6 border-b flex justify-between items-center sticky top-0 bg-[#A8E6CF] z-10">
           <div>
-            <h2 className="text-xl font-bold flex items-center">
-              <VscCalendar className="w-5 h-5 mr-2 text-gray-700" />
+            <h2 className="text-2xl font-bold text-[#003637] flex items-center">
+              <VscCalendar className="w-6 h-6 mr-2 text-[#003637]" />
               Novo Agendamento
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#003637] mt-1">
               Preencha os dados do agendamento
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-900"
+            className="text-gray-500 hover:text-gray-800 p-2 rounded-full transition-colors"
           >
-            <VscClose className="w-5 h-5" />
+            <VscClose className="w-6 h-6" />
           </button>
         </div>
-        <div className="p-4 space-y-4">
+        <div className="p-6 space-y-8">
           <Section
             title="Informações do Cliente"
             icon={VscPerson}
-            color="text-gray-700"
+            color="text-[#F0F0F0]"
+            className="bg-[#058789]"
           >
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <Input
                 label="Nome do Pet"
-                icon={VscHeart}
+                icon={MdOutlinePets}
                 placeholder="Nome do Pet"
               />
               <Input
@@ -58,7 +57,7 @@ const NewAppointmentModal = ({ isOpen, onClose }) => {
               />
               <Input
                 label="Telefone"
-                icon={VscLock}
+                icon={FiPhoneCall}
                 placeholder="Telefone"
                 type="tel"
               />
@@ -73,15 +72,21 @@ const NewAppointmentModal = ({ isOpen, onClose }) => {
           <Section
             title="Informações do Serviço"
             icon={VscTag}
-            color="text-gray-700"
+            color="text-[#F0F0F0]"
+            className="bg-[#058789]"
           >
             <Select
               label="Tipo de Serviço"
               options={["Consulta", "Tosa", "Banho", "Vacinação"]}
             />
           </Section>
-          <Section title="Data e Horário" icon={VscWatch} color="text-gray-700">
-            <div className="grid grid-cols-3 gap-3">
+          <Section
+            title="Data e Horário"
+            icon={MdOutlineWatchLater}
+            color="text-[#F0F0F0]"
+            className="bg-[#058789]"
+          >
+            <div className="grid grid-cols-3 gap-4">
               <Input label="Data" placeholder="DD/MM/AAAA" type="date" />
               <Select label="Horário" options={["09:00", "10:00", "11:00"]} />
               <Select
@@ -94,26 +99,27 @@ const NewAppointmentModal = ({ isOpen, onClose }) => {
             title="Status do Agendamento"
             icon={VscInfo}
             color="text-gray-700"
+            className="bg-gray-50"
           >
             <StatusRadios />
           </Section>
-
           <Section
             title="Observações (opcional)"
             icon={VscInfo}
-            color="text-gray-700"
+            color="text-[#F0F0F0]"
+            className="bg-[#058789]"
           >
             <TextArea placeholder="Informações adicionais sobre o agendamento..." />
           </Section>
         </div>
-        <div className="p-4 border-t flex justify-end gap-3 bg-gray-100">
+        <div className="p-6 border-t flex justify-end gap-3 sticky bottom-0 bg-white z-10">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-600 border border-gray-300"
+            className="px-6 py-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
           >
             Cancelar
           </button>
-          <button className="px-4 py-2 text-white font-semibold bg-gray-500">
+          <button className="px-6 py-2 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md">
             Salvar
           </button>
         </div>
@@ -121,10 +127,9 @@ const NewAppointmentModal = ({ isOpen, onClose }) => {
     </div>
   );
 };
-
-const Section = ({ title, icon: Icon, color, children }) => (
-  <div className="p-3 border border-gray-200">
-    <h3 className={`font-semibold mb-3 flex items-center ${color}`}>
+const Section = ({ title, icon: Icon, color, children, className = "" }) => (
+  <div className={`p-4 rounded-lg ${className}`}>
+    <h3 className={`font-semibold mb-4 flex items-center ${color}`}>
       <Icon className="w-5 h-5 mr-2" />
       {title}
     </h3>
@@ -133,7 +138,7 @@ const Section = ({ title, icon: Icon, color, children }) => (
 );
 const Input = ({ label, icon: Icon, placeholder, type = "text" }) => (
   <div className="flex flex-col">
-    <label className="text-sm font-medium text-gray-700 mb-1">{label}</label>
+    <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
     <div className="relative">
       {Icon && (
         <Icon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -141,8 +146,8 @@ const Input = ({ label, icon: Icon, placeholder, type = "text" }) => (
       <input
         type={type}
         placeholder={placeholder}
-        className={`w-full p-2 border border-gray-300 text-gray-800 ${
-          Icon ? "pl-9" : "pl-2"
+        className={`w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 ${
+          Icon ? "pl-10" : "pl-3"
         }`}
       />
     </div>
@@ -150,8 +155,8 @@ const Input = ({ label, icon: Icon, placeholder, type = "text" }) => (
 );
 const Select = ({ label, options }) => (
   <div className="flex flex-col">
-    <label className="text-sm font-medium text-gray-700 mb-1">{label}</label>
-    <select className="w-full p-2 border border-gray-300 text-gray-800 bg-white">
+    <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
+    <select className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 appearance-none bg-white">
       <option value="">Selecione o serviço...</option>
       {options.map((option) => (
         <option key={option} value={option}>
@@ -162,27 +167,27 @@ const Select = ({ label, options }) => (
   </div>
 );
 const TextArea = ({ placeholder }) => (
-  <div className="flex flex-col mt-3">
+  <div className="flex flex-col mt-4">
     <textarea
       placeholder={placeholder}
       rows="3"
-      className="w-full p-2 border border-gray-300 text-gray-800"
+      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 bg-wh"
     ></textarea>
   </div>
 );
 const StatusRadios = () => (
-  <div className="mb-3">
+  <div className="mb-4">
     <label className="text-sm font-medium text-gray-700 block mb-2">
       Status do Agendamento
     </label>
-    <div className="flex gap-4">
+    <div className="flex gap-6">
       <label className="flex items-center space-x-2 text-gray-800">
         <input
           type="radio"
           name="status"
           value="Agendado"
           defaultChecked
-          className="text-gray-600"
+          className="text-teal-600 focus:ring-teal-500"
         />
         <span>Agendado</span>
       </label>
@@ -191,7 +196,7 @@ const StatusRadios = () => (
           type="radio"
           name="status"
           value="Confirmado"
-          className="text-gray-600"
+          className="text-teal-600 focus:ring-teal-500"
         />
         <span>Confirmado</span>
       </label>
