@@ -1,17 +1,16 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 
 export default function BottomActions() {
-  const router = useRouter();
 
   return (
     <View style={styles.bottomContainer}>
-      <Pressable style={styles.button} onPress={() => router.push("/addPetScreens/FotoPetScreen")}>
+      <Pressable style={styles.button} onPress={() => router.push("/screens/addPetScreens/FotoPetScreen")}>
         <Text style={styles.buttonText}>Próximo</Text>
       </Pressable>
 
-      <Pressable onPress={() => router.push("/addPetScreens/FotoPetScreen")}>
+      <Pressable onPress={() => router.push("/screens/addPetScreens/FotoPetScreen")}>
         <Text style={styles.skipText}>Não tenho certeza</Text>
       </Pressable>
     </View>
