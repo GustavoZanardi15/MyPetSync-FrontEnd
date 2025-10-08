@@ -88,10 +88,16 @@ const NewAppointmentModal = ({ isOpen, onClose }) => {
           >
             <div className="grid grid-cols-3 gap-4">
               <Input label="Data" placeholder="DD/MM/AAAA" type="date" />
-              <Select label="Horário" options={["09:00", "10:00", "11:00"]} />
+              <Select
+                label="Horário"
+                options={["09:00", "10:00", "11:00"]}
+                defaultMessage="Selecione o horário..."
+              />
+
               <Select
                 label="Duração"
                 options={["30 min", "60 min", "90 min"]}
+                dafaultMessage="Selecione o serviço..."
               />
             </div>
           </Section>
@@ -153,11 +159,15 @@ const Input = ({ label, icon: Icon, placeholder, type = "text" }) => (
     </div>
   </div>
 );
-const Select = ({ label, options }) => (
+const Select = ({
+  label,
+  options,
+  defaultMessage = "Selecione o serviço...",
+}) => (
   <div className="flex flex-col">
     <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
     <select className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 appearance-none bg-white">
-      <option value="">Selecione o serviço...</option>
+      <option value="">{defaultMessage}</option>
       {options.map((option) => (
         <option key={option} value={option}>
           {option}
