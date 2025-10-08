@@ -97,7 +97,7 @@ const NewAppointmentModal = ({ isOpen, onClose }) => {
               <Select
                 label="Duração"
                 options={["30 min", "60 min", "90 min"]}
-                dafaultMessage="Selecione o serviço..."
+                defaultMessage="Selecione a duração..."
               />
             </div>
           </Section>
