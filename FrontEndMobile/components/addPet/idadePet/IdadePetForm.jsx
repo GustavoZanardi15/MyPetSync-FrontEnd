@@ -3,11 +3,11 @@ import { View, Text, StyleSheet, FlatList, Pressable, Platform } from "react-nat
 import { Picker } from "@react-native-picker/picker";
 
 const PICKER_WIDTH = 280;
-const ITEM_WIDTH = 56;    
+const ITEM_WIDTH = 56;
 
 export default function IdadePetForm({ anos, setAnos, meses, setMeses }) {
-  const anosArray = [...Array(21).keys()]; 
-  const mesesArray = [...Array(12).keys()]; 
+  const anosArray = [...Array(21).keys()];
+  const mesesArray = [...Array(12).keys()];
 
   const ScrollPicker = ({ data, value, onChange }) => {
     const flatListRef = useRef(null);
@@ -15,88 +15,88 @@ export default function IdadePetForm({ anos, setAnos, meses, setMeses }) {
     const centerOffset = PICKER_WIDTH / 2 - ITEM_WIDTH / 2;
 
     const getCurrentCenterIndex = (offset) => {
-        return Math.round(offset / ITEM_WIDTH);
+      return Math.round(offset / ITEM_WIDTH);
     };
 
     const handleScroll = (event) => {
       setCurrentScrollOffset(event.nativeEvent.contentOffset.x);
     };
-    
+
     const handleMomentumScrollEnd = (event) => {
       const offset = event.nativeEvent.contentOffset.x;
       const finalIndex = getCurrentCenterIndex(offset);
-      
+
       if (finalIndex >= 0 && finalIndex < data.length) {
         onChange(data[finalIndex]);
       }
     };
-    
+
     useEffect(() => {
-        const index = data.indexOf(value);
-        if (flatListRef.current && index !== -1) {
-            flatListRef.current.scrollToOffset({
-                offset: index * ITEM_WIDTH,
-                animated: false,
-            });
-            setCurrentScrollOffset(index * ITEM_WIDTH);
-        }
+      const index = data.indexOf(value);
+      if (flatListRef.current && index !== -1) {
+        flatListRef.current.scrollToOffset({
+          offset: index * ITEM_WIDTH,
+          animated: false,
+        });
+        setCurrentScrollOffset(index * ITEM_WIDTH);
+      }
     }, [data, value]);
-    
+
     const centerIndex = getCurrentCenterIndex(currentScrollOffset);
 
     return (
       <FlatList
         ref={flatListRef}
         data={data}
-        horizontal={true} 
+        horizontal={true}
         showsHorizontalScrollIndicator={false}
         style={styles.scrollPicker}
         keyExtractor={(item) => item.toString()}
-        
+
         snapToInterval={ITEM_WIDTH}
-        decelerationRate="fast" 
-        
+        decelerationRate="fast"
+
         onScroll={handleScroll}
         scrollEventThrottle={16}
-        onMomentumScrollEnd={handleMomentumScrollEnd} 
-        
-        contentContainerStyle={{ paddingHorizontal: centerOffset }}
-        extraData={centerIndex} 
-        
-        renderItem={({ item, index }) => {
-            const isSelected = index === centerIndex;
-            
-            const itemCenterPosition = index * ITEM_WIDTH + ITEM_WIDTH / 2;
-            const viewCenterPosition = currentScrollOffset + PICKER_WIDTH / 2;
-            const distance = Math.abs(itemCenterPosition - viewCenterPosition);
-            
-            const maxDistance = PICKER_WIDTH / 2; 
-            const clampedDistance = Math.min(1, Math.max(0, distance / maxDistance));
-            
-            const opacity = isSelected ? 1 : 1 - clampedDistance * 0.7; 
+        onMomentumScrollEnd={handleMomentumScrollEnd}
 
-            return (
-              <Pressable style={styles.scrollItem}>
-                <Text
-                  style={[
-                    styles.scrollText,
-                    { opacity: opacity },
-                    isSelected && styles.selectedText,
-                  ]}
-                >
-                  {item} 
-                </Text> 
-              </Pressable>
-            );
+        contentContainerStyle={{ paddingHorizontal: centerOffset }}
+        extraData={centerIndex}
+
+        renderItem={({ item, index }) => {
+          const isSelected = index === centerIndex;
+
+          const itemCenterPosition = index * ITEM_WIDTH + ITEM_WIDTH / 2;
+          const viewCenterPosition = currentScrollOffset + PICKER_WIDTH / 2;
+          const distance = Math.abs(itemCenterPosition - viewCenterPosition);
+
+          const maxDistance = PICKER_WIDTH / 2;
+          const clampedDistance = Math.min(1, Math.max(0, distance / maxDistance));
+
+          const opacity = isSelected ? 1 : 1 - clampedDistance * 0.7;
+
+          return (
+            <Pressable style={styles.scrollItem}>
+              <Text
+                style={[
+                  styles.scrollText,
+                  { opacity: opacity },
+                  isSelected && styles.selectedText,
+                ]}
+              >
+                {item}
+              </Text>
+            </Pressable>
+          );
         }}
       />
     );
   };
 
-  return ( 
+  return (
     <View style={styles.form}>
-      
-      <View style={styles.pickerWrapper}>
+
+      <View style={[styles.pickerWrapper, styles.pickerWrapperYears]}>
         {Platform.OS === "ios" ? (
           <View style={styles.pickerContainerIOS}>
             <Picker
@@ -106,17 +106,15 @@ export default function IdadePetForm({ anos, setAnos, meses, setMeses }) {
             >
               {anosArray.map((n) => (
                 <Picker.Item key={n} label={n.toString()} value={n} />
-              ))} 
+              ))}
             </Picker>
           </View>
-        ) : ( 
+        ) : (
           <View style={styles.pickerContainer}>
-            <View style={styles.topGuide} />
             <ScrollPicker data={anosArray} value={anos} onChange={setAnos} />
-            <View style={styles.bottomGuide} />
           </View>
-        )} 
-        <Text style={styles.label}>anos</Text> 
+        )}
+        <Text style={styles.label}>anos</Text>
       </View>
 
       <View style={styles.pickerWrapper}>
@@ -134,9 +132,7 @@ export default function IdadePetForm({ anos, setAnos, meses, setMeses }) {
           </View>
         ) : (
           <View style={styles.pickerContainer}>
-            <View style={styles.topGuide} />
             <ScrollPicker data={mesesArray} value={meses} onChange={setMeses} />
-            <View style={styles.bottomGuide} />
           </View>
         )}
         <Text style={styles.label}>meses</Text>
@@ -151,68 +147,59 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   pickerWrapper: {
-    alignItems: 'center',
-    marginBottom: 40,
+    alignItems: "center",
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#C4C4C4",
+    paddingBottom: 10,
+    width: 280,
+  },
+  pickerWrapperYears: {
+    borderTopWidth: 1,
+    borderTopColor: "#C4C4C4",
+    paddingTop: 10,
   },
   pickerContainer: {
-    width: 280, 
-    height: 70, 
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative', 
-    backgroundColor: '#F7F7F7',
-  },
-  pickerContainerIOS: { 
-    width: 280, 
+    width: 280,
     height: 70,
-    overflow: 'hidden',
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    backgroundColor: "transparent",
+  },
+  pickerContainerIOS: {
+    width: 280,
+    height: 70,
+    overflow: "hidden",
   },
   picker: {
-    width: 280, 
+    width: 280,
     height: 70,
   },
   scrollPicker: {
-    width: 280, 
-    height: 70, 
-    backgroundColor: "transparent", 
+    width: 280,
+    height: 70,
+    backgroundColor: "transparent",
   },
   scrollItem: {
     justifyContent: "center",
     alignItems: "center",
-    width: 56, 
-    height: 70, 
+    width: 56,
+    height: 70,
   },
   scrollText: {
-    fontSize: 32, 
-    color: "#444", 
+    fontSize: 32,
+    color: "#555",
+    fontWeight: "500",
   },
   selectedText: {
-    color: "#2F8B88", 
+    color: "#2F8B88",
     fontWeight: "bold",
-  },
-  topGuide: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 20, 
-    height: 1,
-    backgroundColor: '#D3D3D3',
-    zIndex: 10,
-  },
-  bottomGuide: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 20, 
-    height: 1,
-    backgroundColor: '#D3D3D3',
-    zIndex: 10,
   },
   label: {
     color: "#2F8B88",
     fontSize: 15,
-    marginTop: 5,
-    fontWeight: "600",
-  }
+    fontWeight: "regular",
+  },
 });

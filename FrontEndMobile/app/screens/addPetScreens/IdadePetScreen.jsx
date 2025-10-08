@@ -12,8 +12,10 @@ export default function IdadePetScreen() {
         <View style={styles.container}>
             <View>
                 <IdadePetHeader />
-                <Text style={styles.title}>Quantos anos tem seu Pet?</Text>
-                <IdadePetForm anos={anos} setAnos={setAnos} meses={meses} setMeses={setMeses} />
+                <View style={styles.contentWrapper}>
+                    <Text style={styles.title}>Quantos anos tem seu Pet?</Text>
+                    <IdadePetForm anos={anos} setAnos={setAnos} meses={meses} setMeses={setMeses} />
+                </View>
             </View>
             <BottomActions />
         </View>
@@ -27,6 +29,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingTop: 60,
         justifyContent: "space-between",
+    },
+    contentWrapper: {
+        marginTop: 40,
+        alignItems: "center",
+        width: '100%', 
     },
     title: {
         fontSize: 22,
