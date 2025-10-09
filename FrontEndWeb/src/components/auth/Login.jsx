@@ -2,18 +2,24 @@ import dogAndCatLogin from "../../assets/dogAndCatLogin.png";
 import { VscLock, VscMail } from "react-icons/vsc";
 import InputWithIcon from "../../components/common/InputWithIcon";
 import AuthSidebar from "./AuthSidebar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const COLOR_BUTTON_BG = "#003637";
-
 const Login = () => {
+  const navigate = useNavigate();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Login efetuado. Redirecionando para Home.");
+
+    navigate("/homePage", { replace: true });
+  };
   return (
     <div className="flex w-full min-h-screen">
       <AuthSidebar widthClass="lg:w-1/3">
         <h2 className="text-[#003637] text-4xl font-bold mb-8 text-center">
           Entre na sua conta
         </h2>
-        <form className="space-y-4 ">
+        <form className="space-y-4 " onSubmit={handleSubmit}>
           <InputWithIcon
             Icon={VscMail}
             type="email"
@@ -32,20 +38,23 @@ const Login = () => {
           >
             Esqueceu sua senha?
           </a>
-          <Link
-            to="/HomePage"
+          <button
+            type="submit"
             style={{ backgroundColor: COLOR_BUTTON_BG }}
             className="w-72 p-3 text-center text-white font-bold rounded-lg hover:opacity-90 transition shadow-md mt-6 mx-auto block"
           >
             ENTRAR
-          </Link>
+          </button>
         </form>
         <div className="mt-4 text-center">
           <p className="text-[#003637] text-sm font-semibold">
             Não tem conta?
-            <a href="#" className="font-bold ml-1 hover:underline">
+            <Link
+              to="/registerAutonomo"
+              className="font-bold ml-1 hover:underline"
+            >
               Crie sua conta
-            </a>
+            </Link>
           </p>
         </div>
       </AuthSidebar>
