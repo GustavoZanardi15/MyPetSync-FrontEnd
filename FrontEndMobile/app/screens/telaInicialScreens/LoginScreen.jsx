@@ -16,7 +16,7 @@ export default function LoginScreen() {
     return (
         <View style={styles.fullScreen}>
             <Image 
-                source={require("../../../assets/images/ilustracao_fundo.png")}
+                source={require("../../../assets/images/telaInicial/ilustracao_fundo.png")}
                 style={[styles.illustration, {height: screenHeight * 0.7}]} 
                 resizeMode="cover"
             />

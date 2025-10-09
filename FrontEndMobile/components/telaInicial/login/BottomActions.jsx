@@ -12,7 +12,7 @@ export default function BottomActions({onPress}) {
                     </Pressable>
                     <Pressable style={styles.socialButton}>
                         <Image 
-                            source={require("../../../assets/images/IconGoogle.png")} 
+                            source={require("../../../assets/images/telaInicial/IconGoogle.png")} 
                             style={styles.logoGoogle} 
                         />
                     </Pressable>

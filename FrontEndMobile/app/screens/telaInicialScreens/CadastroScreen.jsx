@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import CadastroHeader from "../../../components/telaInicial/cadastro/CadastroHeader";
 import CadastroForm from "../../../components/telaInicial/cadastro/CadastroForm";
 import BottomActions from "../../../components/telaInicial/cadastro/BottomActions";
-
-const screenHeight = Dimensions.get('window').height;
 
 export default function CadastroScreens() {
     const [aba, setAba] = useState("novaConta");

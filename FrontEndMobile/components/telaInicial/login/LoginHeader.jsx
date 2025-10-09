@@ -9,7 +9,7 @@ export default function LoginHeader() {
                 <Text style={styles.highlight}>pet lover...</Text>
             </Text>
             <View style={styles.iconContainer}>
-                <Image source={require("../../../assets/images/Logo.png")} style={styles.logo} />
+                <Image source={require("../../../assets/images/telaInicial/Logo.png")} style={styles.logo} />
             </View>
         </View>
     );

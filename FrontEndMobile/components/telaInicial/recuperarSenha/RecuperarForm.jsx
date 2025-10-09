@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import React from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 
-export default function RecuperarSenhaForm({ telefone, setTelefone, onPress }) {
+export default function RecuperarSenhaForm({ telefone, setTelefone }) {
     return (
         <View style={styles.content}>
             
