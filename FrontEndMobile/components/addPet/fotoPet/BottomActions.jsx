@@ -5,7 +5,7 @@ import { router } from "expo-router";
 export default function BottomActions() {
 
   return (
-    <View style={styles.bottomContainer}>
+    <View>
       <Pressable style={styles.button} onPress={() => router.push("/screens/addPetScreens/FotoAddPetScreen")}>
         <Text style={styles.buttonText}>Próximo</Text>
       </Pressable>
@@ -18,25 +18,26 @@ export default function BottomActions() {
 }
 
 const styles = StyleSheet.create({
-  bottomContainer: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
   button: {
     backgroundColor: "#2F8B88",
-    width: "80%",
-    paddingVertical: 14,
-    borderRadius: 10,
+    height: 56,
+    width: 276,
+    borderRadius: 16,
+    justifyContent: "center",
     alignItems: "center",
+    alignSelf: "center"
   },
   buttonText: {
     color: "#fff",
-    fontWeight: "bold",
     fontSize: 16,
+    fontWeight: "bold"
   },
   skipText: {
-    marginTop: 12,
-    color: "#87CEEB",
-    fontSize: 14,
-  },
+    fontSize: 15,
+    fontWeight: "regular",
+    color: "#89CFF0",
+    textAlign: "center",
+    marginTop: 15,
+    marginBottom: 15
+  }
 });

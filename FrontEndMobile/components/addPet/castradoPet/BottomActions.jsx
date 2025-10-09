@@ -18,19 +18,17 @@ export default function BottomActions() {
 }
 
 const styles = StyleSheet.create({
-    button: {
+    bbutton: {
     backgroundColor: "#2F8B88",
-    height: 56,
-    width: 276,
-    borderRadius: 16,
-    justifyContent: "center",
+    width: "80%",
+    paddingVertical: 14,
+    borderRadius: 10,
     alignItems: "center",
-    alignSelf: "center"
   },
   buttonText: {
     color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
-    fontWeight: "bold"
   },
   linkText: {
     fontSize: 15,
