@@ -9,13 +9,13 @@ export default function SenhaAlteradaScreen() {
     return (
         <View style={styles.container}>
 
-            <Image source={require("../../../assets/images/ilustracao_fundo.png")}
+            <Image source={require("../../../assets/images/telaInicial/ilustracao_fundo.png")}
                 style={[styles.illustration, { height: screenHeight * 0.7 }]}
                 resizeMode="cover"
             />
 
             <View style={styles.contentWrapper}>
-                <Image source={require("../../../assets/images/Logo.png")} style={styles.logo} />
+                <Image source={require("../../../assets/images/telaInicial/Logo.png")} style={styles.logo} />
                 <Text style={styles.text}>
                     Pet adicionado com sucesso!{"\n"}
                     <Text style={styles.secondText}>

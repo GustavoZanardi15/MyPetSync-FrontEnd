@@ -8,10 +8,10 @@ export default function OutraEspecieForm() {
     <View style={styles.container}>
 
       <View style={styles.iconsRow}>
-        <Image source={require("../../../../assets/images/Cat.png")} style={styles.icon} />
-        <Image source={require("../../../../assets/images/Dog.png")} style={styles.icon} />
-        <Image source={require("../../../../assets/images/Bird.png")} style={styles.icon} />
-        <Image source={require("../../../../assets/images/Fish.png")} style={styles.icon} />
+        <Image source={require("../../../../assets/images/addPet/Cat.png")} style={styles.icon} />
+        <Image source={require("../../../../assets/images/addPet/Dog.png")} style={styles.icon} />
+        <Image source={require("../../../../assets/images/addPet/Bird.png")} style={styles.icon} />
+        <Image source={require("../../../../assets/images/addPet/Fish.png")} style={styles.icon} />
       </View>
 
       <TextInput

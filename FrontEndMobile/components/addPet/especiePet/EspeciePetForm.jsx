@@ -12,7 +12,7 @@ export default function EspecieForm() {
           <Pressable style={[styles.circle, { backgroundColor: "#C7EBDD" }, especie === "cachorro" && styles.selected]}
             onPress={() => setEspecie("cachorro")}
           >
-            <Image source={require("../../../assets/images/Dog.png")} style={styles.image} />
+            <Image source={require("../../../assets/images/addPet/Dog.png")} style={styles.image} />
           </Pressable>
           <Text style={[styles.text, especie === "cachorro" && styles.textSelected]}>Cachorro</Text>
         </View>
@@ -21,7 +21,7 @@ export default function EspecieForm() {
           <Pressable style={[styles.circle, { backgroundColor: "#E6D6F7" }, especie === "gato" && styles.selected]}
             onPress={() => setEspecie("gato")}
           >
-            <Image source={require("../../../assets/images/Cat.png")} style={styles.image}/>
+            <Image source={require("../../../assets/images/addPet/Cat.png")} style={styles.image}/>
           </Pressable>
           <Text style={[styles.text, especie === "gato" && styles.textSelected]}>Gato</Text>
         </View>
