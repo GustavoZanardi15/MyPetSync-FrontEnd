@@ -1,14 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { VscAdd } from "react-icons/vsc";
 import AgendaCalendar from "../components/agenda/AgendaCalendar";
 import DailySchedule from "../components/agenda/DailySchedule";
 import DailySummary from "../components/agenda/DailySummary";
 import NewAppointmentModal from "../components/agenda/NewAppointmentModal";
+import { useSearchParams } from "react-router-dom";
 
 const AgendaPage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const shouldOpenModal = searchParams.get("new") === "true";
+  const [isModalOpen, setIsModalOpen] = useState(shouldOpenModal);
+  useEffect(() => {
+    setIsModalOpen(shouldOpenModal);
+  }, [shouldOpenModal]);
+
+  const openModal = () => {
+    setSearchParams({ new: true });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSearchParams({});
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="p-8">
