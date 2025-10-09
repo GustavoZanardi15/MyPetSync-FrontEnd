@@ -11,6 +11,7 @@ const navItems = [
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
   const handleLogout = () => {
     if (location.pathname.startsWith("/agenda")) {
       console.log("Saindo da Agenda para Home");
@@ -31,7 +32,14 @@ const Sidebar = () => {
       </div>
       <nav className="flex flex-col gap-3 p-4">
         {navItems.map((item) => {
-          const isActive = location.pathname.startsWith(item.path);
+          let isActive;
+          const currentPath = location.pathname;
+          if (item.path === "/homePage") {
+            isActive = currentPath === item.path;
+          } else {
+            isActive = currentPath.startsWith(item.path);
+          }
+
           return (
             <Link
               key={item.name}
@@ -43,8 +51,7 @@ const Sidebar = () => {
         : "bg-[#058789] hover:bg-[#2BB6A8]"
     }`}
             >
-              <item.icon className="w-5 h-5" />
-              {item.name}
+              <item.icon className="w-5 h-5" /> {item.name}
             </Link>
           );
         })}
