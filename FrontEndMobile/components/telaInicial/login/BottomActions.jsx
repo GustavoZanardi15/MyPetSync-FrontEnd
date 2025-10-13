@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Pressable, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 export default function BottomActions({onPress}) {
     return (
@@ -17,7 +18,7 @@ export default function BottomActions({onPress}) {
                         />
                     </Pressable>
                 </View>
-                <Pressable style={styles.button} onPress={onPress}>
+                <Pressable style={styles.button} onPress={() => {router.push("/screens/home/homeScreen")}}>
                     <Text style={styles.buttonText}>Entrar</Text>
                 </Pressable>
             </View>
