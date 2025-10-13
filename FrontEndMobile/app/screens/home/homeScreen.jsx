@@ -4,145 +4,173 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 export default function HomeScreen() {
-    // 👉 estado para armazenar o índice do pet selecionado
-    const [selectedPet, setSelectedPet] = useState(0);
+  const [selectedPet, setSelectedPet] = useState(0);
 
-    // 👉 lista de pets (simulada)
-    const pets = [
-        require("../../../assets/images/home/DogHomePet1.png"),
-        require("../../../assets/images/home/DogHomePet2.png"),
-        require("../../../assets/images/home/CatHomePet.png"),
-    ];
+  const pets = [
+    { id: 0, image: require("../../../assets/images/home/DogHomePet1.png") },
+    { id: 1, image: require("../../../assets/images/home/DogHomePet2.png") },
+    { id: 2, image: require("../../../assets/images/home/CatHomePet.png") },
+  ];
 
-    return (
-        <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+  const reminders = [
+    {
+      title: "Colírio Ocular",
+      subtitle: "Aplicar 3 gotas, manhã e noite",
+      time: "08:45 - 20:45",
+      repeat: "Diariamente",
+    },
+    {
+      title: "Passeio",
+      subtitle: "Lembrar de levar água",
+      time: "18:00 - 19:00",
+      repeat: "Quarta-feira",
+    },
+    {
+      title: "Petshop",
+      subtitle: "Banho e tosa",
+      time: "09:00",
+      repeat: "Sexta-feira",
+    },
+  ];
 
-                <View style={styles.header}>
-                    <View>
-                        <Text style={styles.ola}>Olá, <Text style={styles.nome}>Lucas</Text></Text>
-                    </View>
-                    <View style={styles.icons}>
-                        <Ionicons name="search-outline" size={22} color="#2F8B88" style={{ marginRight: 14 }} />
-                        <Ionicons name="notifications-outline" size={22} color="#2F8B88" />
-                    </View>
-                </View>
+  return (
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
 
-                <View style={styles.spaCard}>
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.spaTitle}>Hora do Spa do seu pet!</Text>
-                        <Text style={styles.spaSubtitle}>Agende Banho & Tosa com {"\n"}profissionais de confiança</Text>
-                        <Pressable style={styles.spaButton} onPress={() => router.push("/screens/agendaPet/AgendaScreen")}>
-                            <Text style={styles.spaButtonText}>Agende agora</Text>
-                        </Pressable>
-                    </View>
-                    <Image
-                        source={require("../../../assets/images/home/DogHome.png")}
-                        style={styles.spaImage}
-                    />
-                </View>
-
-                <Text style={styles.sectionTitle}>Selecione seu Pet</Text>
-                <View style={styles.petsRow}>
-                    {pets.map((pet, index) => (
-                        <Pressable key={index} onPress={() => setSelectedPet(index)}>
-                            <Image
-                                source={pet}
-                                style={[
-                                    styles.petAvatar,
-                                    selectedPet === index && styles.petAvatarSelected, // 💙 aplica borda se selecionado
-                                ]}
-                            />
-                        </Pressable>
-                    ))}
-
-                    <Pressable style={styles.addPet} onPress={() => router.push("/screens/addPetScreens/NomePetScreen")}>
-                        <Ionicons name="add" size={22} color="#2F8B88" />
-                    </Pressable>
-                </View>
-
-                <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Lembretes</Text>
-                    <Text style={styles.verTudo}>Ver tudo</Text>
-                </View>
-
-                <View style={styles.card}>
-                    <Text style={styles.cardTitle}>Colírio Ocular</Text>
-                    <Text style={styles.cardSubtitle}>Aplicar 3 gotas, manhã e noite</Text>
-                    <View style={styles.cardFooter}>
-                        <Ionicons name="time-outline" size={16} color="#2F8B88" />
-                        <Text style={styles.cardTime}>08:45 - 20:45</Text>
-                        <Text style={styles.cardRepeat}>Diariamente</Text>
-                        <Ionicons name="notifications" size={16} color="#2F8B88" style={{ marginLeft: "auto" }} />
-                    </View>
-                </View>
-
-                {/* Médicos */}
-                <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Médicos Veterinários</Text>
-                    <Text style={styles.verTudo}>Ver tudo</Text>
-                </View>
-
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <View style={styles.vetCard}>
-                        <Image source={require("../../../assets/images/home/Vet1.png")} style={styles.vetImage} />
-                        <Text style={styles.vetName}>Carolina Vivaz</Text>
-                        <View style={styles.stars}>
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star-outline" size={14} color="#C4C4C4" />
-                        </View>
-                    </View>
-
-                    <View style={styles.vetCard}>
-                        <Image source={require("../../../assets/images/home/Vet2.png")} style={styles.vetImage} />
-                        <Text style={styles.vetName}>José Augusto</Text>
-                        <View style={styles.stars}>
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star-outline" size={14} color="#C4C4C4" />
-                        </View>
-                    </View>
-
-                    <View style={styles.vetCard}>
-                        <Image source={require("../../../assets/images/home/Vet3.png")} style={styles.vetImage} />
-                        <Text style={styles.vetName}>Alisson Dias</Text>
-                        <View style={styles.stars}>
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star" size={14} color="#FFD700" />
-                            <Ionicons name="star-outline" size={14} color="#C4C4C4" />
-                            <Ionicons name="star-outline" size={14} color="#C4C4C4" />
-                        </View>
-                    </View>
-                </ScrollView>
-            </ScrollView>
-
-            {/* Barra inferior */}
-            <View style={styles.bottomNav}>
-                <Ionicons name="calendar-outline" size={22} color="#2F8B88" />
-                <Ionicons name="home" size={28} color="#2F8B88" />
-                <Ionicons name="paw-outline" size={22} color="#2F8B88" />
-            </View>
+        <View style={styles.header}>
+          <Text style={styles.ola}>
+            Olá, <Text style={styles.nome}>Lucas</Text>
+          </Text>
+          <View style={styles.icons}>
+            <Ionicons name="search-outline" size={22} color="#2F8B88" style={{ marginRight: 14 }} />
+            <Ionicons name="notifications-outline" size={22} color="#2F8B88" />
+          </View>
         </View>
-    );
+
+        <View style={styles.spaCard}>
+          <View style={styles.spaTextWrapper}>
+            <Text style={styles.spaTitle}>Hora do Spa do seu pet!</Text>
+            <Text style={styles.spaSubtitle}>
+              Agende Banho & Tosa com{"\n"}profissionais de confiança
+            </Text>
+            <Pressable
+              style={styles.spaButton}
+              onPress={() => router.push("/screens/agendaPet/AgendaScreen")}
+            >
+              <Text style={styles.spaButtonText}>Agende agora</Text>
+            </Pressable>
+          </View>
+
+          <Image
+            source={require("../../../assets/images/home/DogHome.png")}
+            style={styles.spaImage}
+          />
+        </View>
+
+        <Text style={styles.sectionTitle}>Selecione seu Pet</Text>
+        <View style={styles.petsRow}>
+          {pets.map((pet, index) => (
+            <Pressable key={index} onPress={() => setSelectedPet(index)}>
+              <Image
+                source={pet.image}
+                style={[
+                  styles.petAvatar,
+                  selectedPet === index && styles.petAvatarSelected,
+                ]}
+              />
+            </Pressable>
+          ))}
+
+          <Pressable
+            style={styles.addPet}
+            onPress={() => router.push("/screens/addPetScreens/NomePetScreen")}
+          >
+            <Ionicons name="add" size={22} color="#2F8B88" />
+          </Pressable>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Lembretes</Text>
+          <Text style={styles.verTudo}>Ver tudo</Text>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>{reminders[selectedPet].title}</Text>
+          <Text style={styles.cardSubtitle}>{reminders[selectedPet].subtitle}</Text>
+          <View style={styles.cardFooter}>
+            <Ionicons name="time-outline" size={16} color="#2F8B88" />
+            <Text style={styles.cardTime}>{reminders[selectedPet].time}</Text>
+            <Text style={styles.cardRepeat}>{reminders[selectedPet].repeat}</Text>
+            <Ionicons
+              name="notifications"
+              size={16}
+              color="#2F8B88"
+              style={{ marginLeft: "auto" }}
+            />
+          </View>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Médicos Veterinários</Text>
+          <Text style={styles.verTudo}>Ver tudo</Text>
+        </View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.vetCard}>
+            <Image source={require("../../../assets/images/home/Vet1.png")} style={styles.vetImage} />
+            <Text style={styles.vetName}>Carolina Vivaz</Text>
+            <View style={styles.stars}>
+              {[...Array(4)].map((_, i) => (
+                <Ionicons key={i} name="star" size={14} color="#FFD700" />
+              ))}
+              <Ionicons name="star-outline" size={14} color="#C4C4C4" />
+            </View>
+          </View>
+
+          <View style={styles.vetCard}>
+            <Image source={require("../../../assets/images/home/Vet2.png")} style={styles.vetImage} />
+            <Text style={styles.vetName}>José Augusto</Text>
+            <View style={styles.stars}>
+              {[...Array(4)].map((_, i) => (
+                <Ionicons key={i} name="star" size={14} color="#FFD700" />
+              ))}
+              <Ionicons name="star-outline" size={14} color="#C4C4C4" />
+            </View>
+          </View>
+
+          <View style={styles.vetCard}>
+            <Image source={require("../../../assets/images/home/Vet3.png")} style={styles.vetImage} />
+            <Text style={styles.vetName}>Alisson Dias</Text>
+            <View style={styles.stars}>
+              {[...Array(3)].map((_, i) => (
+                <Ionicons key={i} name="star" size={14} color="#FFD700" />
+              ))}
+              {[...Array(2)].map((_, i) => (
+                <Ionicons key={i} name="star-outline" size={14} color="#C4C4C4" />
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+      </ScrollView>
+
+      <View style={styles.bottomNav}>
+        <Ionicons name="calendar-outline" size={22} color="#2F8B88" />
+        <Ionicons name="home" size={28} color="#2F8B88" />
+        <Ionicons name="paw-outline" size={22} color="#2F8B88" />
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9F9F9"
-  },
+  container: { flex: 1, backgroundColor: "#F9F9F9" },
+
   header: {
     marginTop: 40,
     marginHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   ola: {
     fontSize: 24,
@@ -158,36 +186,77 @@ const styles = StyleSheet.create({
   },
   spaCard: {
     backgroundColor: "#A8E6CF",
-    margin: 20,
-    borderRadius: 15,
+    marginHorizontal: 20,
+    marginTop: 18,
+    borderRadius: 16,
     flexDirection: "row",
-    padding: 16
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingLeft: 18,
+    overflow: "hidden",
+    position: "relative",
+    elevation: 3, 
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
+  spaTextWrapper: {
+    flex: 1,
+    paddingRight: 110,
+  },
+
   spaTitle: {
     fontSize: 20,
-    fontWeight: "600",
-    color: "#2F8B88"
+    fontWeight: "semibold",
+    color: "#2F8B88",
+    width: 283,
+    height: 27, 
+    marginBottom: 6,
+    letterSpacing: 0.3,
   },
+
   spaSubtitle: {
-    fontSize: 12,
-    color: "#333",
-    marginVertical: 6
+    fontSize: 13,
+    width: 168,
+    height: 34, 
+    fontWeight: "regular",
+    color: "#323232",
+    right: -5,
+    lineHeight: 18,
+    marginBottom: 10,
+    opacity: 0.9,
   },
   spaButton: {
     backgroundColor: "#2F8B88",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignSelf: "flex-start"
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    width: 127,
+    height: 32,
+    gap: 24,
+    borderRadius: 20,
+    alignSelf: "flex-start",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
+
   spaButtonText: {
     color: "#fff",
-    fontWeight: "600"
+    fontWeight: "regular",
+    fontSize: 13,
+    textAlign: "center",
+    letterSpacing: 0.3,
   },
   spaImage: {
-    width: 80,
-    height: 80,
-    resizeMode: "contain"
+    position: "absolute",
+    right: 5,
+    bottom: -4,
+    width: 131.89,
+    height: 169.63,
+    resizeMode: "contain",
+    zIndex: 1
   },
   petsRow: {
     flexDirection: "row",
