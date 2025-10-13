@@ -117,46 +117,63 @@ export default function HomeScreen() {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.vetCard}>
-            <Image source={require("../../../assets/images/home/Vet1.png")} style={styles.vetImage} />
-            <Text style={styles.vetName}>Carolina Vivaz</Text>
-            <View style={styles.stars}>
-              {[...Array(4)].map((_, i) => (
-                <Ionicons key={i} name="star" size={14} color="#FFD700" />
-              ))}
-              <Ionicons name="star-outline" size={14} color="#C4C4C4" />
+            <Image
+              source={require("../../../assets/images/home/Vet1.png")}
+              style={styles.vetImage}
+            />
+            <View style={styles.vetOverlay}>
+              <Text style={styles.vetName}>Carolina Vivaz</Text>
+              <View style={styles.stars}>
+                {[...Array(4)].map((_, i) => (
+                  <Ionicons key={i} name="star" size={14} color="#FFD700" />
+                ))}
+                <Ionicons name="star-outline" size={14} color="#C4C4C4" />
+              </View>
             </View>
           </View>
 
           <View style={styles.vetCard}>
-            <Image source={require("../../../assets/images/home/Vet2.png")} style={styles.vetImage} />
-            <Text style={styles.vetName}>José Augusto</Text>
-            <View style={styles.stars}>
-              {[...Array(4)].map((_, i) => (
-                <Ionicons key={i} name="star" size={14} color="#FFD700" />
-              ))}
-              <Ionicons name="star-outline" size={14} color="#C4C4C4" />
+            <Image
+              source={require("../../../assets/images/home/Vet2.png")}
+              style={styles.vetImage}
+            />
+            <View style={styles.vetOverlay}>
+              <Text style={styles.vetName}>José Augusto</Text>
+              <View style={styles.stars}>
+                {[...Array(4)].map((_, i) => (
+                  <Ionicons key={i} name="star" size={14} color="#FFD700" />
+                ))}
+                <Ionicons name="star-outline" size={14} color="#C4C4C4" />
+              </View>
             </View>
           </View>
 
           <View style={styles.vetCard}>
-            <Image source={require("../../../assets/images/home/Vet3.png")} style={styles.vetImage} />
-            <Text style={styles.vetName}>Alisson Dias</Text>
-            <View style={styles.stars}>
-              {[...Array(3)].map((_, i) => (
-                <Ionicons key={i} name="star" size={14} color="#FFD700" />
-              ))}
-              {[...Array(2)].map((_, i) => (
-                <Ionicons key={i} name="star-outline" size={14} color="#C4C4C4" />
-              ))}
+            <Image
+              source={require("../../../assets/images/home/Vet3.png")}
+              style={styles.vetImage}
+            />
+            <View style={styles.vetOverlay}>
+              <Text style={styles.vetName}>Alisson Dias</Text>
+              <View style={styles.stars}>
+                {[...Array(3)].map((_, i) => (
+                  <Ionicons key={i} name="star" size={14} color="#FFD700" />
+                ))}
+                {[...Array(2)].map((_, i) => (
+                  <Ionicons key={i} name="star-outline" size={14} color="#C4C4C4" />
+                ))}
+              </View>
             </View>
           </View>
         </ScrollView>
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <Ionicons name="calendar-outline" size={22} color="#2F8B88" />
-        <Ionicons name="home" size={28} color="#2F8B88" />
-        <Ionicons name="paw-outline" size={22} color="#2F8B88" />
+        <Image source={require("../../../assets/images/home/NavBarCalendar.png")} size={24} color="#2F8B88" />
+        <Image source={require("../../../assets/images/home/NavBarServico.png")} size={24} color="#2F8B88" />
+        <Image source={require("../../../assets/images/home/NavBarHome.png")} size={24} color="#2F8B88" />
+        <Image source={require("../../../assets/images/home/NavBarPet.png")} size={24} color="#2F8B88" />
+        <Image source={require("../../../assets/images/home/NavBarPerfil.png")} size={24} color="#2F8B88" />
       </View>
     </View>
   );
@@ -195,7 +212,7 @@ const styles = StyleSheet.create({
     paddingLeft: 18,
     overflow: "hidden",
     position: "relative",
-    elevation: 3, 
+    elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -211,7 +228,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#2F8B88",
     width: 283,
-    height: 27, 
+    height: 27,
     marginBottom: 6,
     letterSpacing: 0.3,
   },
@@ -219,7 +236,7 @@ const styles = StyleSheet.create({
   spaSubtitle: {
     fontSize: 13,
     width: 168,
-    height: 34, 
+    height: 34,
     fontWeight: "regular",
     color: "#4B887C",
     right: -5,
@@ -258,7 +275,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     zIndex: 1
   },
-  sectionPet:{
+  sectionPet: {
     fontSize: 13,
     fontWeight: "regular",
     color: "#323232",
@@ -306,7 +323,8 @@ const styles = StyleSheet.create({
   },
   verTudo: {
     color: "#87CEEB",
-    fontSize: 13
+    fontSize: 15,
+    fontWeight: "regular"
   },
   card: {
     backgroundColor: "#fff",
@@ -344,28 +362,39 @@ const styles = StyleSheet.create({
     marginLeft: 8
   },
   vetCard: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    marginLeft: 20,
-    padding: 10,
-    alignItems: "center",
-    width: 110
-  },
-  vetImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginBottom: 6
-  },
-  vetName: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#333"
-  },
-  stars: {
-    flexDirection: "row",
-    marginTop: 4
-  },
+  width: 113,
+  height: 136,
+  marginLeft: 20,
+  borderRadius: 12,
+  overflow: "hidden",
+  backgroundColor: "#fff",
+  position: "relative",
+  justifyContent: "flex-end",
+},
+
+vetImage: {
+  ...StyleSheet.absoluteFillObject,
+  resizeMode: "cover",
+},
+
+vetOverlay: {
+  backgroundColor: "rgba(0, 0, 0, 0.35)", 
+  alignItems: "center",
+  paddingVertical: 6,
+},
+
+vetName: {
+  fontSize: 13,
+  fontWeight: "600",
+  color: "#fff",
+  textShadowColor: "rgba(0,0,0,0.5)",
+  textShadowOffset: { width: 0, height: 1 },
+  textShadowRadius: 2,
+},
+stars: {
+  flexDirection: "row",
+  marginTop: 2,
+},
   bottomNav: {
     flexDirection: "row",
     justifyContent: "space-around",
