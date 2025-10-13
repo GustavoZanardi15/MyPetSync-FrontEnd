@@ -1,15 +1,6 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { VscChevronLeft, VscChevronRight } from "react-icons/vsc";
 
-const dayNames = [
-  "Domingo",
-  "Segunda",
-  "Terça",
-  "Quarta",
-  "Quinta",
-  "Sexta",
-  "Sábado",
-];
 const ptDayNames = [
   "Segunda",
   "Terça",
@@ -19,25 +10,10 @@ const ptDayNames = [
   "Sábado",
   "Domingo",
 ];
-const monthNames = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro",
-];
 
 const getWeekData = (startDate) => {
   const weekData = [];
   const current = new Date(startDate);
-
   const startOfWeek =
     current.getDate() - current.getDay() + (current.getDay() === 0 ? -6 : 1);
   current.setDate(startOfWeek);
@@ -68,12 +44,16 @@ const getWeekData = (startDate) => {
 
 const AgendaCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-
-  const currentMonthYear = `${
-    monthNames[currentDate.getMonth()]
-  } ${currentDate.getFullYear()}`;
-
   const weekData = useMemo(() => getWeekData(currentDate), [currentDate]);
+  const weekReferenceDate = weekData[0].date;
+  const currentMonthYear = useMemo(() => {
+    return new Intl.DateTimeFormat("pt-BR", {
+      month: "long",
+      year: "numeric",
+    })
+      .format(weekReferenceDate)
+      .replace(/(^|\s)\S/g, (l) => l.toUpperCase());
+  }, [weekReferenceDate]);
 
   const goToNextWeek = useCallback(() => {
     const nextDate = new Date(currentDate);
@@ -86,9 +66,11 @@ const AgendaCalendar = () => {
     prevDate.setDate(currentDate.getDate() - 7);
     setCurrentDate(prevDate);
   }, [currentDate]);
+
   const goToToday = useCallback(() => {
     setCurrentDate(new Date());
   }, []);
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg mb-6">
       <div className="flex justify-between items-center pb-4 border-b">
@@ -121,12 +103,12 @@ const AgendaCalendar = () => {
         {weekData.map((day, index) => (
           <div
             key={day.date.toISOString()}
-            className={`flex flex-col bg-teal-600 h-60 text-white rounded-lg overflow-hidden transition-all
+            className={`flex flex-col h-60 text-white rounded-lg overflow-hidden transition-all
                                                                 ${
                                                                   day.date.toDateString() ===
                                                                   new Date().toDateString()
-                                                                    ? "ring-4 ring-teal-500 shadow-xl"
-                                                                    : ""
+                                                                    ? "bg-teal-700 ring-4 ring-teal-500 shadow-xl"
+                                                                    : "bg-teal-600"
                                                                 }`}
           >
             <div className="p-2 border-b border-teal-500">

@@ -9,13 +9,17 @@ import { useSearchParams } from "react-router-dom";
 const AgendaPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const shouldOpenModal = searchParams.get("new") === "true";
+  const selectedTime = searchParams.get("time");
   const [isModalOpen, setIsModalOpen] = useState(shouldOpenModal);
   useEffect(() => {
     setIsModalOpen(shouldOpenModal);
   }, [shouldOpenModal]);
-
-  const openModal = () => {
-    setSearchParams({ new: true });
+  const handleNewAppointmentClick = (time = null) => {
+    if (time) {
+      setSearchParams({ new: true, time: time });
+    } else {
+      setSearchParams({ new: true });
+    }
     setIsModalOpen(true);
   };
 
@@ -34,7 +38,7 @@ const AgendaPage = () => {
           </p>
         </div>
         <button
-          onClick={openModal}
+          onClick={() => handleNewAppointmentClick()}
           className="flex items-center p-3 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md"
         >
           <VscAdd className="w-5 h-5 mr-2" />
@@ -44,11 +48,15 @@ const AgendaPage = () => {
       <div className="flex gap-8 mt-6">
         <div className="flex-grow">
           <AgendaCalendar />
-          <DailySchedule />
+          <DailySchedule onAddAppointment={handleNewAppointmentClick} />
         </div>
         <DailySummary />
       </div>
-      <NewAppointmentModal isOpen={isModalOpen} onClose={closeModal} />
+      <NewAppointmentModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        initialTime={selectedTime}
+      />
     </div>
   );
 };

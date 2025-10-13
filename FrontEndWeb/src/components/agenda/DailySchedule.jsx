@@ -21,8 +21,7 @@ const mockDailyAppointments = [
     id: 2,
   },
 ];
-
-const DailySchedule = () => {
+const DailySchedule = ({ onAddAppointment }) => {
   const getAppointmentByTime = (time) => {
     return mockDailyAppointments.find((appt) => appt.time === time);
   };
@@ -59,12 +58,11 @@ const DailySchedule = () => {
                     <div className="flex items-center gap-3">
                       <span
                         className={`px-3 py-1 text-xs font-semibold rounded-full 
-                                                              ${
-                                                                appointment.status ===
-                                                                "Confirmado"
-                                                                  ? "bg-green-100 text-green-700"
-                                                                  : "bg-yellow-100 text-yellow-700"
-                                                              }`}
+                               ${
+                                 appointment.status === "Confirmado"
+                                   ? "bg-green-100 text-green-700"
+                                   : "bg-yellow-100 text-yellow-700"
+                               }`}
                       >
                         {appointment.status}
                       </span>
@@ -74,7 +72,10 @@ const DailySchedule = () => {
                     </div>
                   </div>
                 ) : (
-                  <button className="flex items-center text-teal-600 font-medium hover:text-teal-700 transition-colors">
+                  <button
+                    onClick={() => onAddAppointment(time)}
+                    className="flex items-center text-teal-600 font-medium hover:text-teal-700 transition-colors"
+                  >
                     <VscAdd className="w-4 h-4 mr-2" />
                     Adicionar agendamento
                   </button>
