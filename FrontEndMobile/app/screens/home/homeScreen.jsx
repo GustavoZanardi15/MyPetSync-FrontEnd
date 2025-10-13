@@ -67,7 +67,7 @@ export default function HomeScreen() {
           />
         </View>
 
-        <Text style={styles.sectionTitle}>Selecione seu Pet</Text>
+        <Text style={styles.sectionPet}>Selecione seu Pet</Text>
         <View style={styles.petsRow}>
           {pets.map((pet, index) => (
             <Pressable key={index} onPress={() => setSelectedPet(index)}>
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
 
   spaTitle: {
     fontSize: 20,
-    fontWeight: "semibold",
+    fontWeight: "600",
     color: "#2F8B88",
     width: 283,
     height: 27, 
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     width: 168,
     height: 34, 
     fontWeight: "regular",
-    color: "#323232",
+    color: "#4B887C",
     right: -5,
     lineHeight: 18,
     marginBottom: 10,
@@ -258,6 +258,14 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     zIndex: 1
   },
+  sectionPet:{
+    fontSize: 13,
+    fontWeight: "regular",
+    color: "#323232",
+    lineHeight: 18,
+    right: -25,
+    marginTop: 10
+  },
   petsRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -291,8 +299,10 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   sectionTitle: {
-    fontSize: 13,
-    color: "#323232"
+    fontSize: 20,
+    fontWeight: "semibold",
+    color: "#2F8B88",
+    lineHeight: 27,
   },
   verTudo: {
     color: "#87CEEB",
