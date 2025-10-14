@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, ScrollView, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const [selectedPet, setSelectedPet] = useState(0);
+  const router = useRouter();
 
   const pets = [
     { id: 0, image: require("../../../assets/images/home/DogHomePet1.png") },
     { id: 1, image: require("../../../assets/images/home/DogHomePet2.png") },
-    { id: 2, image: require("../../../assets/images/home/CatHomePet.png") },
+    { id: 2, image: require("../../../assets/images/home/CatHomePet.png") }
   ];
 
   const reminders = [
@@ -25,7 +26,7 @@ export default function HomeScreen() {
         subtitle: "Lembrar de levar água",
         time: "18:00 - 19:00",
         repeat: "Quarta-feira"
-      },
+      }
     ],
     [
       {
@@ -47,42 +48,71 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         <View style={styles.header}>
-          <Text style={styles.ola}>Olá, <Text style={styles.nome}>Lucas</Text></Text>
+          <Text style={styles.ola}>
+            Olá,{" "}
+            <Text style={styles.nome}>Lucas</Text>
+          </Text>
+
           <View style={styles.icons}>
-            <View style={styles.iconCircle}>
-              <Pressable onPress={() => (router.push("/screens/home/BuscaScreen"))}>
-                <Ionicons name="search-outline" size={23} color="#2F8B88" />
-              </Pressable>
-            </View>
-            <View style={styles.iconCircle}>
-              <Pressable>
-                <Ionicons name="notifications-outline" size={23} color="#2F8B88" />
-              </Pressable>
-            </View>
+            <Pressable
+              style={styles.iconCircle}
+              onPress={() => router.push("/screens/home/BuscaScreen")}
+            >
+              <Ionicons name="search-outline" size={23} color="#2F8B88" />
+            </Pressable>
+
+            <Pressable style={styles.iconCircle} onPress={() => { /* notifs */ }}>
+              <Ionicons name="notifications-outline" size={23} color="#2F8B88" />
+            </Pressable>
           </View>
         </View>
 
         <View style={styles.spaCard}>
           <View style={styles.spaTextWrapper}>
             <Text style={styles.spaTitle}>Hora do Spa do seu pet!</Text>
-            <Text style={styles.spaSubtitle}>Agende Banho & Tosa com{"\n"}profissionais de confiança</Text>
-            <Pressable style={styles.spaButton} onPress={() => router.push("/screens/agendaPet/AgendaScreen")}>
+            <Text style={styles.spaSubtitle}>
+              Agende Banho &amp; Tosa com{"\n"}
+              profissionais de confiança
+            </Text>
+
+            <Pressable
+              style={styles.spaButton}
+              onPress={() => router.push("/screens/agendaPet/AgendaScreen")}
+            >
               <Text style={styles.spaButtonText}>Agende agora</Text>
             </Pressable>
           </View>
-          <Image source={require("../../../assets/images/home/DogHome.png")} style={styles.spaImage} />
+
+          <Image
+            source={require("../../../assets/images/home/DogHome.png")}
+            style={styles.spaImage}
+          />
         </View>
 
         <Text style={styles.sectionPet}>Selecione seu Pet</Text>
+
         <View style={styles.petsRow}>
           {pets.map((pet, index) => (
-            <Pressable key={index} onPress={() => setSelectedPet(index)}>
-              <Image source={pet.image} style={[styles.petAvatar, selectedPet === index && styles.petAvatarSelected]} />
+            <Pressable key={pet.id} onPress={() => setSelectedPet(index)}>
+              <Image
+                source={pet.image}
+                style={[
+                  styles.petAvatar,
+                  selectedPet === index && styles.petAvatarSelected
+                ]}
+              />
             </Pressable>
           ))}
-          <Pressable style={styles.addPet} onPress={() => router.push("/screens/addPetScreens/NomePetScreen")}>
+
+          <Pressable
+            style={styles.addPet}
+            onPress={() => router.push("/screens/addPetScreens/NomePetScreen")}
+          >
             <Ionicons name="add" size={22} color="#2F8B88" />
           </Pressable>
         </View>
@@ -92,7 +122,11 @@ export default function HomeScreen() {
           <Text style={styles.verTudo}>Ver tudo</Text>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.reminderScrollContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.reminderScrollContainer}
+        >
           <Pressable style={styles.cardAdd}>
             <Ionicons name="add" size={30} color="#2F8B88" />
           </Pressable>
@@ -100,18 +134,27 @@ export default function HomeScreen() {
           {(reminders[selectedPet] || []).map((reminder, index) => (
             <View style={styles.card} key={index}>
               <View style={styles.cardVerticalBar} />
-              <View style={{ paddingLeft: 10, flex: 1, justifyContent: 'space-between' }}>
+
+              <View style={{ paddingLeft: 10, flex: 1, justifyContent: "space-between" }}>
                 <View>
                   <Text style={styles.cardTitle}>{reminder.title}</Text>
                   <Text style={styles.cardSubtitle}>{reminder.subtitle}</Text>
                 </View>
+
                 <View style={styles.cardFooter}>
                   <Ionicons name="time-outline" size={16} color="#2F8B88" />
+
                   <View style={{ marginLeft: 5 }}>
                     <Text style={styles.cardTime}>{reminder.time}</Text>
                     <Text style={styles.cardRepeatText}>{reminder.repeat}</Text>
                   </View>
-                  <Ionicons name="notifications" size={24} color="#2F8B88" style={{ marginLeft: "auto" }} />
+
+                  <Ionicons
+                    name="notifications"
+                    size={24}
+                    color="#2F8B88"
+                    style={{ marginLeft: "auto" }}
+                  />
                 </View>
               </View>
             </View>
@@ -123,11 +166,16 @@ export default function HomeScreen() {
           <Text style={styles.verTudo}>Ver tudo</Text>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.vetScrollContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.vetScrollContainer}
+        >
           <View style={styles.vetCard}>
             <Image source={require("../../../assets/images/home/Vet1.png")} style={styles.vetImage} />
             <View style={styles.vetOverlay}>
               <Text style={styles.vetName}>Carolina Vivaz</Text>
+
               <View style={styles.stars}>
                 <Ionicons name="star" size={14} color="#FFD700" />
                 <Ionicons name="star" size={14} color="#FFD700" />
@@ -137,10 +185,12 @@ export default function HomeScreen() {
               </View>
             </View>
           </View>
+
           <View style={styles.vetCard}>
             <Image source={require("../../../assets/images/home/Vet2.png")} style={styles.vetImage} />
             <View style={styles.vetOverlay}>
               <Text style={styles.vetName}>José Augusto</Text>
+
               <View style={styles.stars}>
                 <Ionicons name="star" size={14} color="#FFD700" />
                 <Ionicons name="star" size={14} color="#FFD700" />
@@ -153,8 +203,11 @@ export default function HomeScreen() {
 
           <View style={styles.vetCard}>
             <Image source={require("../../../assets/images/home/Vet3.png")} style={styles.vetImage} />
-            <View style={styles.vetOverlay}> <Text style={styles.vetName}>Alisson Dias</Text>
-              <View style={styles.stars}> <Ionicons name="star" size={14} color="#FFD700" />
+            <View style={styles.vetOverlay}>
+              <Text style={styles.vetName}>Alisson Dias</Text>
+
+              <View style={styles.stars}>
+                <Ionicons name="star" size={14} color="#FFD700" />
                 <Ionicons name="star" size={14} color="#FFD700" />
                 <Ionicons name="star" size={14} color="#FFD700" />
                 <Ionicons name="star-outline" size={14} color="#C4C4C4" />
@@ -166,19 +219,23 @@ export default function HomeScreen() {
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <Pressable onPress={() => { router.push()}}>
+        <Pressable onPress={() => router.push()}>
           <Image source={require("../../../assets/images/home/NavBarCalendar.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push()}}>
+
+        <Pressable onPress={() => router.push()}>
           <Image source={require("../../../assets/images/home/NavBarServico.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push("/screens/home/homeScreen") }}>
-          <Image source={require("../../../assets/images/home/NavBarHome.png")} />
+
+        <Pressable onPress={() => router.push("/screens/home/homeScreen")}>
+          <Image source={require("../../../assets/images/home/NavBarHomeSelect.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push()}}>
+
+        <Pressable onPress={() => router.push()}>
           <Image source={require("../../../assets/images/home/NavBarPet.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push()}}>
+
+        <Pressable onPress={() => router.push()}>
           <Image source={require("../../../assets/images/home/NavBarPerfil.png")} />
         </Pressable>
       </View>
@@ -267,11 +324,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignSelf: "flex-start",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
   spaButtonText: {
     color: "#fff",
-    fontWeight: "regular",
+    fontWeight: "400",
     fontSize: 13,
     textAlign: "center",
     letterSpacing: 0.3
@@ -353,8 +410,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 5,
     elevation: 2,
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: "row",
+    alignItems: "center"
   },
   cardAdd: {
     backgroundColor: "#fff",
@@ -376,27 +433,26 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     position: "absolute",
     left: 20,
-    top: 12,
+    top: 12
   },
   cardTitle: {
-    fontWeight: "medium",
+    fontWeight: "500",
     color: "#2F8B88",
     fontSize: 15,
-    left: 10,
+    marginLeft: 10
   },
   cardSubtitle: {
-    fontWeight: "regular",
+    fontWeight: "400",
     fontSize: 13,
     color: "#555",
-    left: 10,
+    marginLeft: 10,
     marginTop: 2
   },
   cardFooter: {
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
     marginTop: 25,
-    left: -5,
+    marginLeft: -5
   },
   cardTime: {
     fontSize: 13,
@@ -412,7 +468,7 @@ const styles = StyleSheet.create({
   vetScrollContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    flexDirection: 'row'
+    flexDirection: "row"
   },
   vetCard: {
     width: 114,
@@ -439,7 +495,7 @@ const styles = StyleSheet.create({
   },
   vetName: {
     fontSize: 13,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#fff",
     textAlign: "center"
   },
