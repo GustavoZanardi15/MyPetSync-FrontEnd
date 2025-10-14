@@ -1,7 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  TextInput,
+  Image
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
+
 const RECENT_ITEMS = [
   "Banho & Tosa",
   "Passeio",
@@ -12,16 +21,33 @@ const RECENT_ITEMS = [
 ];
 
 export default function BuscaScreen() {
- const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* HEADER dividido em duas linhas */}
         <View style={styles.header}>
-          <Pressable onPress={() => navigate("Back")} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#2F8B88" />
-          </Pressable>
-          <Text style={styles.headerTitle}>Buscar</Text>
+          <View style={styles.headerTop}>
+            <Pressable
+              onPress={() => {
+                if (router.canGoBack()) router.back();
+                else router.push("/screens/home/homeScreen");
+              }}
+              style={styles.backButton}
+              hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
+            >
+              <Ionicons name="arrow-back" size={24} color="#2F8B88" />
+            </Pressable>
+          </View>
+
+          <View style={styles.headerBottom}>
+            <Text style={styles.headerTitle}>Buscar</Text>
+          </View>
         </View>
 
         <View style={styles.searchBar}>
@@ -32,44 +58,54 @@ export default function BuscaScreen() {
             value={searchText}
             onChangeText={setSearchText}
           />
-          <Ionicons name="search-outline" size={24} color="#2F8B88" style={styles.searchIcon} />
+          <Ionicons
+            name="search-outline"
+            size={24}
+            color="#2F8B88"
+            style={styles.searchIcon}
+          />
         </View>
 
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Recentes</Text>
-          
+
           <View style={styles.recentList}>
             {RECENT_ITEMS.map((item, index) => (
-              <Pressable 
-                key={index} 
-                onPress={() => handleItemPress(item)} 
+              <Pressable
+                key={index}
+                onPress={() => {
+                  /* sua ação ao tocar no item */
+                }}
                 style={styles.recentItem}
               >
                 <Text style={styles.recentItemText}>{item}</Text>
                 {index < RECENT_ITEMS.length - 1 && (
-                    <View style={styles.separator} />
+                  <View style={styles.separator} />
                 )}
               </Pressable>
             ))}
           </View>
         </View>
-        
       </ScrollView>
 
       <View style={styles.bottomNav}>
         <Pressable onPress={() => { router.push() }}>
           <Image source={require("../../../assets/images/home/NavBarCalendar.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push() }}>
+
+        <Pressable onPress={() => { router.push()}}>
           <Image source={require("../../../assets/images/home/NavBarServico.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push("/screens/home/homeScreen") }}>
+
+        <Pressable onPress={() => { router.push("/screens/home/homeScreen")}}>
           <Image source={require("../../../assets/images/home/NavBarHome.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push() }}>
+
+        <Pressable onPress={() => { router.push()}}>
           <Image source={require("../../../assets/images/home/NavBarPet.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push() }}>
+
+        <Pressable onPress={() => { router.push()}}>
           <Image source={require("../../../assets/images/home/NavBarPerfil.png")} />
         </Pressable>
       </View>
@@ -80,33 +116,39 @@ export default function BuscaScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9F9F9"
+    backgroundColor: "#F9F9F9",
   },
   scrollContent: {
     paddingTop: 40,
-    paddingBottom: 70 + 10, 
-    paddingHorizontal: 20
+    paddingBottom: 70 + 10,
+    paddingHorizontal: 20,
   },
   header: {
+    marginBottom: 12,
+  },
+  headerTop: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20
+    height: 44,
   },
   backButton: {
-    paddingRight: 10,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  headerBottom: {
+    alignItems: "center",
+    paddingBottom: 8,
   },
   headerTitle: {
-    flex: 1,
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#2F8B88",
-    textAlign: 'center', 
-    marginLeft: -34,
   },
   searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
     borderRadius: 16,
     paddingHorizontal: 15,
     height: 50,
@@ -116,32 +158,31 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
-    borderWidth: 1, 
-    borderColor: '#E5E5E5',
+    borderWidth: 1,
+    borderColor: "#E5E5E5",
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
-    color: '#323232',
-    height: '100%',
+    fontSize: 15,
+    color: "#323232",
+    height: "100%",
   },
   searchIcon: {
     marginLeft: 10,
-    color: '#2F8B88', 
   },
   sectionContainer: {
     marginBottom: 30,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "semibold",
+    fontWeight: "600",
     color: "#2F8B88",
     marginBottom: 10,
   },
   recentList: {
-    backgroundColor: '#F9F9F9',
+    backgroundColor: "#F9F9F9",
     borderRadius: 10,
-    overflow: 'hidden', 
+    overflow: "hidden",
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 5,
@@ -150,16 +191,16 @@ const styles = StyleSheet.create({
   recentItem: {
     paddingVertical: 15,
     paddingHorizontal: 15,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   recentItemText: {
     fontSize: 16,
-    color: '#4B887C', 
+    color: "#4B887C",
   },
   separator: {
     height: 1,
-    backgroundColor: '#F0F0F0', 
-    position: 'absolute',
+    backgroundColor: "#F0F0F0",
+    position: "absolute",
     bottom: 0,
     left: 15,
     right: 15,
@@ -178,9 +219,5 @@ const styles = StyleSheet.create({
     right: 0,
     height: 70,
     elevation: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4
-  }
+  },
 });
