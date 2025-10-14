@@ -88,8 +88,9 @@ export default function BuscaScreen() {
               ))
             ) : ( 
               <View style={styles.noResults}>
-                <Image source={require("../../../assets/images/busca/ServicoNaoEncontrado.png")}/>
-                <Text style={styles.noResultsText}>Nenhum resultado encontrado para "{searchText}".</Text>
+                <Image source={require("../../../assets/images/busca/ServicoNaoEncontrado.png")} style={styles.noResultsImage}/>
+                <Text style={styles.noResultsText}>Nenhum resultado encontrado</Text>
+                <Text style={styles.noResultSubText}>{"\n"} para "{searchText}"</Text>
               </View>
             )}
           </View>
@@ -216,11 +217,21 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
+  noResultsImage:{
+    width: 193,
+    height: 204
+  },
   noResultsText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#323232',
+    fontSize: 24,
+    fontWeight: "bold",
+    color: '#2F8B88',
     marginBottom: 5,
+    textAlign: 'center',
+  },
+  noResultSubText:{
+    fontSize: 18,
+    fontWeight: "medium",
+    color: "#2F8B88",
     textAlign: 'center',
   },
   noResultsTip: {
