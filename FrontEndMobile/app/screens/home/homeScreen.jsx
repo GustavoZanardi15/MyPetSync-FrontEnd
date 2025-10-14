@@ -52,7 +52,7 @@ export default function HomeScreen() {
           <Text style={styles.ola}>Olá, <Text style={styles.nome}>Lucas</Text></Text>
           <View style={styles.icons}>
             <View style={styles.iconCircle}>
-              <Pressable>
+              <Pressable onPress={() => (router.push("/screens/home/BuscaScreen"))}>
                 <Ionicons name="search-outline" size={23} color="#2F8B88" />
               </Pressable>
             </View>
@@ -360,14 +360,14 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   cardVerticalBar: {
-  width: 4,
-  height: 59, 
-  backgroundColor: "#A8E6CF",
-  borderRadius: 16,
-  position: "absolute",
-  left: 20,
-  top: 12, 
-},
+    width: 4,
+    height: 59,
+    backgroundColor: "#A8E6CF",
+    borderRadius: 16,
+    position: "absolute",
+    left: 20,
+    top: 12,
+  },
   cardTitle: {
     fontWeight: "medium",
     color: "#2F8B88",
