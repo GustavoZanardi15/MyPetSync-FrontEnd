@@ -216,6 +216,7 @@ const styles = StyleSheet.create({
   },
   spaCard: {
     backgroundColor: "#A8E6CF",
+    height: 170,
     marginHorizontal: 20,
     marginTop: 18,
     borderRadius: 16,
@@ -280,13 +281,13 @@ const styles = StyleSheet.create({
     color: "#323232",
     lineHeight: 18,
     right: -25,
-    marginTop: 10
+    marginTop: 20
   },
   petsRow: {
     flexDirection: "row",
     alignItems: "center",
     marginLeft: 20,
-    marginTop: 10
+    marginTop: 15
   },
   petAvatar: {
     width: 56,
@@ -312,7 +313,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: 20,
-    marginTop: 25,
+    marginTop: 40,
     alignItems: "center"
   },
   sectionTitle: {
