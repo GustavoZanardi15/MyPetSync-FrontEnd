@@ -14,29 +14,33 @@ export default function HomeScreen() {
 
   const reminders = [
     [
-      { title: "Colírio Ocular", 
-        subtitle: "Aplicar 3 gotas, manhã e noite", 
-        time: "08:45 - 20:45", 
-        repeat: "Diariamente" 
+      {
+        title: "Colírio Ocular",
+        subtitle: "Aplicar 3 gotas, manhã e noite",
+        time: "08:45 - 20:45",
+        repeat: "Diariamente"
       },
-      { title: "Passeio", 
-        subtitle: "Lembrar de levar água", 
-        time: "18:00 - 19:00", 
-        repeat: "Quarta-feira" 
+      {
+        title: "Passeio",
+        subtitle: "Lembrar de levar água",
+        time: "18:00 - 19:00",
+        repeat: "Quarta-feira"
       },
     ],
     [
-      { title: "Petshop", 
-        subtitle: "Banho e tosa", 
-        time: "09:00", 
-        repeat: "Sexta-feira" 
+      {
+        title: "Petshop",
+        subtitle: "Banho e tosa",
+        time: "09:00",
+        repeat: "Sexta-feira"
       }
-  ],
+    ],
     [
-      { title: "Vacina", 
-        subtitle: "Levar ao veterinário", 
-        time: "10:00", 
-        repeat: "Anual" 
+      {
+        title: "Vacina",
+        subtitle: "Levar ao veterinário",
+        time: "10:00",
+        repeat: "Anual"
       }
     ]
   ];
@@ -47,8 +51,16 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <Text style={styles.ola}>Olá, <Text style={styles.nome}>Lucas</Text></Text>
           <View style={styles.icons}>
-            <View style={styles.iconCircle}><Pressable><Ionicons name="search-outline" size={23} color="#2F8B88" /></Pressable></View>
-            <View style={styles.iconCircle}><Pressable><Ionicons name="notifications-outline" size={23} color="#2F8B88" /></Pressable></View>
+            <View style={styles.iconCircle}>
+              <Pressable>
+                <Ionicons name="search-outline" size={23} color="#2F8B88" />
+              </Pressable>
+            </View>
+            <View style={styles.iconCircle}>
+              <Pressable>
+                <Ionicons name="notifications-outline" size={23} color="#2F8B88" />
+              </Pressable>
+            </View>
           </View>
         </View>
 
@@ -239,14 +251,16 @@ const styles = StyleSheet.create({
   },
   spaButton: {
     backgroundColor: "#2F8B88",
-    paddingVertical: 6,
+    paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 20,
-    alignSelf: "flex-start"
+    borderRadius: 16,
+    alignSelf: "flex-start",
+    justifyContent: "center",
+    alignItems: "center",
   },
   spaButtonText: {
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: "regular",
     fontSize: 13,
     textAlign: "center",
     letterSpacing: 0.3
@@ -345,8 +359,8 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   cardVerticalBar: {
-    width: 4,
-    height: 59,
+    width: 3,
+    height: 40,
     backgroundColor: '#A8E6CF',
     borderRadius: 16
   },
