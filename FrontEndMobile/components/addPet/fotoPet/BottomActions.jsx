@@ -6,7 +6,7 @@ export default function BottomActions() {
 
   return (
     <View>
-      <Pressable style={styles.button} onPress={() => router.push("/screens/addPetScreens/FotoAddPetScreen")}>
+      <Pressable style={styles.button} onPress={() => router.push("/screens/addPetScreens/FinalPetScreen")}>
         <Text style={styles.buttonText}>Concluir</Text>
       </Pressable>
 
