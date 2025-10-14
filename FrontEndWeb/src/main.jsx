@@ -9,6 +9,7 @@ import Login from "./components/auth/Login.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import AgendaPage from "./pages/AgendaPage.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
 
@@ -30,6 +31,14 @@ const router = createBrowserRouter([
     element: (
       <LayoutWrapper>
         <AgendaPage />
+      </LayoutWrapper>
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <LayoutWrapper>
+        <ProfilePage />
       </LayoutWrapper>
     ),
   },
