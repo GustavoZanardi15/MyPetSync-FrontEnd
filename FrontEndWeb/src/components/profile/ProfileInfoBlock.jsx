@@ -22,9 +22,9 @@ const ProfileInfoBlock = ({ title, data, editable = false }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+    <div className="bg-[#058789] p-6 rounded-xl shadow-lg border border-gray-200">
       <div className="flex justify-between items-center mb-4 border-b pb-3">
-        <h2 className="text-xl font-semibold text-gray-700">{title}</h2>
+        <h2 className="text-xl font-semibold text-white">{title}</h2>
         {editable && (
           <button
             onClick={handleEditClick}
@@ -43,7 +43,7 @@ const ProfileInfoBlock = ({ title, data, editable = false }) => {
             className={`flex flex-col space-y-1 
               ${item.fullWidth ? "md:col-span-2" : "md:col-span-1"}`}
           >
-            <label className="text-sm font-medium text-gray-500">
+            <label className="text-sm font-medium text-white">
               {item.label}
             </label>
             {item.value}
