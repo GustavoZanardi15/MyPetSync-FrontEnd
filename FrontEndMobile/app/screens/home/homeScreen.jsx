@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     height: 143,
     borderRadius: 10,
     padding: 10,
-    marginRight: 15,
+    marginRight: 20,
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 5,
@@ -352,33 +352,41 @@ const styles = StyleSheet.create({
     height: 143,
     borderRadius: 10,
     marginRight: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 5,
     elevation: 2
   },
   cardVerticalBar: {
-    width: 3,
-    height: 40,
-    backgroundColor: '#A8E6CF',
-    borderRadius: 16
-  },
+  width: 4,
+  height: 59, 
+  backgroundColor: "#A8E6CF",
+  borderRadius: 16,
+  position: "absolute",
+  left: 20,
+  top: 12, 
+},
   cardTitle: {
-    fontWeight: "500",
+    fontWeight: "medium",
     color: "#2F8B88",
-    fontSize: 14
+    fontSize: 15,
+    left: 10,
   },
   cardSubtitle: {
-    fontSize: 12,
+    fontWeight: "regular",
+    fontSize: 13,
     color: "#555",
+    left: 10,
     marginTop: 2
   },
   cardFooter: {
     flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: 25
+    marginTop: 25,
+    left: -5,
   },
   cardTime: {
     fontSize: 13,
