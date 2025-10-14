@@ -5,7 +5,7 @@ import Logo from "../../assets/Logo.png";
 const navItems = [
   { name: "Home", icon: VscHome, path: "/homePage" },
   { name: "Agenda", icon: VscCalendar, path: "/agenda" },
-  { name: "Perfil", icon: VscAccount, path: "/perfil" },
+  { name: "Perfil", icon: VscAccount, path: "/profile" },
 ];
 
 const Sidebar = () => {
