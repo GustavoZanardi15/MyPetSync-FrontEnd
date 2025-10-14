@@ -20,7 +20,7 @@ const EditIcon = (props) => (
 );
 
 const StyledDataDisplay = ({ value }) => (
-  <div className="bg-teal-50 p-3 rounded-lg text-teal-800 font-medium border border-teal-200">
+  <div className="bg-white p-3 rounded-lg text-teal-800 font-medium border border-black">
     {value}
   </div>
 );
@@ -81,7 +81,7 @@ const MOCK_COMPANY_DATA = {
     {
       label: "Serviços",
       value: (
-        <div className="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-800 font-medium">
+        <div className="p-3 rounded-lg bg-teal-50 border border-black text-teal-800 font-medium">
           Consulta veterinária, Vacinação, Castração, Limpeza Dental, Aplicação
           de Medicamentos, Consulta de Emergência.
         </div>
@@ -107,7 +107,7 @@ const ProfilePage = () => {
         </div>
         <button
           onClick={handleEditProfile}
-          className="flex items-center px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition-colors shadow-lg"
+          className="flex items-center px-6 py-2 bg-[#058789] text-white rounded-lg font-semibold hover:bg-teal-700 transition-colors shadow-lg"
         >
           <EditIcon className="w-5 h-5 mr-2 fill-white" />
           Editar Perfil
@@ -124,7 +124,7 @@ const ProfilePage = () => {
             reviewCount={MOCK_COMPANY_DATA.profile.reviewCount}
           />
         </div>
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 ">
           <ProfileInfoBlock
             title="Informações Básicas"
             data={MOCK_COMPANY_DATA.basicInfo}
