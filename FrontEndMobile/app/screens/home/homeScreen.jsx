@@ -166,11 +166,21 @@ export default function HomeScreen() {
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <Pressable><Image source={require("../../../assets/images/home/NavBarCalendar.png")} /></Pressable>
-        <Pressable><Image source={require("../../../assets/images/home/NavBarServico.png")} /></Pressable>
-        <Pressable><Image source={require("../../../assets/images/home/NavBarHome.png")} /></Pressable>
-        <Pressable><Image source={require("../../../assets/images/home/NavBarPet.png")} /></Pressable>
-        <Pressable><Image source={require("../../../assets/images/home/NavBarPerfil.png")} /></Pressable>
+        <Pressable onPress={() => { router.push()}}>
+          <Image source={require("../../../assets/images/home/NavBarCalendar.png")} />
+        </Pressable>
+        <Pressable onPress={() => { router.push()}}>
+          <Image source={require("../../../assets/images/home/NavBarServico.png")} />
+        </Pressable>
+        <Pressable onPress={() => { router.push("/screens/home/homeScreen") }}>
+          <Image source={require("../../../assets/images/home/NavBarHome.png")} />
+        </Pressable>
+        <Pressable onPress={() => { router.push()}}>
+          <Image source={require("../../../assets/images/home/NavBarPet.png")} />
+        </Pressable>
+        <Pressable onPress={() => { router.push()}}>
+          <Image source={require("../../../assets/images/home/NavBarPerfil.png")} />
+        </Pressable>
       </View>
     </View>
   );
@@ -455,5 +465,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 4
-  },
+  }
 });
