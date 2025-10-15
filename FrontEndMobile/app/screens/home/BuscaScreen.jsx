@@ -1,13 +1,5 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  TextInput,
-  Image
-} from "react-native";
+import React, { useState, useMemo } from "react"; 
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
@@ -18,33 +10,46 @@ const RECENT_ITEMS = [
   "Treinamento / Adestramento",
   "Médicos Veterinários",
   "Consultas Veterinárias",
+  "Vacinação",
+  "Castração",
+  "Venda de Ração",
+  "Acessórios Pet",
 ];
 
 export default function BuscaScreen() {
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
 
+  const filteredItems = useMemo(() => {
+    if (!searchText) {
+      return RECENT_ITEMS;
+    }
+
+    const lowerCaseSearch = searchText.toLowerCase();
+
+    return RECENT_ITEMS.filter((item) =>
+      item.toLowerCase().includes(lowerCaseSearch)
+    );
+  }, [searchText]);
+  
+  const handleItemPress = (item) => {
+    console.log(`Buscando e navegando para: ${item}`);
+  };
+
   return (
     <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* HEADER dividido em duas linhas */}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        
         <View style={styles.header}>
           <View style={styles.headerTop}>
-            <Pressable
-              onPress={() => {
-                if (router.canGoBack()) router.back();
-                else router.push("/screens/home/homeScreen");
-              }}
+            <Pressable 
+              onPress={() => { router.back()}} 
               style={styles.backButton}
               hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
             >
               <Ionicons name="arrow-back" size={24} color="#2F8B88" />
             </Pressable>
           </View>
-
           <View style={styles.headerBottom}>
             <Text style={styles.headerTitle}>Buscar</Text>
           </View>
@@ -57,33 +62,37 @@ export default function BuscaScreen() {
             placeholderTextColor="#C9C9C9"
             value={searchText}
             onChangeText={setSearchText}
+            autoFocus={true} 
           />
-          <Ionicons
-            name="search-outline"
-            size={24}
-            color="#2F8B88"
-            style={styles.searchIcon}
-          />
+          <Ionicons name="search-outline" size={24} color="#2F8B88" style={styles.searchIcon}/>
         </View>
 
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Recentes</Text>
+          <Text style={styles.sectionTitle}>
+            {searchText ? "Resultados da Busca" : "Recentes"}
+          </Text>
 
           <View style={styles.recentList}>
-            {RECENT_ITEMS.map((item, index) => (
-              <Pressable
-                key={index}
-                onPress={() => {
-                  /* sua ação ao tocar no item */
-                }}
-                style={styles.recentItem}
-              >
-                <Text style={styles.recentItemText}>{item}</Text>
-                {index < RECENT_ITEMS.length - 1 && (
-                  <View style={styles.separator} />
-                )}
-              </Pressable>
-            ))}
+            {filteredItems.length > 0 ? (
+              filteredItems.map((item, index) => (
+                <Pressable
+                  key={index}
+                  onPress={() => handleItemPress(item)}
+                  style={styles.recentItem}
+                >
+                  <Text style={styles.recentItemText}>{item}</Text>
+                  {index < filteredItems.length - 1 && (
+                    <View style={styles.separator} />
+                  )}
+                </Pressable>
+              ))
+            ) : ( 
+              <View style={styles.noResults}>
+                <Image source={require("../../../assets/images/busca/ServicoNaoEncontrado.png")} style={styles.noResultsImage}/>
+                <Text style={styles.noResultsText}>Nenhum resultado encontrado</Text>
+                <Text style={styles.noResultSubText}>{"\n"} para "{searchText}"</Text>
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -92,19 +101,15 @@ export default function BuscaScreen() {
         <Pressable onPress={() => { router.push() }}>
           <Image source={require("../../../assets/images/home/NavBarCalendar.png")} />
         </Pressable>
-
         <Pressable onPress={() => { router.push()}}>
           <Image source={require("../../../assets/images/home/NavBarServico.png")} />
         </Pressable>
-
         <Pressable onPress={() => { router.push("/screens/home/homeScreen")}}>
           <Image source={require("../../../assets/images/home/NavBarHome.png")} />
         </Pressable>
-
         <Pressable onPress={() => { router.push()}}>
           <Image source={require("../../../assets/images/home/NavBarPet.png")} />
         </Pressable>
-
         <Pressable onPress={() => { router.push()}}>
           <Image source={require("../../../assets/images/home/NavBarPerfil.png")} />
         </Pressable>
@@ -132,7 +137,8 @@ const styles = StyleSheet.create({
     height: 44,
   },
   backButton: {
-    padding: 10,
+    paddingLeft: 0, 
+    paddingVertical: 10,
     justifyContent: "center",
     alignItems: "flex-start",
   },
@@ -180,13 +186,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   recentList: {
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#fff",
     borderRadius: 10,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 5,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: "#F0F0F0",
   },
   recentItem: {
     paddingVertical: 15,
@@ -204,6 +212,32 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 15,
     right: 15,
+  },
+  noResults: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  noResultsImage:{
+    width: 193,
+    height: 204
+  },
+  noResultsText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: '#2F8B88',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  noResultSubText:{
+    fontSize: 18,
+    fontWeight: "medium",
+    color: "#2F8B88",
+    textAlign: 'center',
+  },
+  noResultsTip: {
+    fontSize: 14,
+    color: '#888',
+    textAlign: 'center',
   },
   bottomNav: {
     flexDirection: "row",
