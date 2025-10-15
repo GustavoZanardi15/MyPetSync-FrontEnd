@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Image } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { View, ScrollView, StyleSheet } from "react-native";
+import BuscaHeader from "../../../components/busca/BuscaHeader";
+import BuscaForm from "../../../components/busca/BuscaForm";
+import BuscaResultados from "../../../components/busca/BuscaResultados";
+import BottomNav from "../../../components/busca/BottomNav";
 
 const RECENT_ITEMS = [
   "Banho & Tosa",
@@ -18,107 +20,23 @@ const RECENT_ITEMS = [
 
 export default function BuscaScreen() {
   const [searchText, setSearchText] = useState("");
-  const router = useRouter();
 
   const filteredItems = useMemo(() => {
-    if (!searchText) {
-      return RECENT_ITEMS;
-    }
-
+    if (!searchText) return RECENT_ITEMS;
     const lowerCaseSearch = searchText.toLowerCase();
-
-    return RECENT_ITEMS.filter((item) =>
-      item.toLowerCase().includes(lowerCaseSearch)
-    );
+    return RECENT_ITEMS.filter((item) => item.toLowerCase().includes(lowerCaseSearch));
   }, [searchText]);
 
-  const handleItemPress = (item) => {
-    console.log(`Buscando e navegando para: ${item}`);
-  };
-
-   const clearSearch = () => {
-    setSearchText("");
-  };
+  const handleItemPress = (item) => console.log(`Buscando e navegando para: ${item}`);
 
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Pressable
-            onPress={() => { router.back() }}
-            style={styles.backButtonAbsolute}
-            hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
-          >
-            <Ionicons name="arrow-back" size={24} color="#2F8B88" />
-          </Pressable>
-          <Text style={styles.headerTitleCentered}>Buscar</Text>
-        </View>
-
-        <View style={styles.searchBar}>
-                  <TextInput
-                    style={styles.searchInput}
-                    placeholder="Digite..."
-                    placeholderTextColor="#C9C9C9"
-                    value={searchText}
-                    onChangeText={setSearchText}
-                    autoFocus={true}
-                  />
-                  {searchText.length > 0 ? (
-                    <Pressable onPress={clearSearch} style={styles.searchClearIcon}>
-                      <Ionicons name="close-circle" size={20} color="#C9C9C9" />
-                    </Pressable>
-                  ) : (
-                    <Ionicons name="search-outline" size={20} color="#2F8B88" style={styles.searchIcon} />
-                  )}
-                </View>
-
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>
-            {searchText ? "" : "Recentes"}
-          </Text>
-
-          <View style={styles.recentList}>
-            {filteredItems.length > 0 ? (
-              filteredItems.map((item, index) => (
-                <Pressable
-                  key={index}
-                  onPress={() => handleItemPress(item)}
-                  style={styles.recentItem}
-                >
-                  <Text style={styles.recentItemText}>{item}</Text>
-                  {index < filteredItems.length - 1 && (
-                    <View style={styles.separator} />
-                  )}
-                </Pressable>
-              ))
-            ) : (
-              <View style={styles.noResults}>
-                <Image source={require("../../../assets/images/busca/ServicoNaoEncontrado.png")} style={styles.noResultsImage} />
-                <Text style={styles.noResultsText}>Nenhum resultado encontrado</Text>
-                <Text style={styles.noResultSubText}>para "{searchText}"</Text>
-              </View>
-            )}
-          </View>
-        </View>
+        <BuscaHeader/>
+        <BuscaForm searchText={searchText} setSearchText={setSearchText} />
+        <BuscaResultados filteredItems={filteredItems} searchText={searchText} onItemPress={handleItemPress} />
       </ScrollView>
-
-      <View style={styles.bottomNav}>
-        <Pressable onPress={() => { router.push() }}>
-          <Image source={require("../../../assets/images/home/NavBarCalendar.png")} />
-        </Pressable>
-        <Pressable onPress={() => { router.push() }}>
-          <Image source={require("../../../assets/images/home/NavBarServico.png")} />
-        </Pressable>
-        <Pressable onPress={() => { router.push("/screens/home/HomeScreen") }}>
-          <Image source={require("../../../assets/images/home/NavBarHome.png")} />
-        </Pressable>
-        <Pressable onPress={() => { router.push() }}>
-          <Image source={require("../../../assets/images/home/NavBarPet.png")} />
-        </Pressable>
-        <Pressable onPress={() => { router.push() }}>
-          <Image source={require("../../../assets/images/home/NavBarPerfil.png")} />
-        </Pressable>
-      </View>
+      <BottomNav />
     </View>
   );
 }
@@ -130,132 +48,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 40,
-    paddingBottom: 70 + 10,
+    paddingBottom: 80,
     paddingHorizontal: 20,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center", 
-    justifyContent: "center",
-    height: 44,
-    marginBottom: 12,
-  },
-  backButtonAbsolute: {
-    position: "absolute", 
-    left: 0,
-    zIndex: 10,
-    paddingVertical: 10,
-  },
-  headerTitleCentered: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#2F8B88",
-    textAlign: "center",
-  },
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    paddingHorizontal: 15,
-    height: 50,
-    marginBottom: 30,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    borderWidth: 1,
-    borderColor: "#E5E5E5",
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    color: "#323232",
-    height: "100%",
-  },
-  searchClearIcon: {
-    marginLeft: 10,
-    padding: 5,
-  },
-  searchIcon: {
-    marginLeft: 10,
-  },
-  sectionContainer: {
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "semibold",
-    color: "#2F8B88",
-    marginBottom: 10,
-    left: 15
-  },
-  recentList: {
-    backgroundColor: "#F9F9F9",
-    borderRadius: 10,
-    overflow: "hidden"
-  },
-  recentItem: {
-    paddingVertical: 15,
-    paddingHorizontal: 15,
-    justifyContent: "center",
-  },
-  recentItemText: {
-    fontSize: 15,
-    fontWeight: "regular",
-    color: "#4B887C",
-  },
-  separator: {
-    height: 1,
-    backgroundColor: "#F0F0F0",
-    position: "absolute",
-    bottom: 0,
-    left: 15,
-    right: 15,
-  },
-  noResults: {
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    marginTop: 150
-  },
-  noResultsImage: {
-    width: 193,
-    height: 204
-  },
-  noResultsText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#2F8B88",
-    marginBottom: 5,
-    textAlign: "center",
-  },
-  noResultSubText: {
-    fontSize: 18,
-    fontWeight: "500", 
-    color: "#2F8B88",
-    textAlign: "center",
-  },
-  noResultsTip: {
-    fontSize: 14,
-    color: "#888",
-    textAlign: "center",
-  },
-  bottomNav: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingVertical: 10,
-    backgroundColor: "#fff",
-    borderTopWidth: 0.3,
-    borderColor: "#ccc",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 70,
-    elevation: 10,
   },
 });
