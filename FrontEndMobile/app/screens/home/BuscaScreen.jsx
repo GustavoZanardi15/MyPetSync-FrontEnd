@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react"; 
+import React, { useState, useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -31,7 +31,7 @@ export default function BuscaScreen() {
       item.toLowerCase().includes(lowerCaseSearch)
     );
   }, [searchText]);
-  
+
   const handleItemPress = (item) => {
     console.log(`Buscando e navegando para: ${item}`);
   };
@@ -39,20 +39,15 @@ export default function BuscaScreen() {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        
         <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <Pressable 
-              onPress={() => { router.back()}} 
-              style={styles.backButton}
-              hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
-            >
-              <Ionicons name="arrow-back" size={24} color="#2F8B88" />
-            </Pressable>
-          </View>
-          <View style={styles.headerBottom}>
-            <Text style={styles.headerTitle}>Buscar</Text>
-          </View>
+          <Pressable
+            onPress={() => { router.back() }}
+            style={styles.backButtonAbsolute}
+            hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
+          >
+            <Ionicons name="arrow-back" size={24} color="#2F8B88" />
+          </Pressable>
+          <Text style={styles.headerTitleCentered}>Buscar</Text>
         </View>
 
         <View style={styles.searchBar}>
@@ -62,14 +57,14 @@ export default function BuscaScreen() {
             placeholderTextColor="#C9C9C9"
             value={searchText}
             onChangeText={setSearchText}
-            autoFocus={true} 
+            autoFocus={true}
           />
-          <Ionicons name="search-outline" size={24} color="#2F8B88" style={styles.searchIcon}/>
+          <Ionicons name="search-outline" size={24} color="#2F8B88" style={styles.searchIcon} />
         </View>
 
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>
-            {searchText ? "Resultados da Busca" : "Recentes"}
+            {searchText ? "" : "Recentes"}
           </Text>
 
           <View style={styles.recentList}>
@@ -86,11 +81,11 @@ export default function BuscaScreen() {
                   )}
                 </Pressable>
               ))
-            ) : ( 
+            ) : (
               <View style={styles.noResults}>
-                <Image source={require("../../../assets/images/busca/ServicoNaoEncontrado.png")} style={styles.noResultsImage}/>
+                <Image source={require("../../../assets/images/busca/ServicoNaoEncontrado.png")} style={styles.noResultsImage} />
                 <Text style={styles.noResultsText}>Nenhum resultado encontrado</Text>
-                <Text style={styles.noResultSubText}>{"\n"} para "{searchText}"</Text>
+                <Text style={styles.noResultSubText}>para "{searchText}"</Text>
               </View>
             )}
           </View>
@@ -101,16 +96,16 @@ export default function BuscaScreen() {
         <Pressable onPress={() => { router.push() }}>
           <Image source={require("../../../assets/images/home/NavBarCalendar.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push()}}>
+        <Pressable onPress={() => { router.push() }}>
           <Image source={require("../../../assets/images/home/NavBarServico.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push("/screens/home/homeScreen")}}>
+        <Pressable onPress={() => { router.push("/screens/home/homeScreen") }}>
           <Image source={require("../../../assets/images/home/NavBarHome.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push()}}>
+        <Pressable onPress={() => { router.push() }}>
           <Image source={require("../../../assets/images/home/NavBarPet.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push()}}>
+        <Pressable onPress={() => { router.push() }}>
           <Image source={require("../../../assets/images/home/NavBarPerfil.png")} />
         </Pressable>
       </View>
@@ -129,27 +124,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   header: {
+    flexDirection: "row",
+    alignItems: "center", 
+    justifyContent: "center",
+    height: 44,
     marginBottom: 12,
   },
-  headerTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 44,
-  },
-  backButton: {
-    paddingLeft: 0, 
+  backButtonAbsolute: {
+    position: "absolute", 
+    left: 0,
+    zIndex: 10,
     paddingVertical: 10,
-    justifyContent: "center",
-    alignItems: "flex-start",
   },
-  headerBottom: {
-    alignItems: "center",
-    paddingBottom: 8,
-  },
-  headerTitle: {
+  headerTitleCentered: {
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: "bold",
     color: "#2F8B88",
+    textAlign: "center",
   },
   searchBar: {
     flexDirection: "row",
@@ -181,20 +172,15 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "600",
+    fontWeight: "semibold",
     color: "#2F8B88",
     marginBottom: 10,
+    left: 15
   },
   recentList: {
-    backgroundColor: "#fff",
+    backgroundColor: "#F9F9F9",
     borderRadius: 10,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: "#F0F0F0",
+    overflow: "hidden"
   },
   recentItem: {
     paddingVertical: 15,
@@ -202,7 +188,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   recentItemText: {
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: "regular",
     color: "#4B887C",
   },
   separator: {
@@ -215,29 +202,32 @@ const styles = StyleSheet.create({
   },
   noResults: {
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    marginTop: 150
   },
-  noResultsImage:{
+  noResultsImage: {
     width: 193,
     height: 204
   },
   noResultsText: {
     fontSize: 24,
     fontWeight: "bold",
-    color: '#2F8B88',
-    marginBottom: 5,
-    textAlign: 'center',
-  },
-  noResultSubText:{
-    fontSize: 18,
-    fontWeight: "medium",
     color: "#2F8B88",
-    textAlign: 'center',
+    marginBottom: 5,
+    textAlign: "center",
+  },
+  noResultSubText: {
+    fontSize: 18,
+    fontWeight: "500", 
+    color: "#2F8B88",
+    textAlign: "center",
   },
   noResultsTip: {
     fontSize: 14,
-    color: '#888',
-    textAlign: 'center',
+    color: "#888",
+    textAlign: "center",
   },
   bottomNav: {
     flexDirection: "row",
