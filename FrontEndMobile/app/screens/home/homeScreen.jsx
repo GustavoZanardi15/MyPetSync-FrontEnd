@@ -66,7 +66,7 @@ export default function HomeScreen() {
               <Ionicons name="search-outline" size={23} color="#2F8B88" />
             </Pressable>
 
-            <Pressable style={styles.iconCircle} onPress={() => { /* notifs */ }}>
+            <Pressable style={styles.iconCircle} onPress={() => router.push("/screens/home/NotificacaoScreen")}>
               <Ionicons name="notifications-outline" size={23} color="#2F8B88" />
             </Pressable>
           </View>
