@@ -18,7 +18,7 @@ export default function BottomActions({onPress}) {
                         />
                     </Pressable>
                 </View>
-                <Pressable style={styles.button} onPress={() => {router.push("/screens/home/homeScreen")}}>
+                <Pressable style={styles.button} onPress={() => {router.push("/screens/home/HomeScreen")}}>
                     <Text style={styles.buttonText}>Entrar</Text>
                 </Pressable>
             </View>
