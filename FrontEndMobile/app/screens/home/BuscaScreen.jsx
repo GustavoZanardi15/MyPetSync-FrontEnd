@@ -36,6 +36,10 @@ export default function BuscaScreen() {
     console.log(`Buscando e navegando para: ${item}`);
   };
 
+   const clearSearch = () => {
+    setSearchText("");
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -51,16 +55,22 @@ export default function BuscaScreen() {
         </View>
 
         <View style={styles.searchBar}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Digite..."
-            placeholderTextColor="#C9C9C9"
-            value={searchText}
-            onChangeText={setSearchText}
-            autoFocus={true}
-          />
-          <Ionicons name="search-outline" size={24} color="#2F8B88" style={styles.searchIcon} />
-        </View>
+                  <TextInput
+                    style={styles.searchInput}
+                    placeholder="Digite..."
+                    placeholderTextColor="#C9C9C9"
+                    value={searchText}
+                    onChangeText={setSearchText}
+                    autoFocus={true}
+                  />
+                  {searchText.length > 0 ? (
+                    <Pressable onPress={clearSearch} style={styles.searchClearIcon}>
+                      <Ionicons name="close-circle" size={20} color="#C9C9C9" />
+                    </Pressable>
+                  ) : (
+                    <Ionicons name="search-outline" size={20} color="#2F8B88" style={styles.searchIcon} />
+                  )}
+                </View>
 
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>
@@ -163,6 +173,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#323232",
     height: "100%",
+  },
+  searchClearIcon: {
+    marginLeft: 10,
+    padding: 5,
   },
   searchIcon: {
     marginLeft: 10,
