@@ -22,7 +22,7 @@ export default function HomeHeader() {
 
         <Pressable
           style={styles.iconCircle}
-          onPress={() => router.push("/screens/home/NotificacaoScreen")}
+          onPress={() => router.push("/screens/home/NotificationScreen")}
         >
           <Ionicons name="notifications-outline" size={23} color="#2F8B88" />
         </Pressable>
