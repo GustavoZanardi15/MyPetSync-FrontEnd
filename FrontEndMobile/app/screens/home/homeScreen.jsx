@@ -10,14 +10,12 @@ import BottomNav from "../../../components/home/BottomNav";
 export default function HomeScreen() {
   const [selectedPet, setSelectedPet] = useState(0);
 
-  // PETS DISPONÍVEIS
   const pets = [
     { id: 0, image: require("../../../assets/images/home/DogHomePet1.png") },
     { id: 1, image: require("../../../assets/images/home/DogHomePet2.png") },
     { id: 2, image: require("../../../assets/images/home/CatHomePet.png") }
   ];
 
-  // LEMBRETES POR PET
   const reminders = [
     [
       { title: "Colírio Ocular", subtitle: "Aplicar 3 gotas, manhã e noite", time: "08:45 - 20:45", repeat: "Diariamente" },
@@ -30,7 +28,7 @@ export default function HomeScreen() {
       { title: "Vacina", subtitle: "Levar ao veterinário", time: "10:00", repeat: "Anual" }
     ]
   ];
-  
+
   const vets = [
     { name: "Carolina Vivaz", image: require("../../../assets/images/home/Vet1.png"), rating: 4 },
     { name: "José Augusto", image: require("../../../assets/images/home/Vet2.png"), rating: 4 },
@@ -42,20 +40,15 @@ export default function HomeScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <HomeHeader/>
 
-        {/* SPA CARD */}
         <SpaCard />
 
-        {/* SELEÇÃO DE PET */}
         <PetSelector pets={pets} selectedPet={selectedPet} setSelectedPet={setSelectedPet} />
 
-        {/* LEMBRETES */}
         <LembretesSection reminders={reminders[selectedPet] || []} />
 
-        {/* VETERINÁRIOS */}
         <VeterinariosSection vets={vets} />
       </ScrollView>
 
-      {/* BOTTOM NAV */}
       <BottomNav />
     </View>
   );

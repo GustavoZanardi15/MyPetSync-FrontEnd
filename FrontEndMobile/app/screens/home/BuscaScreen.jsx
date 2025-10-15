@@ -109,7 +109,7 @@ export default function BuscaScreen() {
         <Pressable onPress={() => { router.push() }}>
           <Image source={require("../../../assets/images/home/NavBarServico.png")} />
         </Pressable>
-        <Pressable onPress={() => { router.push("/screens/home/homeScreen") }}>
+        <Pressable onPress={() => { router.push("/screens/home/HomeScreen") }}>
           <Image source={require("../../../assets/images/home/NavBarHome.png")} />
         </Pressable>
         <Pressable onPress={() => { router.push() }}>
