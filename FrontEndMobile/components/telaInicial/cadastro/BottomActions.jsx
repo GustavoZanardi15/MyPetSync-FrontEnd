@@ -20,7 +20,7 @@ export default function BottomActions({ onPress }) {
                         />
                     </Pressable>
                 </View>
-                <Pressable style={styles.button} onPress={onPress}>
+                <Pressable style={styles.button} onPress={() => router.push("/screens/telaInicialScreens/LoginScreen")}>
                     <Text style={styles.buttonText}>Criar Conta</Text>
                 </Pressable>
             </View>
