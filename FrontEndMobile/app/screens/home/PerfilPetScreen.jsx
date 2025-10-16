@@ -100,8 +100,7 @@ export default function PerfilPetScreen() {
                 <Image source={pet.avatar} style={styles.petImageThumb} />
               </Pressable>
             ))}
-            <Pressable
-              style={[styles.petAvatarWrapper, styles.addPetButton]}
+            <Pressable style={[styles.petAvatarWrapper, styles.addPetButton]} 
               onPress={() => router.push("/screens/addPetScreens/NomePetScreen")}
             >
               <Ionicons name="add" size={24} color="#2F8B88" />
@@ -199,8 +198,8 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   addPetButton: {
-    borderWidth: 1,
-    borderColor: "#D3D3D3",
+    borderWidth: 1.5,
+    borderColor: "#2F8B88",
   },
   contentContainer: {
     paddingHorizontal: 20,
@@ -212,25 +211,27 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   mainPetImage: {
-    width: 210.35,
-    height: 309,
+    width: 240,
+    height: 350,
     borderRadius: 20,
     backgroundColor: "#FFE9E9",
   },
   nameAgeBox: {
     position: "absolute",
-    top: 25,
-    left: "25%",
+    top: 3,
+    left: "24%",
     zIndex: 2,
   },
   petNameText: {
+    marginTop: -12,
     fontSize: 40,
     fontWeight: "bold",
     color: "#2F8B88",
   },
   petAgeText: {
+    marginTop: -15,
     fontSize: 24,
-    fontWeight: "500",
+    fontWeight: "medium",
     color: "#2F8B88",
   },
   actionButton: {
@@ -248,11 +249,11 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   editButton: {
-    right: 40,
+    right: 20,
     top: 15,
   },
   vetButton: {
-    right: 40,
+    right: 20,
     top: 75,
   },
   infoSection: {
