@@ -16,4 +16,18 @@ export const signup = async (userData) => {
   }
 };
 
-export const login = async (email, password) => {};
+export const login = async (email, password) => {
+  try {
+    const response = await api.post("/auth/login", { email, password });
+    const { token, user } = response.data;
+    if (token) {
+      localStorage.setItem("myPetSyncToken", token);
+    }
+    return user;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error("Falha na comunicação com o servidor. Tente novamente.");
+  }
+};

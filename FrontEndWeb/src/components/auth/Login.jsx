@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import { login } from "../../services/authService";
 import dogAndCatLogin from "../../assets/dogAndCatLogin.png";
 import { VscLock, VscMail } from "react-icons/vsc";
 import InputWithIcon from "../../components/common/InputWithIcon";
@@ -5,13 +7,34 @@ import AuthSidebar from "./AuthSidebar";
 import { Link, useNavigate } from "react-router-dom";
 
 const COLOR_BUTTON_BG = "#003637";
+
 const Login = () => {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login efetuado. Redirecionando para Home.");
-    navigate("/homePage", { replace: true });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    if (error) setError(null);
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await login(formData.email, formData.password);
+      navigate("/homePage", { replace: true });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex w-full h-screen">
       <AuthSidebar widthClass="lg:w-1/3 h-full">
@@ -26,12 +49,16 @@ const Login = () => {
                 type="email"
                 placeholder="Email"
                 name="email"
+                value={formData.email}
+                onChange={handleInputChange}
               />
               <InputWithIcon
                 Icon={VscLock}
                 type="password"
                 placeholder="Senha"
-                name="senha"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
               />
               <a
                 href="#"
@@ -39,12 +66,20 @@ const Login = () => {
               >
                 Esqueceu sua senha?
               </a>
+
+              {error && (
+                <p className="text-red-500 font-semibold text-sm text-center">
+                  {error}
+                </p>
+              )}
+
               <button
                 type="submit"
                 style={{ backgroundColor: COLOR_BUTTON_BG }}
                 className="w-full p-3 text-center text-white font-bold rounded-lg hover:opacity-90 transition shadow-md mt-6 block"
+                disabled={isLoading}
               >
-                ENTRAR
+                {isLoading ? "ENTRANDO..." : "ENTRAR"}
               </button>
             </form>
             <div className="mt-4 text-center">
