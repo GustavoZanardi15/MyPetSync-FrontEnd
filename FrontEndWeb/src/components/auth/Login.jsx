@@ -34,8 +34,10 @@ const Login = () => {
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-screen">
       <AuthSidebar widthClass="lg:w-1/3 lg:order-1 hidden lg:block">
-        <div className="area-promocional text-center text-white">
-          <h2 className="text-4xl font-bold text-[#003637] mb-1">Bem-vindo!</h2>
+        <div className="area-formulario text-center text-[#003637]">
+          <h2 className="text-4xl font-bold text-[#003637] mb-3">
+            Bem-vindo de volta!
+          </h2>
           <p className="text-lg font-semibold text-[#003637] mb-8">
             Crie sua conta e comece agora.
           </p>
@@ -56,7 +58,6 @@ const Login = () => {
           <p className="text-[#003637] font-medium text-center mb-8">
             Insira suas credenciais
           </p>
-
           <form className="space-y-4" onSubmit={handleSubmit}>
             <InputWithIcon
               Icon={VscMail}
@@ -74,7 +75,6 @@ const Login = () => {
               value={formData.password}
               onChange={handleInputChange}
             />
-
             <p className="text-sm text-gray-500 font-semibold text-left pt-2">
               <Link
                 to="/forgot-password"
@@ -83,13 +83,11 @@ const Login = () => {
                 Esqueceu sua senha?
               </Link>
             </p>
-
             {error && (
               <p className="text-red-500 font-semibold text-sm text-center">
                 {error}
               </p>
             )}
-
             <button
               type="submit"
               style={{ backgroundColor: COLOR_TEAL }}
@@ -98,7 +96,6 @@ const Login = () => {
             >
               {isLoading ? "ENTRANDO..." : "ENTRAR"}
             </button>
-
             <div className="text-center pt-4">
               <p className="text-sm text-gray-500">
                 Não tem conta?
