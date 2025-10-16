@@ -15,8 +15,8 @@ export const signup = async (userData) => {
     throw new Error("Falha na comunicação com o servidor. Tente novamente.");
   }
 };
-
 export const login = async (email, password) => {
+  /*
   try {
     const response = await api.post("/auth/login", { email, password });
     const { token, user } = response.data;
@@ -30,4 +30,5 @@ export const login = async (email, password) => {
     }
     throw new Error("Falha na comunicação com o servidor. Tente novamente.");
   }
+    */
 };
