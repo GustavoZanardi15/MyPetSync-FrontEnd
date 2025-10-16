@@ -1,15 +1,5 @@
 import React, { useState } from "react";
-import {
-    View,
-    Text,
-    StyleSheet,
-    ScrollView,
-    Pressable,
-    Image,
-    Platform,
-    StatusBar,
-    TextInput
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, Image, Platform, StatusBar, TextInput } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
@@ -100,7 +90,6 @@ export default function EditPetScreen() {
 
     return (
         <View style={editStyles.fullScreen}>
-            {/* Cabeçalho */}
             <View style={editStyles.header}>
                 <Pressable onPress={() => router.back()} style={editStyles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="#2F8B88" />
@@ -116,7 +105,6 @@ export default function EditPetScreen() {
                     { paddingBottom: 100 } 
                 ]}
             >
-                {/* Imagem de Perfil do Pet */}
                 <View style={editStyles.imageContainer}>
                     <Image
                         source={initialPetData.profileImage}
@@ -125,7 +113,6 @@ export default function EditPetScreen() {
                     />
                 </View>
 
-                {/* Campos */}
                 <View style={editStyles.fieldsContainer}>
                     <EditableField
                         label="Raça"
@@ -166,9 +153,6 @@ export default function EditPetScreen() {
     );
 }
 
-// =========================================================
-// Estilos
-// =========================================================
 const editStyles = StyleSheet.create({
     fullScreen: {
         flex: 1,
@@ -176,7 +160,6 @@ const editStyles = StyleSheet.create({
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
         position: "relative"
     },
-    // ... (Estilos do cabeçalho e imagem)
     header: {
         flexDirection: "row",
         alignItems: "center",
@@ -212,7 +195,6 @@ const editStyles = StyleSheet.create({
     fieldsContainer: {
         marginTop: 20,
     },
-    // ... (Estilos dos campos de edição)
     inputContainer: {
         backgroundColor: "#FFFFFF",
         borderRadius: 12,
@@ -246,7 +228,6 @@ const editStyles = StyleSheet.create({
     inputIcon: {
         marginLeft: 10,
     },
-    // ... (Estilos do botão salvar)
     saveButton: {
         backgroundColor: "#2F8B88",
         borderRadius: 30,
@@ -261,8 +242,6 @@ const editStyles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
     },
-    
-    // ESTILO DA BARRA DE NAVEGAÇÃO INFERIOR (ADICIONADO) 👇
     bottomNav: {
         flexDirection: "row",
         justifyContent: "space-around",
