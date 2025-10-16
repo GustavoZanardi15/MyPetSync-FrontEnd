@@ -8,14 +8,12 @@ import { signup } from "../../services/authService";
 
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
-
 const COMPANY_SERVICES = [
   "Clínica Veterinária",
   "Pet Shop",
   "Hotel para Pets",
   "Banho e Tosa",
 ];
-
 const RegisterCompany = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -53,9 +51,29 @@ const RegisterCompany = () => {
 
   return (
     <div className="flex w-full min-h-screen">
-      <AuthSidebar widthClass="lg:w-1/3"></AuthSidebar>
+      <AuthSidebar widthClass="lg:w-1/3">
+        <div className="area-formulario text-center text-[#003637]">
+          <h2 className="text-4xl font-bold mb-3">Bem-vindo de volta! </h2>
+          <p className="text-lg font-semibold mb-8">
+            Acesse sua conta agora mesmo.
+          </p>
+          <Link
+            to="/login"
+            style={{ backgroundColor: COLOR_BUTTON_BG }}
+            className="w-60 p-3 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md inline-block"
+          >
+            ENTRAR
+          </Link>
+        </div>
+      </AuthSidebar>
       <div className="w-full lg:w-3/5 p-16 flex justify-center items-center">
         <div className="w-full max-w-md">
+          <h2 className="text-4xl font-bold text-center text-[#003637] mb-2">
+            Crie sua conta
+          </h2>
+          <p className="text-[#003637] font-medium text-center mb-8">
+            Preencha seus dados
+          </p>
           <div className="flex bg-gray-200 rounded-lg p-1 mb-8">
             <button
               className="w-1/2 p-3 text-sm font-semibold rounded-lg text-white"
