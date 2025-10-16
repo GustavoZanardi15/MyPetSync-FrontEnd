@@ -10,52 +10,55 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Login efetuado. Redirecionando para Home.");
-
     navigate("/homePage", { replace: true });
   };
   return (
-    <div className="flex w-full min-h-screen">
-      <AuthSidebar widthClass="lg:w-1/3">
-        <h2 className="text-[#003637] text-4xl font-bold mb-8 text-center">
-          Entre na sua conta
-        </h2>
-        <form className="space-y-4 " onSubmit={handleSubmit}>
-          <InputWithIcon
-            Icon={VscMail}
-            type="email"
-            placeholder="Email"
-            name="email"
-          />
-          <InputWithIcon
-            Icon={VscLock}
-            type="password"
-            placeholder="Senha"
-            name="senha"
-          />
-          <a
-            href="#"
-            className="relative top-0 mt-2 text-[#003637] text-base font-semibold hover:underline block text-left"
-          >
-            Esqueceu sua senha?
-          </a>
-          <button
-            type="submit"
-            style={{ backgroundColor: COLOR_BUTTON_BG }}
-            className="w-72 p-3 text-center text-white font-bold rounded-lg hover:opacity-90 transition shadow-md mt-6 mx-auto block"
-          >
-            ENTRAR
-          </button>
-        </form>
-        <div className="mt-4 text-center">
-          <p className="text-[#003637] text-sm font-semibold">
-            Não tem conta?
-            <Link
-              to="/registerAutonomo"
-              className="font-bold ml-1 hover:underline"
-            >
-              Crie sua conta
-            </Link>
-          </p>
+    <div className="flex w-full h-screen">
+      <AuthSidebar widthClass="lg:w-1/3 h-full">
+        <div className="flex flex-col items-center justify-center w-full h-full p-8 overflow-auto">
+          <div className="w-full max-w-xs">
+            <h2 className="text-[#003637] text-4xl font-bold mb-8 text-center">
+              Entre na sua conta
+            </h2>
+            <form className="space-y-4 w-full" onSubmit={handleSubmit}>
+              <InputWithIcon
+                Icon={VscMail}
+                type="email"
+                placeholder="Email"
+                name="email"
+              />
+              <InputWithIcon
+                Icon={VscLock}
+                type="password"
+                placeholder="Senha"
+                name="senha"
+              />
+              <a
+                href="#"
+                className="relative top-0 mt-2 text-[#003637] text-base font-semibold hover:underline block text-left"
+              >
+                Esqueceu sua senha?
+              </a>
+              <button
+                type="submit"
+                style={{ backgroundColor: COLOR_BUTTON_BG }}
+                className="w-full p-3 text-center text-white font-bold rounded-lg hover:opacity-90 transition shadow-md mt-6 block"
+              >
+                ENTRAR
+              </button>
+            </form>
+            <div className="mt-4 text-center">
+              <p className="text-[#003637] text-sm font-semibold">
+                Não tem conta?
+                <Link
+                  to="/registerAutonomo"
+                  className="font-bold ml-1 hover:underline"
+                >
+                  Crie sua conta
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
       </AuthSidebar>
       <div className="hidden lg:flex lg:w-3/5 relative flex-col justify-center items-center">
