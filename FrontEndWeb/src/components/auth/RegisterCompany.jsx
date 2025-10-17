@@ -20,7 +20,7 @@ const RegisterCompany = () => {
     password: "",
     companyName: "",
     cnpj: "",
-    service: COMPANY_SERVICES[0],
+    service: "",
     role: "COMPANY",
   });
   const [error, setError] = useState(null);
@@ -38,7 +38,6 @@ const RegisterCompany = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-
     try {
       await signup(formData);
       navigate("/home");
