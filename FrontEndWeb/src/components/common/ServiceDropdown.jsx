@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { VscChevronDown } from "react-icons/vsc";
 
 const COLOR_TEAL = "#058789";
-
 const ServiceDropdown = ({
   services,
   placeholder = "Selecione o Tipo de Serviço",
@@ -10,13 +9,10 @@ const ServiceDropdown = ({
   value,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const displayValue = value || placeholder;
-
   const handleToggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
   const handleSelectService = (service) => {
     if (onChange) {
       onChange(service);
@@ -33,7 +29,6 @@ const ServiceDropdown = ({
         style={{ backgroundColor: COLOR_TEAL }}
       >
         {displayValue}
-
         <VscChevronDown
           className={`w-5 h-5 transition-transform ${
             isDropdownOpen ? "transform rotate-180" : ""
