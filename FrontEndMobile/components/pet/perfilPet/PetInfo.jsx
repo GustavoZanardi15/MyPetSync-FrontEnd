@@ -16,7 +16,7 @@ export default function PetInfo({ label, value }) {
                 numberOfLines={1}
                 ellipsizeMode="tail"
             >
-                {isValueEmpty ? label : value}
+                {isValueEmpty ? "Não" : value}
             </Text>
         </View>
     );

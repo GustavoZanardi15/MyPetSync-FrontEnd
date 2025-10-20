@@ -11,17 +11,13 @@ export default function EditInfo({ label, initialValue, onValueChange, iconName 
             <Text style={styles.editableLabel}>{label}</Text>
 
             <TextInput
-                style={[
-                    styles.editableValue,
-                    !isEditing && { color: "#2F8B88" },
-                ]}
-                value={value}
+                style={[styles.editableValue, !isEditing && { color: "#2F8B88" }]}
+                value={value ? value : "Não"} 
                 editable={isEditing}
                 onChangeText={(text) => {
                     setValue(text);
                     onValueChange?.(text);
                 }}
-                placeholder={label}
                 placeholderTextColor="#8E8E8E"
                 keyboardType={label.includes("Peso") ? "numeric" : "default"}
             />
@@ -59,10 +55,10 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: "regular",
         color: "#8E8E8E",
-        width: 90, 
+        width: 90,
     },
     editableValue: {
-        flex: 1, 
+        flex: 1,
         fontSize: 15,
         fontWeight: "medium",
         color: "#2F8B88",
