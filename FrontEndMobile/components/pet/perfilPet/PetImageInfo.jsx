@@ -11,10 +11,21 @@ export default function PetImageInfo({ pet, router }) {
         <Text style={styles.petAgeText}>{pet.age}</Text>
       </View>
 
-      <Pressable style={[styles.actionButton, styles.editButton]} onPress={() => router.push("/screens/perfilPetScreens/EditarPetScreen")}>
+      <Pressable
+        style={[styles.actionButton, styles.editButton]}
+        onPress={() =>
+          router.push({
+            pathname: "/screens/perfilPetScreens/EditarPetScreen",
+            params: { pet: JSON.stringify(pet) }, 
+          })
+        }
+      >
         <MaterialCommunityIcons name="pencil" size={24} color="#2F8B88" />
       </Pressable>
-      <Pressable style={[styles.actionButton, styles.vetButton]} onPress={() => router.push("/screens/perfilPetScreens/SaudePetScreen")}>
+
+      <Pressable style={[styles.actionButton, styles.vetButton]} 
+        onPress={() => router.push("/screens/perfilPetScreens/SaudePetScreen")}
+      >
         <MaterialCommunityIcons name="stethoscope" size={24} color="#2F8B88" />
       </Pressable>
     </View>

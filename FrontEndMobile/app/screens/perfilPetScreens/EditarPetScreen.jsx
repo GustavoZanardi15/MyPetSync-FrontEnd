@@ -1,24 +1,26 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar} from "react-native";
-import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { View, ScrollView, StyleSheet, Text, Pressable, Platform, StatusBar } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import EditInfo from "../../../components/pet/editarPet/EditInfo";
 import EditPetHeader from "../../../components/pet/editarPet/EditPetHeader";
 import EditPetImage from "../../../components/pet/editarPet/EditPetImage";
-import EditInfo from "../../../components/pet/editarPet/EditInfo";
 import BottomNav from "../../../components/pet/editarPet/BottomNav";
 
 export default function EditarPetScreen() {
     const router = useRouter();
+    const { pet } = useLocalSearchParams();
 
-    const initialPetData = {
-        profileImage: require("../../../assets/images/home/DogHomePet1.png"),
-        race: "Jack Russell Terrier",
-        age: "4 anos",
-        weight: "5kg",
-        neutered: "Sim",
-        specialCondition: "",
-    };
+    const selectedPet = pet ? JSON.parse(pet) : {};
 
-    const [petData, setPetData] = React.useState(initialPetData);
+    const [petData, setPetData] = useState({
+        profileImage: selectedPet.mainImage || require("../../../assets/images/home/DogHomePet1.png"),
+        name: selectedPet.name || "",
+        race: selectedPet.race || "",
+        age: selectedPet.age || "",
+        weight: selectedPet.weight || "",
+        neutered: selectedPet.neutered || "",
+        specialCondition: selectedPet.specialCondition || "",
+    });
 
     const handleFieldChange = (field, value) => {
         setPetData({ ...petData, [field]: value });
@@ -27,10 +29,16 @@ export default function EditarPetScreen() {
     return (
         <View style={styles.fullScreen}>
             <EditPetHeader />
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}>
-                <EditPetImage imageSource={initialPetData.profileImage} />
+
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]} >
+                <EditPetImage imageSource={petData.profileImage} />
 
                 <View style={styles.fieldsWrapper}>
+                    <EditInfo
+                        label="Nome"
+                        initialValue={petData.name}
+                        onValueChange={(v) => handleFieldChange("name", v)}
+                    />
                     <EditInfo
                         label="Raça"
                         initialValue={petData.race}
@@ -58,13 +66,11 @@ export default function EditarPetScreen() {
                     />
                 </View>
 
-                <Pressable
-                    style={styles.saveButton}
-                    onPress={() => router.push("/screens/perfilPetScreens/PerfilPetScreen")}
-                >
+                <Pressable style={styles.saveButton} onPress={() => { router.back() }} >
                     <Text style={styles.saveButtonText}>Salvar</Text>
                 </Pressable>
             </ScrollView>
+
             <BottomNav />
         </View>
     );
