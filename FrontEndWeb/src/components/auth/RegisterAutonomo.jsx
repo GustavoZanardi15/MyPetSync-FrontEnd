@@ -17,7 +17,7 @@ const RegisterAutonomo = () => {
     password: "",
     name: "",
     document: "",
-    service: AUTONOMO_SERVICES[0],
+    service: "",
     role: "PROFESSIONAL_AUTONOMO",
   });
   const [error, setError] = useState(null);
