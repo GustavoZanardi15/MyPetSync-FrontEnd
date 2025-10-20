@@ -15,7 +15,7 @@ export default function BottomNav() {
             <Pressable onPress={() => router.push("/screens/homeScreens/HomeScreen")}>
                 <Image source={require("../../../assets/images/home/NavBarHome.png")} />
             </Pressable>
-            <Pressable onPress={() => router.push("/screens/petPerfilScrees/PerfilPetScreen")}>
+            <Pressable onPress={() => router.push("/screens/petPerfilScreens/PerfilPetScreen")}>
                 <Image source={require("../../../assets/images/home/NavBarPetSelect.png")} />
             </Pressable>
             <Pressable onPress={() => router.push("/perfil")}>
