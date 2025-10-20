@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { View, ScrollView, StyleSheet, Platform, StatusBar } from "react-native";
-import { useRouter } from "expo-router";
+import React, { useState, useEffect } from "react";
+import { View, ScrollView, StyleSheet, Platform, StatusBar, Pressable, Text } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import PetInfo from "../../../components/pet/perfilPet/PetInfo";
 import BottomNav from "../../../components/pet/perfilPet/BottomNav";
 import PetAvatarSelector from "../../../components/pet/perfilPet/PetAvatarSelector";
@@ -8,6 +8,7 @@ import PetImageInfo from "../../../components/pet/perfilPet/PetImageInfo";
 
 export default function PerfilPetScreen() {
   const router = useRouter();
+  const { updatedPet } = useLocalSearchParams();
 
   const pets = [
     {
@@ -47,12 +48,25 @@ export default function PerfilPetScreen() {
 
   const [selectedPet, setSelectedPet] = useState(pets[0]);
 
+  useEffect(() => {
+    if (updatedPet) {
+      setSelectedPet(JSON.parse(updatedPet));
+    }
+  }, [updatedPet]);
+
   return (
     <View style={styles.fullScreen}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <PetAvatarSelector pets={pets} selectedPet={selectedPet} setSelectedPet={setSelectedPet} router={router} />
+        <PetAvatarSelector
+          pets={pets}
+          selectedPet={selectedPet}
+          setSelectedPet={setSelectedPet}
+          router={router}
+        />
+
         <View style={styles.contentContainer}>
           <PetImageInfo pet={selectedPet} router={router} />
+
           <View>
             <PetInfo label="Raça" value={selectedPet.race} />
             <PetInfo label="Idade" value={selectedPet.age} />
@@ -76,5 +90,5 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 20,
-  },
+  }
 });

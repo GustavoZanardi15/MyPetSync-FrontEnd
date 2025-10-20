@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { View, ScrollView, StyleSheet, Text, Pressable, Platform, StatusBar } from "react-native";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import EditInfo from "../../../components/pet/editarPet/EditInfo";
 import EditPetHeader from "../../../components/pet/editarPet/EditPetHeader";
 import EditPetImage from "../../../components/pet/editarPet/EditPetImage";
 import BottomNav from "../../../components/pet/editarPet/BottomNav";
 
 export default function EditarPetScreen() {
-    const router = useRouter();
     const { pet } = useLocalSearchParams();
 
     const selectedPet = pet ? JSON.parse(pet) : {};
@@ -30,43 +29,25 @@ export default function EditarPetScreen() {
         <View style={styles.fullScreen}>
             <EditPetHeader />
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]} >
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+            >
                 <EditPetImage imageSource={petData.profileImage} />
 
                 <View style={styles.fieldsWrapper}>
-                    <EditInfo
-                        label="Nome"
-                        initialValue={petData.name}
-                        onValueChange={(v) => handleFieldChange("name", v)}
-                    />
-                    <EditInfo
-                        label="Raça"
-                        initialValue={petData.race}
-                        onValueChange={(v) => handleFieldChange("race", v)}
-                    />
-                    <EditInfo
-                        label="Idade"
-                        initialValue={petData.age}
-                        onValueChange={(v) => handleFieldChange("age", v)}
-                    />
-                    <EditInfo
-                        label="Peso atual"
-                        initialValue={petData.weight}
-                        onValueChange={(v) => handleFieldChange("weight", v)}
-                    />
-                    <EditInfo
-                        label="Castrado?"
-                        initialValue={petData.neutered}
-                        onValueChange={(v) => handleFieldChange("neutered", v)}
-                    />
-                    <EditInfo
-                        label="Condição especial:"
-                        initialValue={petData.specialCondition}
-                        onValueChange={(v) => handleFieldChange("specialCondition", v)}
-                    />
+                    <EditInfo label="Nome" initialValue={petData.name} onValueChange={(v) => handleFieldChange("name", v)} />
+                    <EditInfo label="Raça" initialValue={petData.race} onValueChange={(v) => handleFieldChange("race", v)} />
+                    <EditInfo label="Idade" initialValue={petData.age} onValueChange={(v) => handleFieldChange("age", v)} />
+                    <EditInfo label="Peso atual" initialValue={petData.weight} onValueChange={(v) => handleFieldChange("weight", v)} />
+                    <EditInfo label="Castrado?" initialValue={petData.neutered} onValueChange={(v) => handleFieldChange("neutered", v)} />
+                    <EditInfo label="Condição especial:" initialValue={petData.specialCondition} onValueChange={(v) => handleFieldChange("specialCondition", v)} />
                 </View>
 
-                <Pressable style={styles.saveButton} onPress={() => { router.back() }} >
+                <Pressable
+                    style={styles.saveButton}
+                    onPress={() => {router.push("/screens/perfilPetScreens/PerfilPetScreen")}}
+                >
                     <Text style={styles.saveButtonText}>Salvar</Text>
                 </Pressable>
             </ScrollView>
