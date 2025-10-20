@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { View, ScrollView, StyleSheet, Platform, StatusBar } from "react-native";
 import { useRouter } from "expo-router";
-import PetAvatarSelector from "../../../components/perfilPet/PetAvatarSelector";
 import PetImageInfo from "../../../components/perfilPet/PetImageInfo";
 import PetInfo from "../../../components/perfilPet/PetInfo";
 import BottomNav from "../../../components/perfilPet/BottomNav";
+import PetAvatarSelector from "../../../components/pet/perfilPet/PetAvatarSelector";
 
 export default function PerfilPetScreen() {
   const router = useRouter();
