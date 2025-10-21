@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { VscMail } from "react-icons/vsc";
 import InputWithIcon from "../../components/common/InputWithIcon";
 import AuthSidebar from "./AuthSidebar";
@@ -12,6 +12,7 @@ const ForgotPassword = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const handleInputChange = (e) => {
     setEmail(e.target.value);
     if (error) setError(null);
@@ -27,7 +28,11 @@ const ForgotPassword = () => {
       setSuccess(
         "Um link de recuperação de senha foi enviado para o seu e-mail."
       );
+      const emailToPass = email;
       setEmail("");
+      setTimeout(() => {
+        navigate("/verify-code", { state: { email: emailToPass } });
+      }, 500);
     } catch (err) {
       setError(
         err.message ||
@@ -37,6 +42,7 @@ const ForgotPassword = () => {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="flex w-full h-screen overflow-hidden">
       <AuthSidebar widthClass="lg:w-1/3 lg:order-1">
