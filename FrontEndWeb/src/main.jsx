@@ -6,6 +6,7 @@ import LandingPage from "./pages/LandingPage.jsx";
 import RegisterCompany from "./components/auth/RegisterCompany.jsx";
 import RegisterAutonomo from "./components/auth/RegisterAutonomo.jsx";
 import Login from "./components/auth/Login.jsx";
+import ForgotPassword from "./components/auth/ForgotPassword.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import AgendaPage from "./pages/AgendaPage.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
   { path: "/registerCompany", element: <RegisterCompany /> },
   { path: "/registerAutonomo", element: <RegisterAutonomo /> },
   { path: "/login", element: <Login /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
   {
     path: "/homePage",
     element: (
