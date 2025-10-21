@@ -6,7 +6,6 @@ import AuthSidebar from "./AuthSidebar";
 import { requestPasswordReset } from "../../services/authService";
 import DOG_AND_CAT_IMAGE from "../../assets/dogAndCat.png";
 
-const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -40,56 +39,52 @@ const ForgotPassword = () => {
   };
   return (
     <div className="flex w-full h-screen overflow-hidden">
-      <AuthSidebar
-        widthClass="lg:w-1/3 lg:order-1"
-        backgroundColorClass={`bg-[${COLOR_TEAL}]`}
-      >
-        <div className="w-full h-full text-white p-8 flex flex-col justify-between items-center">
-          <div className="w-full max-w-sm flex flex-col h-full">
-            <div className="w-full flex justify-end pt-1">
-              <Link
-                to="/login"
-                className="text-sm font-medium hover:underline flex items-center"
+      <AuthSidebar widthClass="lg:w-1/3 lg:order-1">
+        <div className="w-full max-w-sm flex flex-col h-full text-white mx-auto">
+          <div className="flex flex-col items-start justify-center flex-grow w-full">
+            <h2 className="text-3xl text-[#003637] font-bold mb-1">
+              Esqueceu sua senha?
+            </h2>
+            <p className="text-base text-[#003637] font-medium mb-0">
+              Insira seu e-mail abaixo para recuperar sua senha.
+            </p>
+            <form className="w-full space-y-4 mt-5" onSubmit={handleSubmit}>
+              <InputWithIcon
+                Icon={VscMail}
+                type="email"
+                placeholder="Email"
+                name="email"
+                value={email}
+                onChange={handleInputChange}
+                inputClassName="bg-white text-gray-800 p-3 w-full border-none focus:ring-0"
+                containerClassName="rounded-lg shadow-sm bg-white"
+                iconClassName="text-[#003637]"
+              />
+              {error && (
+                <p className="text-red-300 font-semibold text-sm">{error}</p>
+              )}
+              {success && (
+                <p className="text-green-300 font-semibold text-sm">
+                  {success}
+                </p>
+              )}
+              <button
+                type="submit"
+                style={{ backgroundColor: COLOR_BUTTON_BG }}
+                className="w-full p-3 mt-4 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md text-center"
+                disabled={isLoading}
               >
-                &lt; Volte para o Login
-              </Link>
-            </div>
-            <div className="flex flex-col items-start justify-center flex-grow -mt-16">
-              <h2 className="text-3xl font-bold mb-3">Esqueceu sua senha?</h2>
-              <p className="text-base font-medium mb-12">
-                Insira seu e-mail abaixo para recuperar sua senha.
-              </p>
-              <div className="w-24 h-24 mb-12"></div>
-              <form className="w-full space-y-4" onSubmit={handleSubmit}>
-                <InputWithIcon
-                  Icon={VscMail}
-                  type="email"
-                  placeholder="Email"
-                  name="email"
-                  value={email}
-                  onChange={handleInputChange}
-                  inputClassName="bg-white text-gray-800 p-3 w-full border-none focus:ring-0"
-                  containerClassName="rounded-lg shadow-sm bg-white"
-                />
-                {error && (
-                  <p className="text-red-300 font-semibold text-sm">{error}</p>
-                )}
-                {success && (
-                  <p className="text-green-300 font-semibold text-sm">
-                    {success}
-                  </p>
-                )}
-                <button
-                  type="submit"
-                  style={{ backgroundColor: COLOR_BUTTON_BG }}
-                  className="w-full p-3 mt-4 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md text-center"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "ENVIANDO..." : "ENVIAR"}
-                </button>
-              </form>
-            </div>
-            <div className="h-6"></div>
+                {isLoading ? "ENVIANDO..." : "ENVIAR"}
+              </button>
+            </form>
+          </div>
+          <div className="w-full flex justify-end pt-4">
+            <Link
+              to="/login"
+              className="text-sm text-[#003637] font-medium hover:underline flex items-center"
+            >
+              Volte para o Login
+            </Link>
           </div>
         </div>
       </AuthSidebar>
