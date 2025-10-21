@@ -11,6 +11,7 @@ import HomePage from "./pages/HomePage.jsx";
 import AgendaPage from "./pages/AgendaPage.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
+import VerifyCode from "./components/auth/VerifyCode.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
 
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
   { path: "/registerAutonomo", element: <RegisterAutonomo /> },
   { path: "/login", element: <Login /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
+  { path: "/verify-code", element: <VerifyCode /> },
   {
     path: "/homePage",
     element: (

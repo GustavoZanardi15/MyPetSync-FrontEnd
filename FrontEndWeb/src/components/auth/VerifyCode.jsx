@@ -1,43 +1,40 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { VscMail } from "react-icons/vsc";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { VscLock } from "react-icons/vsc";
 import InputWithIcon from "../../components/common/InputWithIcon";
 import AuthSidebar from "./AuthSidebar";
-import { requestPasswordReset } from "../../services/authService";
 import DOG_AND_CAT_IMAGE from "../../assets/dogAndCat.png";
 
 const COLOR_BUTTON_BG = "#003637";
-const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
+const VerifyCode = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email || "seu-email@exemplo.com";
+  const [code, setCode] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const handleInputChange = (e) => {
-    setEmail(e.target.value);
+    setCode(e.target.value);
     if (error) setError(null);
     if (success) setSuccess(null);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
     setIsLoading(true);
     try {
-      await requestPasswordReset(email);
+      console.log(`Verificando código: ${code} para o e-mail: ${email}`);
       setSuccess(
-        "Um link de recuperação de senha foi enviado para o seu e-mail."
+        "Código verificado! Redirecionando para redefinição de senha..."
       );
-      const emailToPass = email;
-      setEmail("");
       setTimeout(() => {
-        navigate("/verify-code", { state: { email: emailToPass } });
-      }, 500);
+        navigate("/reset-password", { state: { email, code } });
+      }, 1500);
     } catch (err) {
-      setError(
-        err.message ||
-          "Falha ao solicitar a recuperação de senha. Verifique o e-mail."
-      );
+      setError(err.message || "Falha ao verificar o código. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -49,22 +46,26 @@ const ForgotPassword = () => {
         <div className="w-full max-w-sm flex flex-col h-full text-white mx-auto">
           <div className="flex flex-col items-start justify-center flex-grow w-full">
             <h2 className="text-3xl text-[#003637] font-bold mb-1">
-              Esqueceu sua senha?
+              Verificar Código
             </h2>
             <p className="text-base text-[#003637] font-medium mb-0">
-              Insira seu e-mail abaixo para recuperar sua senha.
+              Um código foi enviado para{" "}
+              <strong className="break-all">{email}</strong>. Por favor, insira
+              o código abaixo.
             </p>
+
             <form className="w-full space-y-4 mt-5" onSubmit={handleSubmit}>
               <InputWithIcon
-                Icon={VscMail}
-                type="email"
-                placeholder="Email"
-                name="email"
-                value={email}
+                Icon={VscLock}
+                type="text"
+                placeholder="Código de Verificação"
+                name="code"
+                value={code}
                 onChange={handleInputChange}
                 inputClassName="bg-white text-gray-800 p-3 w-full border-none focus:ring-0"
                 containerClassName="rounded-lg shadow-sm bg-white"
                 iconClassName="text-[#003637]"
+                maxLength={6}
               />
               {error && (
                 <p className="text-red-300 font-semibold text-sm">{error}</p>
@@ -80,7 +81,7 @@ const ForgotPassword = () => {
                 className="w-full p-3 mt-4 text-white font-bold rounded-lg hover:opacity-90 transition shadow-md text-center"
                 disabled={isLoading}
               >
-                {isLoading ? "ENVIANDO..." : "ENVIAR"}
+                {isLoading ? "VERIFICANDO..." : "VERIFICAR"}
               </button>
             </form>
           </div>
@@ -105,4 +106,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default VerifyCode;
