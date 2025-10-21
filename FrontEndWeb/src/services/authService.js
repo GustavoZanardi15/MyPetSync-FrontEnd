@@ -15,7 +15,6 @@ export const signup = async (userData) => {
     throw new Error("Falha na comunicação com o servidor. Tente novamente.");
   }
 };
-
 export const login = async (email, password) => {
   try {
     const response = await api.post("/auth/login", { email, password });
@@ -31,7 +30,6 @@ export const login = async (email, password) => {
     throw new Error("Falha na comunicação com o servidor. Tente novamente.");
   }
 };
-
 export const requestPasswordReset = async (email) => {
   try {
     const response = await api.post("/auth/forgot-password", { email });
@@ -44,4 +42,10 @@ export const requestPasswordReset = async (email) => {
       "Falha na comunicação com o servidor ao solicitar recuperação de senha."
     );
   }
+};
+export const verifyResetCode = async (code, email) => {
+  try {
+    const response = await api.post("/auth/verify-code", { code, email });
+    return response.data;
+  } catch (error) {}
 };
