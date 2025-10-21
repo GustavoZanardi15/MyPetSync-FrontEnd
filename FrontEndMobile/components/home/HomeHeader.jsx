@@ -15,14 +15,14 @@ export default function HomeHeader() {
       <View style={styles.icons}>
         <Pressable
           style={styles.iconCircle}
-          onPress={() => router.push("/screens/home/BuscaScreen")}
+          onPress={() => router.push("/screens/homeScreens/BuscaScreen")}
         >
           <Ionicons name="search-outline" size={23} color="#2F8B88" />
         </Pressable>
 
         <Pressable
           style={styles.iconCircle}
-          onPress={() => router.push("/screens/home/NotificationScreen")}
+          onPress={() => router.push("/screens/homeScreens/NotificationScreen")}
         >
           <Ionicons name="notifications-outline" size={23} color="#2F8B88" />
         </Pressable>
