@@ -47,7 +47,7 @@ const ForgotPassword = () => {
     <div className="flex w-full h-screen overflow-hidden">
       <AuthSidebar widthClass="lg:w-1/3 lg:order-1">
         <div className="w-full max-w-sm flex flex-col h-full text-white mx-auto">
-          <div className="flex flex-col items-start justify-center flex-grow w-full">
+          <div className="flex flex-col justify-center flex-grow w-full">
             <h2 className="text-3xl text-[#003637] font-bold mb-1">
               Esqueceu sua senha?
             </h2>
