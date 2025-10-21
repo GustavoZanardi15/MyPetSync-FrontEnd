@@ -4,7 +4,7 @@ const COLOR_TEAL = "#058789";
 const AuthSidebar = ({ children, widthClass = "lg:w-1/3" }) => {
   return (
     <div
-      className={`w-full p-8 sm:p-12 md:p-16 flex flex-col ${widthClass}`}
+      className={`w-full p-8 sm:p-12 md:p-32 flex flex-col ${widthClass}`}
       style={{
         backgroundColor: COLOR_TEAL,
         borderTopRightRadius: "70px",
