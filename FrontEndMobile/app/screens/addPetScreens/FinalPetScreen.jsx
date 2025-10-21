@@ -25,7 +25,7 @@ export default function SenhaAlteradaScreen() {
                 </Text>
             </View>
             <View style={styles.actionsContainer}>
-                <Pressable style={styles.button} onPress={() => router.push("/screens/home/HomeScreen")}>
+                <Pressable style={styles.button} onPress={() => router.push("/screens/homeScreens/HomeScreen")}>
                     <Text style={styles.buttonText}>Ir para a página inicial</Text>
                 </Pressable>
 
