@@ -46,10 +46,6 @@ export default function SaudePetScreen() {
         if (pet) setSelectedPet(pet);
     };
 
-    const handleStethoscopePress = () => {
-        router.push("/screens/perfilPetScreens/SaudePetScreen");
-    };
-
     return (
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -57,16 +53,7 @@ export default function SaudePetScreen() {
 
                 <PetSelector pets={petsData} selectedPet={selectedPet} onSelectPet={handleSelectPet} />
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Medicamentos:</Text>
-                    {selectedPet.medicamentos?.length > 0 ? (
-                        selectedPet.medicamentos.map((m, index) => (
-                            <Medicamento key={index} nome={m.nome} descricao={m.descricao} />
-                        ))
-                    ) : (
-                        <Text style={styles.emptyText}>Nenhum medicamento cadastrado para {selectedPet.name}.</Text>
-                    )}
-                </View>
+                <Medicamento selectedPet={selectedPet} />
 
                 <VacinaList vacinas={selectedPet.vacinas} petName={selectedPet.name} />
 
@@ -77,7 +64,7 @@ export default function SaudePetScreen() {
                 <View style={{ height: 60 }} />
             </ScrollView>
 
-            <BottomNav router={router} />
+            <BottomNav />
         </View>
     );
 }
@@ -96,14 +83,13 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 20,
-        fontWeight: "600",
+        fontWeight: "bold",
         color: "#2F8B88",
         marginBottom: 10
     },
     emptyText: {
-        fontSize: 14,
-        color: "#888",
-        fontStyle: "italic",
+        fontSize: 13,
+        color: "#8E8E8E",
         marginTop: 5
     },
     saveButton: {

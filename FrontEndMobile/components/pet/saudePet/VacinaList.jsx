@@ -21,7 +21,8 @@ export default function VacinaList({ vacinas, petName }) {
 
 const styles = StyleSheet.create({
     section: {
-        marginBottom: 20
+        marginBottom: 20,
+        marginLeft: 10,
     },
     sectionTitle: {
         fontSize: 20,
