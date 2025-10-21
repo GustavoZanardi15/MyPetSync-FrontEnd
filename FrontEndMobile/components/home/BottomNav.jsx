@@ -11,7 +11,7 @@ export default function BottomNav() {
         <Image source={require("../../assets/images/home/NavBarCalendar.png")} />
       </Pressable>
 
-      <Pressable onPress={() => router.push()}>
+      <Pressable onPress={() => router.push("/screens/servicoScreens/ServicoPetScreen")}>
         <Image source={require("../../assets/images/home/NavBarServico.png")} />
       </Pressable>
 
