@@ -13,9 +13,9 @@ import MainLayout from "./layouts/MainLayout.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import VerifyCode from "./components/auth/VerifyCode.jsx";
 import ResetPassword from "./components/auth/ResetPassword.jsx";
+import EditProfilePage from "./pages/EditProfilePage.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
-
 const router = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
   { path: "/registerCompany", element: <RegisterCompany /> },
@@ -45,6 +45,14 @@ const router = createBrowserRouter([
     element: (
       <LayoutWrapper>
         <ProfilePage />
+      </LayoutWrapper>
+    ),
+  },
+  {
+    path: "/edit-profile",
+    element: (
+      <LayoutWrapper>
+        <EditProfilePage />
       </LayoutWrapper>
     ),
   },

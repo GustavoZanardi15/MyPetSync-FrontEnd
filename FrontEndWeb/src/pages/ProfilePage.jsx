@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import ProfileCard from "../components/profile/ProfileCard";
 import ProfileInfoBlock from "../components/profile/ProfileInfoBlock";
 
@@ -18,13 +19,11 @@ const EditIcon = (props) => (
     />
   </svg>
 );
-
 const StyledDataDisplay = ({ value }) => (
   <div className="bg-white p-3 rounded-lg text-teal-800 font-medium border border-black">
     {value}
   </div>
 );
-
 const MOCK_COMPANY_DATA = {
   profile: {
     name: "Clínica Veterinária São José",
@@ -91,8 +90,9 @@ const MOCK_COMPANY_DATA = {
   ],
 };
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const handleEditProfile = () => {
-    console.log("TO DO: Navegar para a tela de Edição de Perfil");
+    navigate("/edit-profile");
   };
   return (
     <div className="p-4 md:p-8 w-full">
@@ -130,13 +130,11 @@ const ProfilePage = () => {
             data={MOCK_COMPANY_DATA.basicInfo}
             editable
           />
-
           <ProfileInfoBlock
             title="Informações de Contato"
             data={MOCK_COMPANY_DATA.contactInfo}
             editable
           />
-
           <ProfileInfoBlock
             title="Informações Adicionais"
             data={MOCK_COMPANY_DATA.additionalInfo}
