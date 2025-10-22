@@ -44,16 +44,15 @@ const VerifyCode = () => {
     <div className="flex w-full h-screen overflow-hidden">
       <AuthSidebar widthClass="lg:w-1/3 lg:order-1">
         <div className="w-full max-w-sm flex flex-col h-full text-white mx-auto">
-          <div className="flex flex-col items-start justify-center flex-grow w-full">
+          <div className="flex flex-col items-center justify-center flex-grow w-full">
             <h2 className="text-3xl text-[#003637] font-bold mb-1">
               Verificar Código
             </h2>
             <p className="text-base text-[#003637] font-medium mb-0">
-              Um código foi enviado para{" "}
-              <strong className="break-all">{email}</strong>. Por favor, insira
+              Um código foi enviado para
+              <strong className="break-all"> {email}</strong>. Por favor, insira
               o código abaixo.
             </p>
-
             <form className="w-full space-y-4 mt-5" onSubmit={handleSubmit}>
               <InputWithIcon
                 Icon={VscLock}
