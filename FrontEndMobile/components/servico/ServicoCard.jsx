@@ -1,11 +1,15 @@
+import { router } from "expo-router";
 import React from "react";
 import { Text, Image, Pressable, StyleSheet } from "react-native";
 
-export default function ServicoCard({ nome, cor, imagem, onPress }) {
+export default function ServicoCard({ nome, cor, imagem }) {
 
     return (
-        <Pressable style={[styles.servicoCard, { backgroundColor: cor }]} onPress={onPress}>
-            <Text style={styles.servicoNome}>{nome}</Text>
+        <Pressable
+            style={[styles.servicoCard, { backgroundColor: cor }]}
+            onPress={() => router.push("/screens/servicoScreens/ServicoVetScreen")}
+        >            
+        <Text style={styles.servicoNome}>{nome}</Text>
             <Image source={imagem} style={styles.servicoImage} resizeMode="contain" />
         </Pressable>
     );
