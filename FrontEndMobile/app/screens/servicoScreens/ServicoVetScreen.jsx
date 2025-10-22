@@ -1,11 +1,13 @@
-import React from "react";
-import { View, ScrollView, StyleSheet, StatusBar, Platform, Pressable } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import React, { useState } from "react";
+import { View, ScrollView, StyleSheet, StatusBar, Platform } from "react-native";
 import VetHeader from "../../../components/servico/servicoVet/VetHeader";
 import VetCard from "../../../components/servico/servicoVet/VetCard";
 import BottomNav from "../../../components/servico/servicoVet/BottomNav";
+import FiltroVet from "../../../components/servico/servicoVet/FiltrarVet";
 
 export default function ServicoVetScreen() {
+  const [veterinariosFiltrados, setVeterinariosFiltrados] = useState(null);
+
   const veterinarios = [
     {
       id: 1,
@@ -46,12 +48,23 @@ export default function ServicoVetScreen() {
       <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" translucent />
       <VetHeader />
 
-      <Pressable style={styles.filterButton}>
-        <MaterialCommunityIcons name="filter-outline" size={24} color="#2F8B88" />
-      </Pressable>
+      <FiltroVet
+        onSelecionar={(filtroSelecionado, correspondencias) => {
+          if (!filtroSelecionado) {
+            setVeterinariosFiltrados(veterinarios);
+          } else {
+            const filtrados = veterinarios.filter((v) =>
+              correspondencias.some((esp) =>
+                v.especialidade.toLowerCase().includes(esp.toLowerCase())
+              )
+            );
+            setVeterinariosFiltrados(filtrados);
+          }
+        }}
+      />
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        {veterinarios.map((vet) => (
+        {(veterinariosFiltrados || veterinarios).map((vet) => (
           <VetCard key={vet.id} vet={vet} />
         ))}
       </ScrollView>
@@ -70,10 +83,5 @@ const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: 16,
     paddingBottom: 80,
-  },
-  filterButton: {
-    padding: 6,
-    alignSelf: "flex-end",
-    marginRight: 16,
   },
 });
