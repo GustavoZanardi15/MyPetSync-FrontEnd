@@ -12,6 +12,7 @@ import AgendaPage from "./pages/AgendaPage.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import VerifyCode from "./components/auth/VerifyCode.jsx";
+import ResetPassword from "./components/auth/ResetPassword.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
 
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/verify-code", element: <VerifyCode /> },
+  { path: "/reset-password", element: <ResetPassword /> },
   {
     path: "/homePage",
     element: (
