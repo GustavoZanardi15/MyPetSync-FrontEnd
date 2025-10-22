@@ -3,9 +3,9 @@ import ProfileCard from "../components/profile/ProfileCard";
 import ProfileInfoBlock from "../components/profile/ProfileInfoBlock";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const EditableInput = ({ value, label, type = "text", fullWidth, name }) => {
+const EditableInput = ({ value, type = "text", name }) => {
   return (
-    <div className={`flex flex-col ${fullWidth ? "w-full" : "w-1/2"}`}>
+    <div className={`flex flex-col w-full`}>
       <input
         type={type}
         defaultValue={value}
@@ -15,7 +15,7 @@ const EditableInput = ({ value, label, type = "text", fullWidth, name }) => {
     </div>
   );
 };
-const EditableTextarea = ({ value, label, name }) => {
+const EditableTextarea = ({ value, name }) => {
   return (
     <div className="flex flex-col w-full">
       <textarea
@@ -27,7 +27,7 @@ const EditableTextarea = ({ value, label, name }) => {
     </div>
   );
 };
-const EditableSchedule = ({ label, value, name }) => {
+const EditableSchedule = ({ value, name }) => {
   return (
     <div className="flex flex-col w-1/2">
       {value.map((item, index) => (
