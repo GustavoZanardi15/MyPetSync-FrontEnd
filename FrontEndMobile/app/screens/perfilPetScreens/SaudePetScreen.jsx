@@ -56,11 +56,6 @@ export default function SaudePetScreen() {
                 <Medicamento selectedPet={selectedPet} />
 
                 <VacinaList vacinas={selectedPet.vacinas} petName={selectedPet.name} />
-
-                <Pressable style={styles.saveButton}>
-                    <Text style={styles.saveText}>Salvar</Text>
-                </Pressable>
-
                 <View style={{ height: 60 }} />
             </ScrollView>
 
@@ -91,23 +86,5 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: "#8E8E8E",
         marginTop: 5
-    },
-    saveButton: {
-        backgroundColor: "#2F8B88",
-        borderRadius: 20,
-        paddingVertical: 10,
-        alignItems: "center",
-        alignSelf: "center",
-        width: 180,
-        marginTop: 20,
-        shadowColor: "#2F8B88",
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 3,
-    },
-    saveText: {
-        color: "#FFFFFF",
-        fontWeight: "bold",
-        fontSize: 15
-    },
+    }
 }); 
