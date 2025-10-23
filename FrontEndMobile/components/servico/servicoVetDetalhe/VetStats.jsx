@@ -10,10 +10,10 @@ export default function VetStats({ vet }) {
       </View>
       <View style={[styles.statItem, styles.rightBorder]}>
         <Text style={styles.statValue}>{vet.consultasRealizadas}</Text>
-        <Text style={styles.statLabel}>Consultas</Text>
+        <Text style={styles.statLabel}>Consultas Realizadas</Text>
       </View>
       <View style={styles.statItem}>
-        <Text style={styles.statValuePrice}>{vet.precoConsulta}</Text>
+        <Text style={styles.statValue}>{vet.precoConsulta}</Text>
         <Text style={styles.statLabel}>Preço</Text>
       </View>
     </View>
@@ -24,14 +24,13 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    backgroundColor: "#F7F7F7",
+    backgroundColor: "#FFF",
     borderRadius: 15,
     paddingVertical: 15,
     marginBottom: 30,
   },
   statItem: { alignItems: "center", paddingHorizontal: 10 },
   rightBorder: { borderRightWidth: 1, borderRightColor: "#EFEFEF" },
-  statValue: { fontSize: 18, fontWeight: "bold", color: "#2F8B88", marginBottom: 4 },
-  statValuePrice: { fontSize: 18, fontWeight: "bold", color: "#FF6347", marginBottom: 4 },
-  statLabel: { fontSize: 12, color: "#888" },
+  statValue: { fontSize: 24, fontWeight: "medium", color: "#2F8B88", marginBottom: 4 },
+  statLabel: { fontSize: 11, color: "#C4C4C4" },
 });
