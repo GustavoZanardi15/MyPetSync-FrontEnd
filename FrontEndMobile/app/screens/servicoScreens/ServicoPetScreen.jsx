@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { View, ScrollView, StyleSheet, Platform, StatusBar } from "react-native";
-import BottomNav from "../../../components/servico/BottomNav";
-import ServicoCard from "../../../components/servico/ServicoCard";
-import ServicoHeader from "../../../components/servico/ServicoHeader";
-import PetSelector from "../../../components/servico/PetSelector";
-
+import ServicoHeader from "../../../components/servico/servicoLista/ServicoHeader";
+import PetSelector from "../../../components/servico/servicoLista/PetSelector";
+import ServicoCard from "../../../components/servico/servicoLista/ServicoCard";
+import BottomNav from "../../../components/servico/servicoLista/BottomNav";
 const petsData = [
     {
         id: "dog1",

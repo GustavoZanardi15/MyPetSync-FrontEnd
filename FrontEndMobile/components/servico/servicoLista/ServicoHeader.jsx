@@ -8,7 +8,7 @@ export default function ServicoHeader({ }) {
       <Text style={styles.headerTitle}>Pet Serviços</Text>
 
       <View style={styles.editCircleButton}>
-          <Image source={require("../../assets/images/home/NavBarServico.png")}/>
+          <Image source={require("../../../assets/images/home/NavBarServico.png")}/>
       </View>
     </View>
   );
