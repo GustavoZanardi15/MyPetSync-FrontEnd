@@ -15,33 +15,21 @@ const EditBlockIcon = (props) => (
     />
   </svg>
 );
-
 const ProfileInfoBlock = ({ title, data, editable = false }) => {
   const handleEditClick = () => {
     console.log(`Clicou para editar o bloco: ${title}`);
   };
-
   return (
     <div className="bg-[#058789] p-6 rounded-xl shadow-lg border border-gray-200">
       <div className="flex justify-between items-center mb-4 border-b pb-3">
         <h2 className="text-xl font-semibold text-white">{title}</h2>
-        {editable && (
-          <button
-            onClick={handleEditClick}
-            className="text-teal-600 hover:text-teal-800 transition-colors p-1 rounded-full hover:bg-teal-50"
-            title={`Editar ${title}`}
-          >
-            <EditBlockIcon className="w-5 h-5" />
-          </button>
-        )}
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         {data.map((item, index) => (
           <div
             key={index}
             className={`flex flex-col space-y-1 
-              ${item.fullWidth ? "md:col-span-2" : "md:col-span-1"}`}
+       ${item.fullWidth ? "md:col-span-2" : "md:col-span-1"}`}
           >
             <label className="text-sm font-medium text-white">
               {item.label}
