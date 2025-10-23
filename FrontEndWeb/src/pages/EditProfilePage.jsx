@@ -164,7 +164,7 @@ const EditProfilePage = () => {
             type="submit"
             disabled={isSaving}
             className={`px-6 py-2 text-white rounded-lg font-semibold transition-colors shadow-lg ${
-              isSaving ? "bg-gray-500" : "bg-[#003637] hover:bg-[#003637]/90"
+              isSaving ? "bg-gray-500" : "bg-[#058789] hover:bg-[#003637]/90"
             }`}
           >
             {isSaving ? "SALVANDO..." : "SALVAR"}
