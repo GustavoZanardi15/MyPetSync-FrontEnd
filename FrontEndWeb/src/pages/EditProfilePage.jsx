@@ -29,7 +29,7 @@ const EditableTextarea = ({ value, name }) => {
 };
 const EditableSchedule = ({ value, name }) => {
   return (
-    <div className="flex flex-col w-1/2">
+    <div className="flex flex-col w-full">
       {value.map((item, index) => (
         <input
           key={index}
@@ -164,7 +164,7 @@ const EditProfilePage = () => {
             type="submit"
             disabled={isSaving}
             className={`px-6 py-2 text-white rounded-lg font-semibold transition-colors shadow-lg ${
-              isSaving ? "bg-gray-500" : "bg-[#003637] hover:bg-[#003637]/90"
+              isSaving ? "bg-gray-500" : "bg-[#058789] hover:bg-[#003637]/90"
             }`}
           >
             {isSaving ? "SALVANDO..." : "SALVAR"}
@@ -181,7 +181,7 @@ const EditProfilePage = () => {
             rating={formData.profile.rating}
             reviewCount={formData.profile.reviewCount}
           >
-            <button className="text-sm text-[#058789] font-medium mt-2 hover:underline">
+            <button className="text-sm text-white font-medium mb-4 hover:underline">
               Alterar Foto
             </button>
           </ProfileCard>
