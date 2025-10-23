@@ -1,8 +1,12 @@
+    
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function VetCard({ vet }) {
+    const router = useRouter();
+
     const renderStars = (count) =>
         Array.from({ length: 5 }).map((_, starIndex) => {
             let iconName = "star-outline";
@@ -19,7 +23,10 @@ export default function VetCard({ vet }) {
 
 
     return (
-        <View style={styles.card}>
+        <Pressable
+            style={styles.card}
+            onPress={() => router.push(`/screens/servicoScreens/ServicoVetDetalheScreen?vetId=${vet.id}`)}
+        >
             <Image source={vet.foto} style={styles.foto} />
             <View style={styles.info}>
                 <Text style={styles.nome}>{vet.nome}</Text>
@@ -30,12 +37,12 @@ export default function VetCard({ vet }) {
                     <Text style={styles.avaliacoes}> ({vet.avaliacoes})</Text>
                 </View>
 
-                <Pressable style={styles.btnAgendar}>
+                <View style={styles.btnAgendar}>
                     <Text style={styles.btnText}>Agende</Text>
                     <Ionicons name="logo-whatsapp" size={21} color="#fff" style={{ marginLeft: 6 }} />
-                </Pressable>
+                </View>
             </View>
-        </View>
+        </Pressable>
     );
 }
 
