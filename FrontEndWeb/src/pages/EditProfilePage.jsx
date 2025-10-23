@@ -29,7 +29,7 @@ const EditableTextarea = ({ value, name }) => {
 };
 const EditableSchedule = ({ value, name }) => {
   return (
-    <div className="flex flex-col w-1/2">
+    <div className="flex flex-col w-full">
       {value.map((item, index) => (
         <input
           key={index}
@@ -181,7 +181,7 @@ const EditProfilePage = () => {
             rating={formData.profile.rating}
             reviewCount={formData.profile.reviewCount}
           >
-            <button className="text-sm text-[#058789] font-medium mt-2 hover:underline">
+            <button className="text-sm text-white font-medium mb-4 hover:underline">
               Alterar Foto
             </button>
           </ProfileCard>
