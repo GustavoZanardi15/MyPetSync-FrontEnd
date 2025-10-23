@@ -10,6 +10,22 @@ export const VETERINARIOS = [
     consultasRealizadas: 1240,
     precoConsulta: "R$120,00",
     bio: "Formada em Medicina Veterinária com ênfase em Oncologia. Atua com casos clínicos e tratamentos especializados.",
+    avaliacoesList: [
+      {
+        id: 1,
+        nome: "Laura S.",
+        data: "2d",
+        estrelas: 5,
+        comentario: "Cuidou muito bem da minha cachorrinha. Atendimento humanizado e muito profissional.",
+      },
+      {
+        id: 2,
+        nome: "Marcos P.",
+        data: "1sem",
+        estrelas: 4,
+        comentario: "Atenciosa e dedicada. Recomendo bastante!",
+      },
+    ],
   },
   {
     id: 2,
@@ -22,6 +38,15 @@ export const VETERINARIOS = [
     consultasRealizadas: 540,
     precoConsulta: "R$95,00",
     bio: "Cirurgião especializado em pequenos animais. Experiência ampla em procedimentos cirúrgicos.",
+    avaliacoesList: [
+      {
+        id: 1,
+        nome: "Ana R.",
+        data: "3d",
+        estrelas: 3,
+        comentario: "Cirurgia correu bem, mas o atendimento pós-operatório poderia ser melhor.",
+      },
+    ],
   },
   {
     id: 3,
@@ -34,6 +59,22 @@ export const VETERINARIOS = [
     consultasRealizadas: 46,
     precoConsulta: "R$89,90",
     bio: "Formou-se em Medicina Veterinária e se especializou em Oncologia. Foco em cuidado humanizado e planos de tratamento.",
+    avaliacoesList: [
+      {
+        id: 1,
+        nome: "Fernanda L.",
+        data: "5d",
+        estrelas: 5,
+        comentario: "Excelente profissional! Explicou tudo com clareza e tratou muito bem do meu gato.",
+      },
+      {
+        id: 2,
+        nome: "Carlos N.",
+        data: "2sem",
+        estrelas: 4,
+        comentario: "Muito empática e detalhista no diagnóstico.",
+      },
+    ],
   },
   {
     id: 4,
@@ -46,6 +87,15 @@ export const VETERINARIOS = [
     consultasRealizadas: 860,
     precoConsulta: "R$110,00",
     bio: "Clínico geral com atendimento preventivo e acompanhamento contínuo de pacientes.",
+    avaliacoesList: [
+      {
+        id: 1,
+        nome: "Julia T.",
+        data: "1d",
+        estrelas: 5,
+        comentario: "Excelente atendimento! Cuidou muito bem do meu cachorro idoso.",
+      },
+    ],
   },
 ];
 
