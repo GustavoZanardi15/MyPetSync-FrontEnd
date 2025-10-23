@@ -1,15 +1,30 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 
 export default function VetInfoSection({ vet }) {
+
+  const renderStars = (count) =>
+    Array.from({ length: 5 }, (_, i) => (
+      <FontAwesome
+        key={i}
+        name={i < Math.floor(count) ? "star" : i < count ? "star-half-full" : "star-o"}
+        size={14}
+        color="#FFC107"
+        style={{ marginRight: 2 }}
+      />
+    ));
+
   return (
     <View style={styles.infoSection}>
       <View>
         <Text style={styles.vetName}>{vet.nome}</Text>
         <Text style={styles.vetSpecialty}>{vet.especialidade}</Text>
-        <Text style={styles.avaliacoesCount}>({vet.avaliacoes})</Text>
+        <View style={styles.ratingRow}>
+          <View style={styles.stars}>{renderStars(vet.estrelas)}</View>
+          <Text style={styles.avaliacoesCount}>({vet.avaliacoes})</Text>
+        </View>
       </View>
       <Pressable
         style={styles.whatsappButton}
@@ -32,9 +47,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
   },
-  vetName: { fontSize: 22, fontWeight: "bold", color: "#2F8B88" },
-  vetSpecialty: { fontSize: 16, color: "#4A4A4A", fontWeight: "500" },
-  avaliacoesCount: { fontSize: 14, color: "#999" },
+  vetName: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#2F8B88",
+  },
+  vetSpecialty: {
+    fontSize: 16,
+    color: "#4A4A4A",
+    fontWeight: "regular",
+  },
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  stars: {
+    flexDirection: "row",
+    marginRight: 5,
+  },
+  avaliacoesCount: {
+    fontSize: 14,
+    color: "#8E8E8E",
+  },
   whatsappButton: {
     width: 50,
     height: 50,
