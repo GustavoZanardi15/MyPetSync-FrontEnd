@@ -21,7 +21,7 @@ const RegisterCompany = () => {
     companyName: "",
     cnpj: "",
     service: "",
-    role: "COMPANY",
+    role: "PROVIDER",
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,8 +38,16 @@ const RegisterCompany = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    const mappedData = {
+      nome: formData.companyName,
+      email: formData.email,
+      senha: formData.password,
+      tipo_usuario: formData.role,
+      cnpj: formData.cnpj,
+      service: formData.service,
+    };
     try {
-      await signup(formData);
+      await signup(mappedData);
       navigate("/home");
     } catch (err) {
       setError(err.message);
