@@ -7,7 +7,7 @@ export default function BottomNav() {
 
   return (
     <View style={styles.bottomNav}>
-      <Pressable onPress={() => router.push()}>
+      <Pressable onPress={() => router.push("/screens/lembreteScreens/LembreteScreen")}>
         <Image source={require("../../assets/images/home/NavBarCalendar.png")} />
       </Pressable>
 

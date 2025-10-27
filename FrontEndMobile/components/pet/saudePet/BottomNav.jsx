@@ -5,7 +5,7 @@ import { View, Image, Pressable, StyleSheet } from "react-native";
 export default function BottomNav({ }) {
   return (
     <View style={styles.bottomNav}>
-      <Pressable onPress={() => router.push("/agenda")}>
+      <Pressable onPress={() => router.push("/screens/lembreteScreens/LembreteScreen")}>
         <Image source={require("../../../assets/images/home/NavBarCalendar.png")} />
       </Pressable>
       <Pressable onPress={() => router.push("/screens/servicoScreens/ServicoPetScreen")}>
