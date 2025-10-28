@@ -14,6 +14,7 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import VerifyCode from "./components/auth/VerifyCode.jsx";
 import ResetPassword from "./components/auth/ResetPassword.jsx";
 import EditProfilePage from "./pages/EditProfilePage.jsx";
+import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
 const router = createBrowserRouter([
@@ -25,36 +26,41 @@ const router = createBrowserRouter([
   { path: "/verify-code", element: <VerifyCode /> },
   { path: "/reset-password", element: <ResetPassword /> },
   {
-    path: "/homePage",
-    element: (
-      <LayoutWrapper>
-        <HomePage />
-      </LayoutWrapper>
-    ),
-  },
-  {
-    path: "/agenda",
-    element: (
-      <LayoutWrapper>
-        <AgendaPage />
-      </LayoutWrapper>
-    ),
-  },
-  {
-    path: "/profile",
-    element: (
-      <LayoutWrapper>
-        <ProfilePage />
-      </LayoutWrapper>
-    ),
-  },
-  {
-    path: "/edit-profile",
-    element: (
-      <LayoutWrapper>
-        <EditProfilePage />
-      </LayoutWrapper>
-    ),
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/homePage",
+        element: (
+          <LayoutWrapper>
+            <HomePage />
+          </LayoutWrapper>
+        ),
+      },
+      {
+        path: "/agenda",
+        element: (
+          <LayoutWrapper>
+            <AgendaPage />
+          </LayoutWrapper>
+        ),
+      },
+      {
+        path: "/profile",
+        element: (
+          <LayoutWrapper>
+            <ProfilePage />
+          </LayoutWrapper>
+        ),
+      },
+      {
+        path: "/edit-profile",
+        element: (
+          <LayoutWrapper>
+            <EditProfilePage />
+          </LayoutWrapper>
+        ),
+      },
+    ],
   },
 ]);
 
