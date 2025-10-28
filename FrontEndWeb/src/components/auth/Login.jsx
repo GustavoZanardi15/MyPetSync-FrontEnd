@@ -7,22 +7,26 @@ import { Link, useNavigate } from "react-router-dom";
 
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
+
 const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", senha: "" });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
     if (error) setError(null);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
     try {
-      await login(formData.email, formData.password);
+      await login(formData.email, formData.senha);
       navigate("/homePage", { replace: true });
     } catch (err) {
       setError(err.message);
@@ -71,8 +75,8 @@ const Login = () => {
               Icon={VscLock}
               type="password"
               placeholder="Senha"
-              name="password"
-              value={formData.password}
+              name="senha"
+              value={formData.senha}
               onChange={handleInputChange}
             />
             <p className="text-sm text-gray-500 font-semibold text-left pt-2">
@@ -84,7 +88,7 @@ const Login = () => {
               </Link>
             </p>
             {error && (
-              <p className="text-red-500 font-semibold text-sm text-center">
+              <p className="text-red-500 font-semibold text-sm text-center whitespace-pre-line">
                 {error}
               </p>
             )}

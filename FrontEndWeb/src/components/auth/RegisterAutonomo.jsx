@@ -8,9 +8,7 @@ import { signup } from "../../services/authService";
 
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
-
 const AUTONOMO_SERVICES = ["Pet Sistter", "Veterinário Autônomo", "Adestrador"];
-
 const RegisterAutonomo = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -18,7 +16,8 @@ const RegisterAutonomo = () => {
     name: "",
     document: "",
     service: "",
-    role: "PROFESSIONAL_AUTONOMO",
+    role: "provider",
+    providerType: "autonomo",
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,12 +34,21 @@ const RegisterAutonomo = () => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
-
+    const mappedData = {
+      nome: formData.name,
+      email: formData.email,
+      senha: formData.password,
+      tipo_usuario: formData.role,
+      type: formData.providerType,
+      cpf: formData.document,
+      service: formData.service,
+    };
     try {
-      await signup(formData);
-      navigate("/home");
+      await signup(mappedData);
+      navigate("/login");
     } catch (err) {
-      setError(err.message);
+      const errorMessage = err.response?.data?.message || err.message;
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
