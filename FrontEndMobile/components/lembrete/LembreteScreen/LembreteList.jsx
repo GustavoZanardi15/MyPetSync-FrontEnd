@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, StatusBar } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function LembretesList({ lembretes }) {
@@ -9,13 +9,8 @@ export default function LembretesList({ lembretes }) {
     return acc;
   }, {});
 
-  const paddingTop = Platform.OS === "android" ? StatusBar.currentHeight + 20 : 50;
-
   return (
-    <ScrollView
-      contentContainerStyle={[styles.scrollContent, { paddingTop }]}
-      showsVerticalScrollIndicator={false}
-    >
+    <View style={styles.container}>
       {Object.entries(lembretesAgrupados).length > 0 ? (
         Object.entries(lembretesAgrupados).map(([horaPrincipal, lembretesDoGrupo]) => (
           <View key={horaPrincipal} style={styles.horaGroup}>
@@ -42,14 +37,13 @@ export default function LembretesList({ lembretes }) {
       ) : (
         <Text style={styles.semLembretes}>Nenhum lembrete neste dia</Text>
       )}
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContent: {
+  container: {
     paddingHorizontal: 20,
-    paddingBottom: 140,
   },
   horaGroup: {
     marginBottom: 20,
@@ -107,7 +101,7 @@ const styles = StyleSheet.create({
   semLembretes: {
     textAlign: "center",
     color: "#8E8E8E",
-    marginTop: 30,
+    marginTop: 160,
     fontSize: 14,
   },
 });
