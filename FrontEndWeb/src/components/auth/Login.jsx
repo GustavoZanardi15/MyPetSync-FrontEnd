@@ -25,7 +25,8 @@ const Login = () => {
       await login(formData.email, formData.password);
       navigate("/homePage", { replace: true });
     } catch (err) {
-      setError(err.message);
+      const errorMessage = err.response?.data?.message || err.message;
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
