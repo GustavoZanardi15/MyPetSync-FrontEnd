@@ -1,13 +1,16 @@
 import React from "react";
 import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 export default function LembretesSection({ reminders }) {
   return (
     <View style={{ marginTop: 40 }}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Lembretes</Text>
+        <Pressable onPress={() => router.push("/screens/lembreteScreens/LembreteScreen")}>
         <Text style={styles.verTudo}>Ver tudo</Text>
+        </Pressable>
       </View>
 
       <ScrollView
