@@ -53,7 +53,7 @@ const RegisterCompany = () => {
   };
   try {
    await signup(mappedData);
-   navigate("/home");
+   navigate("/login");
   } catch (err) {
    setError(err.message);
   } finally {
