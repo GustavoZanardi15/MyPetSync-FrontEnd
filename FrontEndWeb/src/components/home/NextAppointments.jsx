@@ -1,36 +1,29 @@
+import React, { useState, useEffect } from "react";
 import AppointmentItem from "./AppointmentItem";
-
-const mockAppointments = [
-  {
-    id: 1,
-    petName: "Rex",
-    tutorName: "Ana Silva",
-    date: "25/08/2025",
-    time: "09:00",
-    phone: "(11) 99999-1111",
-    status: "Confirmado",
-  },
-  {
-    id: 2,
-    petName: "Luna",
-    tutorName: "João Santos",
-    date: "25/08/2025",
-    time: "16:00",
-    phone: "(11) 99999-2222",
-    status: "Agendado",
-  },
-  {
-    id: 3,
-    petName: "Buddy",
-    tutorName: "Ana Costa",
-    date: "28/08/2025",
-    time: "10:00",
-    phone: "(11) 99999-3333",
-    status: "Confirmado",
-  },
-];
+import { fetchNextAppointments } from "../../services/appointmentService";
 
 const NextAppointments = () => {
+  const [appointments, setAppointments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const loadAppointments = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchNextAppointments();
+        setAppointments(data);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        setAppointments([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadAppointments();
+  }, []);
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <div className="flex justify-between items-end mb-4 border-b pb-3 border-gray-100">
@@ -45,7 +38,22 @@ const NextAppointments = () => {
         </a>
       </div>
       <div className="flex flex-col space-y-3">
-        {mockAppointments.map((appointment) => (
+        {isLoading && (
+          <p className="text-center text-gray-500">
+            Carregando agendamentos...
+          </p>
+        )}
+        {error && (
+          <p className="text-center text-red-600 font-semibold">
+            🚨 Erro: {error}
+          </p>
+        )}
+        {!isLoading && appointments.length === 0 && !error && (
+          <p className="text-center text-gray-500">
+            Nenhum agendamento futuro encontrado.
+          </p>
+        )}
+        {appointments.map((appointment) => (
           <AppointmentItem
             key={appointment.id}
             petName={appointment.petName}
