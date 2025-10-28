@@ -35,7 +35,7 @@ const ResetPassword = () => {
         <div className="w-full max-w-sm flex flex-col h-full mx-auto p-1 pt-0">
           <div className="flex flex-col justify-start w-full h-full">
             <div className="flex flex-col items-start justify-end w-full mt-auto">
-              <h2 className="text-3xl text-[#003637] font-bold mb-2 text-center w-full">
+              <h2 className="text-3xl text-[#003637] font-bold mb-1 text-center w-full">
                 Defina sua nova senha
               </h2>
               <form className="w-full space-y-3" onSubmit={handleSubmit}>
@@ -87,7 +87,7 @@ const ResetPassword = () => {
                 </button>
               </form>
             </div>
-            <div className="w-full flex justify-end pt-4">
+            <div className="w-full flex justify-end pt-4 mb-1">
               <Link
                 to="/login"
                 className="text-sm font-semibold hover:underline flex items-center text-[#003637]"

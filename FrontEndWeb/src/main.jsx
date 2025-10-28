@@ -14,7 +14,7 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import VerifyCode from "./components/auth/VerifyCode.jsx";
 import ResetPassword from "./components/auth/ResetPassword.jsx";
 import EditProfilePage from "./pages/EditProfilePage.jsx";
-import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+/*import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";*/
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
 const router = createBrowserRouter([
@@ -26,7 +26,7 @@ const router = createBrowserRouter([
   { path: "/verify-code", element: <VerifyCode /> },
   { path: "/reset-password", element: <ResetPassword /> },
   {
-    element: <ProtectedRoute />,
+    /*element: <ProtectedRoute />,*/
     children: [
       {
         path: "/homePage",
