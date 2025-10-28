@@ -1,13 +1,16 @@
 import React from "react";
-import { View, Text, ScrollView, Image, StyleSheet } from "react-native";
+import { View, Text, ScrollView, Image, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 export default function VeterinariosSection({ vets }) {
   return (
     <View style={{ marginTop: 40 }}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Médicos Veterinários</Text>
+        <Pressable onPress={() => router.push("/screens/servicoScreens/ServicoVetScreen")}>
         <Text style={styles.verTudo}>Ver tudo</Text>
+        </Pressable>
       </View>
 
       <ScrollView
