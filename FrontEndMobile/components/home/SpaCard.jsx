@@ -15,7 +15,7 @@ export default function SpaCard() {
 
         <Pressable
           style={styles.spaButton}
-          onPress={() => router.push("/screens/agendaPet/AgendaScreen")}
+          onPress={() => router.push("/screens/servicoScreens/ServicoPetScreen")}
         >
           <Text style={styles.spaButtonText}>Agende agora</Text>
         </Pressable>
