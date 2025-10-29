@@ -20,7 +20,7 @@ export default function CadastroScreens() {
             <View style={styles.tabs}>
                 <Pressable onPress={() => {
                     setAba("entrar");
-                    router.push("LoginScreen");
+                    router.push("/screens/telaInicialScreens/LoginScreen");
                 }}>
                     <Text style={[styles.tabText, aba === "entrar" && styles.activeTab]}>Entrar</Text>
                 </Pressable>
