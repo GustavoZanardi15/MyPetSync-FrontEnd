@@ -1,10 +1,10 @@
 import React from "react";
-import { View, Text, Pressable, Image, StyleSheet } from "react-native";
+import { View, Text, Pressable, Image, StyleSheet, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router"; 
+import { useRouter } from "expo-router";
 
-export default function BottomActions({ onPress }) {
-    const router = useRouter(); 
+export default function BottomActions({ onRegister, isLoading }) {
+    const router = useRouter();
 
     return (
         <View style={styles.bottomButtonsContainer}>
@@ -13,19 +13,32 @@ export default function BottomActions({ onPress }) {
                     <Pressable style={styles.socialButton}>
                         <Ionicons name="logo-apple" size={33.6} color={"#2F8B88"} />
                     </Pressable>
+
                     <Pressable style={styles.socialButton}>
-                        <Image 
-                            source={require("../../../assets/images/telaInicial/IconGoogle.png")} 
-                            style={styles.logoGoogle} 
+                        <Image
+                            source={require("../../../assets/images/telaInicial/IconGoogle.png")}
+                            style={styles.logoGoogle}
                         />
                     </Pressable>
                 </View>
-                <Pressable style={styles.button} onPress={() => router.push("/screens/telaInicialScreens/LoginScreen")}>
-                    <Text style={styles.buttonText}>Criar Conta</Text>
+
+                <Pressable
+                    style={[styles.button, isLoading && styles.buttonDisabled]}
+                    onPress={onRegister} 
+                    disabled={isLoading} 
+                >
+                    {isLoading ? (
+                        <ActivityIndicator color="#fff" />
+                    ) : (
+                        <Text style={styles.buttonText}>Criar Conta</Text>
+                    )}
                 </Pressable>
             </View>
 
-            <Pressable style={styles.loginWrapper} onPress={() => router.push("/screens/telaInicialScreens/LoginScreen")}>
+            <Pressable
+                style={styles.loginWrapper}
+                onPress={() => router.push("/screens/telaInicialScreens/LoginScreen")}
+            >
                 <Text style={styles.loginText}>
                     Já possui uma conta? Faça login
                 </Text>
@@ -36,7 +49,7 @@ export default function BottomActions({ onPress }) {
 
 const styles = StyleSheet.create({
     bottomButtonsContainer: {
-        flex: 1, 
+        flex: 1,
         justifyContent: 'flex-end',
         width: 327,
         paddingBottom: 20,
@@ -71,7 +84,7 @@ const styles = StyleSheet.create({
         height: 33.6,
     },
     button: {
-        backgroundColor: "#2F8B88",
+        backgroundColor: "#2F8B88", 
         height: 56,
         borderRadius: 16,
         justifyContent: "center",
@@ -84,6 +97,10 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 2,
     },
+    buttonDisabled: {
+        opacity: 0.6,
+        backgroundColor: '#a3c3bf', 
+    },
     buttonText: {
         color: "#fff",
         fontSize: 15,
@@ -91,11 +108,11 @@ const styles = StyleSheet.create({
     },
     loginWrapper: {
         marginTop: 16,
-        alignItems: "flex-end",
+        alignItems: "flex-end", 
     },
     loginText: {
         fontSize: 15,
         fontWeight: "regular",
-        color: "#89CFF0",
+        color: "#89CFF0", 
     }
 });
