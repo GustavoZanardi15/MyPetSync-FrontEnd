@@ -1,28 +1,26 @@
-import { router } from "expo-router";
 import React from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 
-export default function RecuperarSenhaForm({ telefone, setTelefone }) {
+export default function RecuperarSenhaForm({ telefone, setTelefone, onSubmit }) {
     return (
         <View style={styles.content}>
-            
+
             <View style={styles.topContent}>
                 <Text style={styles.text}>
-                    {"Digite o número de telefone associado \n"}
-                    {"à sua conta e enviaremos um código \n"}
+                    {"Digite o e-mail associado à sua\n"}
+                    {"conta e enviaremos um código \n"}
                     {"para redefinir sua senha"}
                 </Text>
 
                 <TextInput
                     style={styles.input}
-                    placeholder="Número de celular"
-                    keyboardType="phone-pad"
+                    placeholder="E-mail"
                     value={telefone}
                     onChangeText={setTelefone}
                     placeholderTextColor="#A0A0A0"
                 />
             </View>
-            <Pressable style={styles.button} onPress={() => {router.push("/screens/telaInicialScreens/VerificacaoScreen")}}>
+            <Pressable style={styles.button} onPress={onSubmit}>
                 <Text style={styles.buttonText}>Enviar</Text>
             </Pressable>
 
@@ -35,14 +33,14 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 24,
         alignItems: "center",
-        paddingTop: 40, 
+        paddingTop: 40,
         width: "100%",
-        justifyContent: "space-between", 
+        justifyContent: "space-between",
         paddingBottom: 20,
     },
     topContent: {
         alignItems: "center",
-        width: "100%", 
+        width: "100%",
     },
     text: {
         fontSize: 18,
@@ -55,12 +53,12 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 56,
         backgroundColor: "#fff",
-        color: "#2F8B88", 
+        color: "#2F8B88",
         borderRadius: 16,
         paddingHorizontal: 15,
         fontSize: 15,
         fontWeight: "bold",
-        maxWidth: 327, 
+        maxWidth: 327,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
@@ -68,7 +66,7 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     button: {
-        backgroundColor: "#2F8B88", 
+        backgroundColor: "#2F8B88",
         height: 56,
         borderRadius: 16,
         justifyContent: "center",
@@ -82,10 +80,10 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     buttonDisabled: {
-        backgroundColor: "#A0A0A0", 
+        backgroundColor: "#A0A0A0",
     },
     buttonText: {
-        color: "#fff", 
+        color: "#fff",
         fontSize: 15,
         fontWeight: "bold"
     }
