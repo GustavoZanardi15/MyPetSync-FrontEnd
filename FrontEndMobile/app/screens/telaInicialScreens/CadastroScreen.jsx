@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
 import { useRouter } from "expo-router";
+import api from "../../../src/service/api";
 import CadastroHeader from "../../../components/telaInicial/cadastro/CadastroHeader";
 import CadastroForm from "../../../components/telaInicial/cadastro/CadastroForm";
 import BottomActions from "../../../components/telaInicial/cadastro/BottomActions";
+
 
 export default function CadastroScreens() {
     const [aba, setAba] = useState("novaConta");
@@ -13,6 +15,54 @@ export default function CadastroScreens() {
     const [email, setEmail] = useState("");
     const [celular, setCelular] = useState("");
     const [senha, setSenha] = useState("");
+
+    const [loading, setLoading] = useState(false);
+
+    const handleRegister = async () => {
+        setLoading(true);
+
+        if (!nome || !email || !celular || !senha) {
+            Alert.alert("Erro", "Preencha todos os campos.");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const response = await api.post('/auth/signup', {
+                nome: nome,           
+                email: email,
+                telefone: celular,    
+                senha: senha,         
+                tipo_usuario: 'tutor'
+            });
+
+            console.log('Cadastro Sucesso:', response.data);
+            Alert.alert(
+                "Sucesso!",
+                "Sua conta foi criada! Faça login para continuar.",
+                [{
+                    text: "Fazer Login",
+                    onPress: () => router.replace("/screens/telaInicialScreens/LoginScreen")
+                }]
+            );
+
+            setNome('');
+            setEmail('');
+            setCelular('');
+            setSenha('');
+
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Erro ao tentar cadastrar. Verifique a conexão ou tente um e-mail diferente.';
+            console.error('Erro de Cadastro:', errorMessage);
+
+            const displayMessage = Array.isArray(errorMessage) ? errorMessage.join('\n') : errorMessage;
+
+            Alert.alert("Erro no Cadastro", displayMessage);
+
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <View style={styles.fullScreen}>
@@ -31,16 +81,21 @@ export default function CadastroScreens() {
 
             <View style={styles.contentContainer}>
                 <View style={styles.formWrapper}>
-                <CadastroHeader />
+                    <CadastroHeader />
                 </View>
-                
-                    <CadastroForm
-                        nome={nome} setNome={setNome}
-                        email={email} setEmail={setEmail}
-                        celular={celular} setCelular={setCelular}
-                        senha={senha} setSenha={setSenha}
-                    />
-                <BottomActions />
+
+                <CadastroForm
+                    nome={nome} setNome={setNome}
+                    email={email} setEmail={setEmail}
+                    celular={celular} setCelular={setCelular}
+                    senha={senha} setSenha={setSenha}
+                />
+
+                <BottomActions
+                    onRegister={handleRegister}
+                    isLoading={loading}
+                    router={router}
+                />
             </View>
         </View>
     );
