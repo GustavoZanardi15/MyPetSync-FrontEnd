@@ -6,6 +6,7 @@ export const signup = async (userData) => {
     const { token, user } = response.data;
     if (token) {
       localStorage.setItem("myPetSyncToken", token);
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
     return user;
   } catch (error) {
@@ -26,6 +27,7 @@ export const login = async (email, senha) => {
     const { token, user } = response.data;
     if (token) {
       localStorage.setItem("myPetSyncToken", token);
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
     return user;
   } catch (error) {
@@ -60,4 +62,14 @@ export const verifyResetCode = async (code, email) => {
     const response = await api.post("/auth/verify-code", { code, email });
     return response.data;
   } catch (error) {}
+};
+
+export const isAuthenticated = () => {
+  const token = localStorage.getItem("myPetSyncToken");
+  return !!token;
+};
+
+export const logout = () => {
+  localStorage.removeItem("myPetSyncToken");
+  delete api.defaults.headers.common["Authorization"];
 };

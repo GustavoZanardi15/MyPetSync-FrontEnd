@@ -16,8 +16,8 @@ const AuthSidebar = ({
       <div className="flex flex-col items-center text-center h-full">
         <div className="w-full flex flex-col items-center">
           <div className="area-conteudo-topo w-full"></div>
-          <div className="mb-8 md:mb-10 text-white">
-            <div className="mb-8 md:mb-10">
+          <div className="mb-6 md:mb-8 text-white">
+            <div className="mb-6 md:mb-8">
               <p className="text-4xl text-[#003637] font-bold">Portal</p>
               <h1 className="text-4xl text-[#003637] font-bold">
                 Prestador de Serviço
@@ -26,7 +26,7 @@ const AuthSidebar = ({
             <img
               src={Logo}
               alt="Logo"
-              className="w-44 h-48 mb-4 md:mb-4 mx-auto"
+              className="w-44 h-48 mb-4 md:mb-2 mx-auto"
             />
           </div>
         </div>
