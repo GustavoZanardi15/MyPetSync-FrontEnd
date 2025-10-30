@@ -2,10 +2,10 @@ import { router } from "expo-router";
 import React, { useRef } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, Keyboard } from "react-native";
 
-const CODE_LENGTH = 5; 
+const CODE_LENGTH = 6;
 
-export default function VerificacaoForm({ code, setCode }) {
-  const inputs = useRef([]); 
+export default function VerificacaoForm({ code, setCode, userEmail, errorMessage }) {
+  const inputs = useRef([]);
 
   const setInputRef = (el, index) => {
     inputs.current[index] = el;
@@ -34,7 +34,9 @@ export default function VerificacaoForm({ code, setCode }) {
   return (
     <View style={styles.content}>
       <Text style={styles.text}>{"Insira o código enviado"}</Text>
-      
+
+      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+
       <View style={styles.codeInputContainer}>
         {[...Array(CODE_LENGTH)].map((_, index) => (
           <TextInput
@@ -59,7 +61,7 @@ export default function VerificacaoForm({ code, setCode }) {
 }
 
 const styles = StyleSheet.create({
-  content: {
+   content: {
     paddingHorizontal: 24,
     alignItems: "center",
     paddingTop: 40,
@@ -74,6 +76,20 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     width: "100%",
     maxWidth: 327,
+  },
+  emailText: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#2F8B88",
+    textAlign: "center",
+    marginBottom: 30, 
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginBottom: 10,
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   codeInputContainer: {
     flexDirection: "row",
