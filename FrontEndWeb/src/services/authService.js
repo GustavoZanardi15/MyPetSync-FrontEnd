@@ -45,7 +45,7 @@ export const login = async (email, senha) => {
 
 export const requestPasswordReset = async (email) => {
   try {
-    const response = await api.post("/auth/esqueci-senha", { email }); // ROTA CORRIGIDA
+    const response = await api.post("/auth/esqueci-senha", { email });
     return response.data;
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
@@ -74,8 +74,7 @@ export const verifyResetCode = async (code, email) => {
 export const resetPassword = async (email, code, newPassword) => {
   try {
     const response = await api.post("/auth/reset-password", {
-      email,
-      token: code,
+      token: code, // CORREÇÃO: Email removido, envia apenas o código como token
       newPassword,
     });
     return response.data;
