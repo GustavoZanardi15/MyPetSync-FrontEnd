@@ -15,6 +15,7 @@ import VerifyCode from "./components/auth/VerifyCode.jsx";
 import ResetPassword from "./components/auth/ResetPassword.jsx";
 import EditProfilePage from "./pages/EditProfilePage.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
 const router = createBrowserRouter([
@@ -66,6 +67,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>
 );

@@ -4,6 +4,7 @@ import { VscLock, VscMail } from "react-icons/vsc";
 import InputWithIcon from "../../components/common/InputWithIcon";
 import AuthSidebar from "./AuthSidebar";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const COLOR_TEAL = "#058789";
 const COLOR_BUTTON_BG = "#003637";
@@ -13,6 +14,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { loginContext } = useAuth();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,6 +29,7 @@ const Login = () => {
 
     try {
       await login(formData.email, formData.senha);
+      loginContext();
       navigate("/homePage", { replace: true });
     } catch (err) {
       setError(err.message);
