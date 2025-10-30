@@ -1,20 +1,9 @@
-// Arquivo: VerificacaoScreen.js
-
 import React, { useState } from "react"
-import {
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  Alert
-} from "react-native"
+import { View, StyleSheet, KeyboardAvoidingView, Platform, Alert } from "react-native"
 import { useLocalSearchParams, router } from "expo-router";
 import VerificacaoHeader from "../../../components/telaInicial/verificacao/VerificacaoHeader"
 import VerificacaoForm from "../../../components/telaInicial/verificacao/VerificacaoForm"
 import VerificacaoBottomAction from "../../../components/telaInicial/verificacao/BottomActions"
-
-// IMPORTANTE: Use a instância 'api' que já tem a baseURL e interceptors
-// Ajuste o caminho se seu arquivo 'api.js' estiver em outro lugar.
 import api from "../../../src/service/api";
 
 const CODE_LENGTH = 6;
