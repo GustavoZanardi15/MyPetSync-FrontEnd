@@ -4,6 +4,7 @@ import { VscLock } from "react-icons/vsc";
 import InputWithIcon from "../../components/common/InputWithIcon";
 import AuthSidebar from "./AuthSidebar";
 import DOG_AND_CAT_IMAGE from "../../assets/dogAndCat.png";
+import { verifyResetCode } from "../../services/authService";
 
 const COLOR_BUTTON_BG = "#003637";
 const VerifyCode = () => {
@@ -14,6 +15,7 @@ const VerifyCode = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const handleInputChange = (e) => {
     setCode(e.target.value);
     if (error) setError(null);
@@ -25,8 +27,10 @@ const VerifyCode = () => {
     setError(null);
     setSuccess(null);
     setIsLoading(true);
+
     try {
-      console.log(`Verificando código: ${code} para o e-mail: ${email}`);
+      await verifyResetCode(code, email);
+
       setSuccess(
         "Código verificado! Redirecionando para redefinição de senha..."
       );

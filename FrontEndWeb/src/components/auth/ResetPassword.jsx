@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { VscLock } from "react-icons/vsc";
 import InputWithIcon from "../../components/common/InputWithIcon";
 import AuthSidebar from "./AuthSidebar";
 import DOG_AND_CAT_IMAGE from "../../assets/dogAndCat.png";
+import { resetPassword } from "../../services/authService";
 
 const COLOR_BUTTON_BG = "#003637";
 const ResetPassword = () => {
@@ -13,6 +14,11 @@ const ResetPassword = () => {
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const email = location.state?.email;
+  const code = location.state?.code;
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "password") {
@@ -23,9 +29,51 @@ const ResetPassword = () => {
     if (error) setError(null);
     if (success) setSuccess(null);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    if (password.length < 6) {
+      setError("A senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+    if (!email || !code) {
+      setError(
+        "Informações de redefinição incompletas. Tente novamente a recuperação."
+      );
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await resetPassword(email, code, password);
+
+      setSuccess(
+        "Senha redefinida com sucesso! Redirecionando para o Login..."
+      );
+      setPassword("");
+      setConfirmPassword("");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    } catch (err) {
+      setError(
+        err.message ||
+          "Falha ao redefinir senha. Verifique o código e tente novamente."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
+
   return (
     <div className="flex w-full min-h-screen overflow-hidden bg-white">
       <AuthSidebar
