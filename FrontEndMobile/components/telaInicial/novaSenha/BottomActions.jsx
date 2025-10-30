@@ -1,12 +1,19 @@
-import { router } from "expo-router";
 import React from "react";
-import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
+import { View, Text, Pressable, StyleSheet, Platform, ActivityIndicator } from "react-native";
 
-export default function BottomActions({ }) {
+export default function BottomActions({ onPress, isLoading, isDisabled }) {
   return (
     <View style={styles.container}>
-      <Pressable style={styles.button} onPress={() => {router.push("/screens/telaInicialScreens/SenhaAlteradaScreen")}}>
-        <Text style={styles.buttonText}>Alterar senha</Text>
+      <Pressable
+        style={[styles.button, isDisabled && styles.buttonDisabled]}
+        onPress={onPress} 
+        disabled={isDisabled} 
+      >
+        {isLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Alterar senha</Text>
+        )}
       </Pressable>
     </View>
   );
@@ -32,6 +39,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  buttonDisabled: {
+    backgroundColor: "#A0D8D6", 
   },
   buttonText: {
     color: "#fff",
