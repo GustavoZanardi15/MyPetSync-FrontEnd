@@ -73,7 +73,7 @@ export default function VerificacaoScreen() {
         <VerificacaoForm
           code={codeArray}
           setCode={setCodeArray}
-          userEmail={userEmail}
+          userEmail={userEmail} 
           errorMessage={errorMessage}
         />
         <VerificacaoBottomAction

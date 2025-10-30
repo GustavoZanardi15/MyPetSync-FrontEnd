@@ -14,7 +14,7 @@ export default function VerificacaoBottomAction({ onPress, isLoading, isDisabled
                 ) : (
                     <Text style={styles.buttonText}>Próximo</Text>
                 )}
-            </Pressable>
+            </Pressable> 
         </View>
     );
 }

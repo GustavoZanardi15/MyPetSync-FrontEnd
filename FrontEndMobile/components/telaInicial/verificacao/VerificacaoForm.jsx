@@ -9,7 +9,7 @@ export default function VerificacaoForm({ code, setCode, userEmail, errorMessage
 
   const setInputRef = (el, index) => {
     inputs.current[index] = el;
-  };
+  }; 
 
   const handleChangeText = (text, index) => {
     const newCode = [...code];
