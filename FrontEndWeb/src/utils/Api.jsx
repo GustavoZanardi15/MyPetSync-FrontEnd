@@ -9,8 +9,6 @@ const api = axios.create({
   },
 });
 
-// 🚨 CORREÇÃO ESSENCIAL: Tenta carregar o token imediatamente na inicialização
-// Isso garante que requisições assíncronas ao carregar a página já tenham o token
 const initialToken = localStorage.getItem("myPetSyncToken");
 if (initialToken) {
   api.defaults.headers.common["Authorization"] = `Bearer ${initialToken}`;
@@ -18,7 +16,6 @@ if (initialToken) {
 
 api.interceptors.request.use(
   (config) => {
-    // O interceptor garante que requisições enviadas após o login (sem refresh) também recebam o token
     const token = localStorage.getItem("myPetSyncToken");
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -33,11 +30,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Limpa o token se o servidor rejeitar a requisição por não autorizado (401)
     if (error.response?.status === 401) {
       localStorage.removeItem("myPetSyncToken");
       delete api.defaults.headers.common["Authorization"];
-      // Se o 401 persistir, adicione aqui o código para forçar um redirecionamento para /login
     }
     return Promise.reject(error);
   }
