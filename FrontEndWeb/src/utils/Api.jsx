@@ -19,7 +19,12 @@ api.interceptors.request.use(
     const token = localStorage.getItem("myPetSyncToken");
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
-    }
+    } // LINHAS DE DEBUGGING
+    console.log("-> Requisitando URL:", config.url);
+    console.log(
+      "-> Cabeçalho Auth:",
+      config.headers.Authorization ? "PRESENTE" : "AUSENTE"
+    ); // FIM DO DEBUGGING
     return config;
   },
   (error) => {
