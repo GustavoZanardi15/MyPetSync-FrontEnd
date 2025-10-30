@@ -74,7 +74,7 @@ export const verifyResetCode = async (code, email) => {
 export const resetPassword = async (email, code, newPassword) => {
   try {
     const response = await api.post("/auth/reset-password", {
-      token: code, // CORREÇÃO: Email removido, envia apenas o código como token
+      token: code,
       newPassword,
     });
     return response.data;
