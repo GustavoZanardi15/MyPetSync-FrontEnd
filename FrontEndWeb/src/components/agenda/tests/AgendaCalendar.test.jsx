@@ -18,6 +18,13 @@ describe('AgendaCalendar', () => {
     });
 
 
+    it('deve renderizar 7 dias por semana', () => {
+        render(<AgendaCalendar />);
+        const dias = screen.getAllByText(/^[0-9]+$/); 
+        expect(dias.length).toBe(7);
+    })
+
+
     it('deve exibir os nomes dos dias da semana em português', () => {
         render(<AgendaCalendar />);
         const dias = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
@@ -62,6 +69,20 @@ describe('AgendaCalendar', () => {
     });
 
 
+    it('deve mudar a semana ao clicar no botão de semana anterior', () => {
+        render(<AgendaCalendar />);
+        const primeiroDiaAntes = screen.getAllByText(/^[0-9]+$/)[0].textContent;
+
+        const botoes = screen.getAllByRole("button");
+        const btnPrev = botoes[0]; 
+
+        fireEvent.click(btnPrev);
+
+        const primeiroDiaDepois = screen.getAllByText(/^[0-9]+$/)[0].textContent;
+        expect(primeiroDiaDepois).not.toEqual(primeiroDiaAntes);
+    });
+
+
     it('deve voltar para hoje ao clicar no botão "Hoje"', () => {
         render(<AgendaCalendar />);
         const botoes = screen.getAllByRole("button");
@@ -73,6 +94,15 @@ describe('AgendaCalendar', () => {
 
         expect(screen.getByText(/de 2024/i)).toBeInTheDocument();
     });
+
+
+    it('deve ter botões acessíveis com rótulos "Anterior", "Hoje" e "Próximo"', () => {
+        render(<AgendaCalendar />);
+        expect(screen.getByRole("button", { name: /anterior/i })).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /hoje/i })).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /próximo/i })).toBeInTheDocument();
+    });
+
 });
 
 describe('Jest', () => {
