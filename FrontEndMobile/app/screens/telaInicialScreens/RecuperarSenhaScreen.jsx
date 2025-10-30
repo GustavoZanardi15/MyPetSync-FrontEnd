@@ -21,7 +21,7 @@ export default function RecuperarSenhaScreen() {
 
         try {
             const response = await api.post('/auth/esqueci-senha', {
-                email: email, // Envia o email correto ao backend
+                email: email, 
             });
 
             console.log('Recuperação Sucesso:', response.data);
