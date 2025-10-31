@@ -4,6 +4,7 @@ import ProfileCard from "../components/profile/ProfileCard";
 import ProfileInfoBlock from "../components/profile/ProfileInfoBlock";
 import { fetchProviderProfile } from "../services/providerService";
 
+// Componentes Auxiliares
 const EditIcon = (props) => (
   <svg
     {...props}
@@ -27,19 +28,47 @@ const StyledDataDisplay = ({ value }) => (
   </div>
 );
 
+// Função de Tradução do Tipo de REGISTRO (para o Card)
+const translateProviderType = (type) => {
+  if (!type) return "Tipo Pendente";
+  const upperCaseType = type.toUpperCase();
+  switch (upperCaseType) {
+    case "COMPANY":
+      return "Empresa";
+    case "AUTONOMO":
+      return "Autônomo";
+    default:
+      return type;
+  }
+};
+
+// Mapeamento dos dados da API para o formato de exibição do componente
 const mapProviderData = (data) => {
   if (!data) return {};
 
-  const address = `${data.street || ""} ${data.number || ""}${
-    data.complement ? `, ${data.complement}` : ""
-  }${data.city ? ` - ${data.city}` : ""}${data.state ? `, ${data.state}` : ""}${
-    data.zipCode ? ` (${data.zipCode})` : ""
-  }`;
+  // 1. TIPO DE REGISTRO (AUTONOMO/EMPRESA) para o Profile Card
+  const registrationType = translateProviderType(data.type);
+
+  // 2. CATEGORIA DE SERVIÇO (CLÍNICA, PET SITTER, etc) -> TESTANDO NOMES DE CAMPO COMUNS
+  const rawServiceCategory =
+    data.service || data.serviceCategory || data.mainService || data.category; // Tentando ler campos comuns
+  const serviceCategory = rawServiceCategory || "Categoria não definida";
+  const displayServiceCategory = serviceCategory.toUpperCase();
+
+  // Lógica para Endereço
+  let address = "Adicionar endereço completo (Rua, Cidade, Estado)";
+  if (data.street && data.number && data.city && data.state) {
+    const complement = data.complement ? `, ${data.complement}` : "";
+    const zipCode = data.zipCode ? ` (${data.zipCode})` : "";
+    address = `${data.street}, ${data.number}${complement} - ${data.city}, ${data.state}${zipCode}`;
+  } else if (data.street && data.city) {
+    address = `${data.street} - ${data.city}, ${data.state || ""}`;
+  }
 
   return {
     profile: {
-      name: data.name || "Nome não informado",
-      category: data.type || "Tipo não informado",
+      name: data.name || "Nome da Empresa Pendente",
+      category: registrationType,
       imageUrl:
         data.profilePictureUrl ||
         "https://placehold.co/128x128/FFBD70/ffffff?text=PET",
@@ -50,34 +79,58 @@ const mapProviderData = (data) => {
     basicInfo: [
       {
         label: "Nome da Empresa",
-        value: <StyledDataDisplay value={data.name || "N/A"} />,
+        value: (
+          <StyledDataDisplay
+            value={data.name || "Adicione o nome fantasia ou razão social"}
+          />
+        ),
       },
       {
         label: "Tipo de Serviço",
-        value: <StyledDataDisplay value={data.type || "N/A"} />,
+        value: <StyledDataDisplay value={displayServiceCategory} />,
       },
       {
         label: "CNPJ/CPF",
-        value: <StyledDataDisplay value={data.cnpj || data.cpf || "N/A"} />,
+        value: (
+          <StyledDataDisplay
+            value={
+              data.cnpj ||
+              data.cpf ||
+              "Não informado. Necessário para emissão de nota."
+            }
+          />
+        ),
       },
     ],
     contactInfo: [
       {
         label: "Email",
-        value: <StyledDataDisplay value={data.email || "N/A"} />,
+        value: (
+          <StyledDataDisplay
+            value={data.email || "Adicionar e-mail para contato e notificações"}
+          />
+        ),
       },
       {
         label: "Telefone",
-        value: <StyledDataDisplay value={data.phone || "N/A"} />,
+        value: (
+          <StyledDataDisplay
+            value={data.phone || "Adicione para contato rápido"}
+          />
+        ),
       },
       {
         label: "Endereço",
-        value: <StyledDataDisplay value={address || "N/A"} />,
+        value: <StyledDataDisplay value={address} />,
         fullWidth: true,
       },
       {
         label: "WhatsApp",
-        value: <StyledDataDisplay value={data.whatsapp || "N/A"} />,
+        value: (
+          <StyledDataDisplay
+            value={data.whatsapp || "Adicione WhatsApp para contato imediato"}
+          />
+        ),
       },
     ],
     additionalInfo: [
@@ -85,7 +138,8 @@ const mapProviderData = (data) => {
         label: "Descrição da Empresa",
         value: (
           <div className="p-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-700">
-            {data.description || "Nenhuma descrição fornecida."}
+            {data.description ||
+              "Descreva sua empresa em poucas linhas para atrair e informar clientes."}
           </div>
         ),
         fullWidth: true,
@@ -94,7 +148,12 @@ const mapProviderData = (data) => {
         label: "Horário de Funcionamento",
         value: (
           <div className="space-y-2">
-            <StyledDataDisplay value={data.openingHours || "N/A"} />
+            <StyledDataDisplay
+              value={
+                data.openingHours ||
+                "Horário indisponível. Clientes não podem agendar."
+              }
+            />
           </div>
         ),
       },
@@ -102,7 +161,8 @@ const mapProviderData = (data) => {
         label: "Serviços Oferecidos",
         value: (
           <div className="p-3 rounded-lg bg-teal-50 border border-black text-teal-800 font-medium">
-            {data.servicesOffered?.join(", ") || "Nenhum serviço listado."}
+            {data.servicesOffered?.join(", ") ||
+              "Adicionar serviços (Consulta, Banho, Tosa, etc.)"}
           </div>
         ),
         fullWidth: true,
@@ -115,6 +175,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const [providerData, setProviderData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -128,13 +189,16 @@ const ProfilePage = () => {
     };
     loadProfile();
   }, []);
+
   const mappedData = useMemo(
     () => mapProviderData(providerData),
     [providerData]
   );
+
   const handleEditProfile = () => {
     navigate("/edit-profile");
   };
+
   if (isLoading) {
     return (
       <div className="p-8 text-center text-[#003637] text-xl">
@@ -171,6 +235,7 @@ const ProfilePage = () => {
         </button>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Coluna do Cartão de Perfil */}
         <div className="lg:col-span-1">
           <ProfileCard
             name={mappedData.profile.name}
@@ -181,6 +246,7 @@ const ProfilePage = () => {
             reviewCount={mappedData.profile.reviewCount}
           />
         </div>
+        {/* Colunas de Informações Detalhadas */}
         <div className="lg:col-span-2 space-y-6 ">
           <ProfileInfoBlock
             title="Informações Básicas"
