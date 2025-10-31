@@ -10,20 +10,23 @@ const navItems = [
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     const currentPath = location.pathname;
     if (
       currentPath.startsWith("/agenda") ||
-      currentPath.startsWith("/profile")
+      currentPath.startsWith("/profile") ||
+      currentPath.startsWith("/edit-profile")
     ) {
-      console.log("Saindo da Agenda/Perfil para Home");
-      navigate("/homePage");
+      console.log("Saindo da Área Protegida para Login");
+      navigate("/login");
     } else {
       console.log("Saindo para Login");
       navigate("/login");
     }
   };
+
   return (
     <div className="hidden lg:flex flex-col h-screen w-72 bg-[#A5E5D9] flex-shrink-0">
       <div className="flex items-center gap-8 bg-[#058789] p-8 text-white">
@@ -37,21 +40,27 @@ const Sidebar = () => {
         {navItems.map((item) => {
           let isActive;
           const currentPath = location.pathname;
+
           if (item.path === "/homePage") {
             isActive = currentPath === item.path;
+          } else if (item.path === "/profile") {
+            isActive =
+              currentPath.startsWith("/profile") ||
+              currentPath.startsWith("/edit-profile");
           } else {
             isActive = currentPath.startsWith(item.path);
           }
+
           return (
             <Link
               key={item.name}
               to={item.path}
               className={`flex items-center gap-3 w-full px-4 py-2 rounded-md font-medium text-white transition-all
-  ${
-    isActive
-      ? "bg-[#2BB6A8] shadow-md ring-2 ring-black/20"
-      : "bg-[#058789] hover:bg-[#2BB6A8]"
-  }`}
+                ${
+                  isActive
+                    ? "bg-[#2BB6A8] shadow-md ring-2 ring-black/20"
+                    : "bg-[#058789] hover:bg-[#2BB6A8]"
+                }`}
             >
               <item.icon className="w-5 h-5" /> {item.name}
             </Link>
