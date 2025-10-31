@@ -9,22 +9,14 @@ const api = axios.create({
   },
 });
 
-const initialToken = localStorage.getItem("myPetSyncToken");
-if (initialToken) {
-  api.defaults.headers.common["Authorization"] = `Bearer ${initialToken}`;
-}
-
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("myPetSyncToken");
-    if (token && !config.headers.Authorization) {
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    } // LINHAS DE DEBUGGING
-    console.log("-> Requisitando URL:", config.url);
-    console.log(
-      "-> Cabeçalho Auth:",
-      config.headers.Authorization ? "PRESENTE" : "AUSENTE"
-    ); // FIM DO DEBUGGING
+    } else {
+      delete config.headers.Authorization;
+    }
     return config;
   },
   (error) => {

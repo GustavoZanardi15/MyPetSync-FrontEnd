@@ -21,7 +21,7 @@ export const fetchNextAppointments = async () => {
       params: {
         limit: 5,
         sort: "dateTime",
-        dateFrom: new Date().toISOString(),
+        from: new Date().toISOString(),
         status: "scheduled,confirmed",
         asc: "true",
       },

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { isAuthenticated, logout as apiLogout } from "../services/authService";
-import api from "../utils/Api"; // 🎯 GARANTA QUE ESTE IMPORT ESTEJA AQUI
+import api from "../utils/Api";
 
 const AuthContext = createContext();
 
@@ -10,18 +10,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem("myPetSyncToken");
-      const authStatus = !!token;
+      const authStatus = isAuthenticated();
 
-      if (authStatus) {
-        // 🎯 ESSENCIAL: Garante que o token seja configurado no Axios na inicialização.
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      } else {
+      if (!authStatus) {
         delete api.defaults.headers.common["Authorization"];
       }
 
       setIsLoggedIn(authStatus);
-      setIsLoading(false); // SÓ define como false após o token ser checado/configurado
+      setIsLoading(false);
     };
     checkAuth();
   }, []);

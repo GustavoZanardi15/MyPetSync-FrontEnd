@@ -6,7 +6,6 @@ export const signup = async (userData) => {
     const { token, user } = response.data;
     if (token) {
       localStorage.setItem("myPetSyncToken", token);
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
     return user;
   } catch (error) {
@@ -27,7 +26,6 @@ export const login = async (email, senha) => {
     const { token, user } = response.data;
     if (token) {
       localStorage.setItem("myPetSyncToken", token);
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
     return user;
   } catch (error) {
