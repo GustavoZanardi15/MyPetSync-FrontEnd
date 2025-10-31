@@ -59,6 +59,7 @@ const EditableSchedule = ({ value, name, onChange }) => {
     </div>
   );
 };
+
 const translateProviderType = (type) => {
   if (!type) return "Tipo Pendente";
   const upperCaseType = type.toUpperCase();
@@ -71,6 +72,7 @@ const translateProviderType = (type) => {
       return type;
   }
 };
+
 const mapApiDataToForm = (data) => {
   if (!data) return null;
 
@@ -79,6 +81,14 @@ const mapApiDataToForm = (data) => {
     data.street && data.number ? `${data.street}, ${data.number}` : "";
   const cityAndState =
     data.city && data.state ? `${data.city}, ${data.state}` : "";
+  let openingHoursArray = [];
+  if (Array.isArray(data.openingHours)) {
+    openingHoursArray = data.openingHours;
+  } else if (typeof data.openingHours === "string" && data.openingHours) {
+    openingHoursArray = [data.openingHours];
+  } else {
+    openingHoursArray = ["Segunda a Sexta: 8h às 18h.", "Sábado: 8h às 12h."];
+  }
 
   return {
     profile: {
@@ -106,6 +116,13 @@ const mapApiDataToForm = (data) => {
         type: "email",
         renderAs: "input",
         placeholder: "Ex: contato@suaempresa.com",
+      },
+      {
+        label: "Telefone",
+        value: data.phone || "",
+        name: "phone",
+        renderAs: "input",
+        placeholder: "Ex: (11) 99999-9999",
       },
       {
         label: "WhatsApp",
@@ -140,6 +157,12 @@ const mapApiDataToForm = (data) => {
         placeholder: "Escreva uma breve descrição da sua empresa...",
       },
       {
+        label: "Horário de Funcionamento",
+        value: openingHoursArray,
+        name: "openingHours",
+        renderAs: "schedule",
+      },
+      {
         label: "Serviços",
         value: data.servicesOffered?.join(", ") || "",
         name: "servicesOffered",
@@ -159,6 +182,7 @@ const EditProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -174,12 +198,32 @@ const EditProfilePage = () => {
     };
     loadData();
   }, []);
+
   const handleInputChange = (e, blockType, itemIndex) => {
     const { name, value } = e.target;
     setError(null);
-
     setFormData((prevData) => {
       const newBlock = prevData[blockType].map((item, idx) => {
+        if (
+          item.name === "openingHours" &&
+          item.renderAs === "schedule" &&
+          name.startsWith("openingHours_")
+        ) {
+          const scheduleIndex = parseInt(name.split("_")[1], 10);
+          let newScheduleArray = Array.isArray(item.value)
+            ? [...item.value]
+            : [item.value];
+
+          newScheduleArray[scheduleIndex] = value;
+
+          newScheduleArray = newScheduleArray.filter((s) => s.trim() !== "");
+          if (newScheduleArray.length === 0 && scheduleIndex === 0) {
+            newScheduleArray = [""];
+          }
+
+          return { ...item, value: newScheduleArray };
+        }
+
         if (idx === itemIndex) {
           return { ...item, value: value };
         }
@@ -188,20 +232,16 @@ const EditProfilePage = () => {
       return { ...prevData, [blockType]: newBlock };
     });
   };
+
   const extractApiData = (form) => {
     const data = {};
     const blocks = ["basicInfo", "contactInfo", "additionalInfo"];
-
     const acceptedFields = [
       "name",
       "email",
       "whatsapp",
       "bio",
-      "city",
-      "state",
       "servicesOffered",
-      "street",
-      "number",
     ];
 
     blocks.forEach((blockType) => {
@@ -213,14 +253,7 @@ const EditProfilePage = () => {
         ) {
           return;
         }
-        if (item.name === "streetAndNumber" && item.value) {
-          const parts = item.value.split(",").map((s) => s.trim());
-          data.street = parts[0] || undefined;
-        } else if (item.name === "cityAndState" && item.value) {
-          const parts = item.value.split(",").map((s) => s.trim());
-          data.city = parts[0] || undefined;
-          data.state = parts[1] || undefined;
-        } else if (
+        if (
           item.name &&
           acceptedFields.includes(item.name) &&
           item.value !== null &&
@@ -231,6 +264,7 @@ const EditProfilePage = () => {
         }
       });
     });
+
     if (data.servicesOffered && typeof data.servicesOffered === "string") {
       data.servicesOffered = data.servicesOffered
         .split(",")
@@ -239,9 +273,16 @@ const EditProfilePage = () => {
     } else {
       delete data.servicesOffered;
     }
-    if (!data.city) delete data.city;
-    if (!data.state) delete data.state;
-    if (!data.street) delete data.street;
+
+    delete data.city;
+    delete data.state;
+    delete data.street;
+    delete data.number;
+    delete data.openingHours;
+    delete data.service;
+    delete data.cnpj;
+    delete data.cpf;
+    delete data.phone;
 
     return data;
   };
@@ -263,13 +304,16 @@ const EditProfilePage = () => {
       navigate("/profile");
     } catch (err) {
       const errorResponse = err.response?.data?.message || err.message;
+      const formattedError = Array.isArray(errorResponse)
+        ? errorResponse.join("; ")
+        : errorResponse;
 
       if (err.response?.status === 409) {
         setError(
           err.response.data.message || "Erro de conflito (E-mail já em uso)."
         );
       } else {
-        setError("Erro ao salvar: " + errorResponse);
+        setError("Erro ao salvar: " + formattedError);
       }
     } finally {
       setIsSaving(false);
@@ -290,7 +334,7 @@ const EditProfilePage = () => {
       case "textarea":
         return <EditableTextarea {...commonProps} />;
       case "schedule":
-        return null;
+        return <EditableSchedule {...commonProps} />;
       default:
         return null;
     }
@@ -347,6 +391,11 @@ const EditProfilePage = () => {
           </button>
         </div>
       </div>
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded font-medium">
+          ⚠️ **Erro ao Salvar:** {error}
+        </div>
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <ProfileCard

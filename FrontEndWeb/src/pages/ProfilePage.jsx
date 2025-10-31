@@ -42,16 +42,22 @@ const translateProviderType = (type) => {
 
 const mapProviderData = (data) => {
   if (!data) return {};
+
   const registrationType = translateProviderType(data.type);
   const serviceCategory = data.service || "Adicione o serviço principal";
   const displayServiceCategory = serviceCategory.toUpperCase();
-  let address = "Adicionar endereço completo (Rua, Cidade, Estado)";
-  if (data.street && data.number && data.city && data.state) {
-    const complement = data.complement ? `, ${data.complement}` : "";
-    const zipCode = data.zipCode ? ` (${data.zipCode})` : "";
-    address = `${data.street}, ${data.number}${complement} - ${data.city}, ${data.state}${zipCode}`;
-  } else if (data.street && data.city) {
-    address = `${data.street} - ${data.city}, ${data.state || ""}`;
+
+  const streetAndNumber =
+    data.street && data.number ? `${data.street}, ${data.number}` : "";
+  const cityAndState =
+    data.city && data.state ? `${data.city}, ${data.state}` : "";
+
+  // Correção de exibição: garantir que openingHours seja um array para mapear
+  let openingHoursDisplay = data.openingHours;
+  if (Array.isArray(data.openingHours)) {
+    openingHoursDisplay = data.openingHours.join(" | "); // Junta o array para exibição em uma linha
+  } else if (!openingHoursDisplay) {
+    openingHoursDisplay = "Horário indisponível. Clientes não podem agendar.";
   }
 
   return {
@@ -109,9 +115,20 @@ const mapProviderData = (data) => {
         ),
       },
       {
-        label: "Endereço",
-        value: <StyledDataDisplay value={address} />,
-        fullWidth: true,
+        label: "Rua e Número",
+        value: (
+          <StyledDataDisplay
+            value={streetAndNumber || "Adicionar rua e número"}
+          />
+        ),
+      },
+      {
+        label: "Cidade e Estado",
+        value: (
+          <StyledDataDisplay
+            value={cityAndState || "Adicionar cidade e estado"}
+          />
+        ),
       },
       {
         label: "WhatsApp",
@@ -127,7 +144,7 @@ const mapProviderData = (data) => {
         label: "Descrição da Empresa",
         value: (
           <div className="p-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-700">
-            {data.description ||
+            {data.bio ||
               "Descreva sua empresa em poucas linhas para atrair e informar clientes."}
           </div>
         ),
@@ -138,10 +155,7 @@ const mapProviderData = (data) => {
         value: (
           <div className="space-y-2">
             <StyledDataDisplay
-              value={
-                data.openingHours ||
-                "Horário indisponível. Clientes não podem agendar."
-              }
+              value={openingHoursDisplay} // Usando o valor formatado
             />
           </div>
         ),
