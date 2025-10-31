@@ -4,7 +4,6 @@ import ProfileCard from "../components/profile/ProfileCard";
 import ProfileInfoBlock from "../components/profile/ProfileInfoBlock";
 import { fetchProviderProfile } from "../services/providerService";
 
-// Componentes Auxiliares
 const EditIcon = (props) => (
   <svg
     {...props}
@@ -28,7 +27,6 @@ const StyledDataDisplay = ({ value }) => (
   </div>
 );
 
-// Função de Tradução do Tipo de REGISTRO (para o Card)
 const translateProviderType = (type) => {
   if (!type) return "Tipo Pendente";
   const upperCaseType = type.toUpperCase();
@@ -42,20 +40,14 @@ const translateProviderType = (type) => {
   }
 };
 
-// Mapeamento dos dados da API para o formato de exibição do componente
 const mapProviderData = (data) => {
   if (!data) return {};
 
-  // 1. TIPO DE REGISTRO (AUTONOMO/EMPRESA) para o Profile Card
   const registrationType = translateProviderType(data.type);
-
-  // 2. CATEGORIA DE SERVIÇO (CLÍNICA, PET SITTER, etc) -> TESTANDO NOMES DE CAMPO COMUNS
   const rawServiceCategory =
-    data.service || data.serviceCategory || data.mainService || data.category; // Tentando ler campos comuns
+    data.service || data.serviceCategory || data.mainService || data.category;
   const serviceCategory = rawServiceCategory || "Categoria não definida";
   const displayServiceCategory = serviceCategory.toUpperCase();
-
-  // Lógica para Endereço
   let address = "Adicionar endereço completo (Rua, Cidade, Estado)";
   if (data.street && data.number && data.city && data.state) {
     const complement = data.complement ? `, ${data.complement}` : "";
@@ -235,7 +227,6 @@ const ProfilePage = () => {
         </button>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Coluna do Cartão de Perfil */}
         <div className="lg:col-span-1">
           <ProfileCard
             name={mappedData.profile.name}
@@ -246,7 +237,6 @@ const ProfilePage = () => {
             reviewCount={mappedData.profile.reviewCount}
           />
         </div>
-        {/* Colunas de Informações Detalhadas */}
         <div className="lg:col-span-2 space-y-6 ">
           <ProfileInfoBlock
             title="Informações Básicas"
