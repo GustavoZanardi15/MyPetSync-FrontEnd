@@ -59,26 +59,26 @@ const EditableSchedule = ({ value, name, onChange }) => {
     </div>
   );
 };
-
+const translateProviderType = (type) => {
+  if (!type) return "Tipo Pendente";
+  const upperCaseType = type.toUpperCase();
+  switch (upperCaseType) {
+    case "COMPANY":
+      return "Empresa";
+    case "AUTONOMO":
+      return "Autônomo";
+    default:
+      return type;
+  }
+};
 const mapApiDataToForm = (data) => {
   if (!data) return null;
 
-  const translateProviderType = (type) => {
-    if (!type) return "Tipo Pendente";
-    const upperCaseType = type.toUpperCase();
-    switch (upperCaseType) {
-      case "COMPANY":
-        return "Empresa";
-      case "AUTONOMO":
-        return "Autônomo";
-      default:
-        return type;
-    }
-  };
-
   const serviceCategory = data.service || "Adicionar serviço principal";
-  const addressValue =
+  const streetAndNumber =
     data.street && data.number ? `${data.street}, ${data.number}` : "";
+  const cityAndState =
+    data.city && data.state ? `${data.city}, ${data.state}` : "";
 
   return {
     profile: {
@@ -97,20 +97,6 @@ const mapApiDataToForm = (data) => {
         renderAs: "input",
         placeholder: "Ex: Clínica Veterinária São José",
       },
-      {
-        label: "Tipo de Serviço",
-        value: serviceCategory,
-        name: "service",
-        renderAs: "input",
-        placeholder: "Ex: Pet Sitter, Veterinário Autônomo",
-      },
-      {
-        label: "CNPJ/CPF",
-        value: data.cnpj || data.cpf || "",
-        name: data.cnpj ? "cnpj" : "cpf",
-        renderAs: "input",
-        placeholder: "Ex: 12.345.678/0001-90",
-      },
     ],
     contactInfo: [
       {
@@ -122,27 +108,26 @@ const mapApiDataToForm = (data) => {
         placeholder: "Ex: contato@suaempresa.com",
       },
       {
-        label: "Telefone",
-        value: data.phone || "",
-        name: "phone",
-        renderAs: "input",
-        placeholder: "Ex: (11) 99999-9999",
-      },
-      {
-        label: "Endereço",
-        value: addressValue,
-        name: "address_line1",
-        fullWidth: true,
-        renderAs: "input",
-        placeholder:
-          "Informe seu endereço completo (Ex: Rua, Número, Cidade e Estado)",
-      },
-      {
         label: "WhatsApp",
         value: data.whatsapp || "",
         name: "whatsapp",
         renderAs: "input",
         placeholder: "Ex: (11) 99999-9999",
+      },
+      {
+        label: "Rua e Número",
+        value: streetAndNumber,
+        name: "streetAndNumber",
+        fullWidth: true,
+        renderAs: "input",
+        placeholder: "Rua, Av. e Número",
+      },
+      {
+        label: "Cidade e Estado",
+        value: cityAndState,
+        name: "cityAndState",
+        renderAs: "input",
+        placeholder: "Ex: Maringá, PR",
       },
     ],
     additionalInfo: [
@@ -153,16 +138,6 @@ const mapApiDataToForm = (data) => {
         fullWidth: true,
         renderAs: "textarea",
         placeholder: "Escreva uma breve descrição da sua empresa...",
-      },
-      {
-        label: "Horário de Funcionamento",
-        value: data.openingHours || [
-          "Segunda a Sexta: 8h às 18h.",
-          "Sábado: 8h às 12h.",
-        ],
-        name: "openingHours",
-        renderAs: "schedule",
-        placeholder: "Adicione o horário de funcionamento",
       },
       {
         label: "Serviços",
@@ -217,20 +192,56 @@ const EditProfilePage = () => {
     const data = {};
     const blocks = ["basicInfo", "contactInfo", "additionalInfo"];
 
+    const acceptedFields = [
+      "name",
+      "email",
+      "whatsapp",
+      "bio",
+      "city",
+      "state",
+      "servicesOffered",
+      "street",
+      "number",
+    ];
+
     blocks.forEach((blockType) => {
       form[blockType].forEach((item) => {
-        if (item.name) {
-          if (item.renderAs !== "schedule") {
-            data[item.name] = item.value;
-          }
+        if (
+          item.name === "email" &&
+          initialData &&
+          item.value.toLowerCase() === initialData.email.toLowerCase()
+        ) {
+          return;
+        }
+        if (item.name === "streetAndNumber" && item.value) {
+          const parts = item.value.split(",").map((s) => s.trim());
+          data.street = parts[0] || undefined;
+        } else if (item.name === "cityAndState" && item.value) {
+          const parts = item.value.split(",").map((s) => s.trim());
+          data.city = parts[0] || undefined;
+          data.state = parts[1] || undefined;
+        } else if (
+          item.name &&
+          acceptedFields.includes(item.name) &&
+          item.value !== null &&
+          item.value !== undefined &&
+          item.value !== ""
+        ) {
+          data[item.name] = item.value;
         }
       });
     });
     if (data.servicesOffered && typeof data.servicesOffered === "string") {
       data.servicesOffered = data.servicesOffered
         .split(",")
-        .map((s) => s.trim());
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+    } else {
+      delete data.servicesOffered;
     }
+    if (!data.city) delete data.city;
+    if (!data.state) delete data.state;
+    if (!data.street) delete data.street;
 
     return data;
   };
@@ -251,7 +262,15 @@ const EditProfilePage = () => {
       await updateProviderProfile(dataToSave);
       navigate("/profile");
     } catch (err) {
-      setError(err.message || "Não foi possível salvar as alterações.");
+      const errorResponse = err.response?.data?.message || err.message;
+
+      if (err.response?.status === 409) {
+        setError(
+          err.response.data.message || "Erro de conflito (E-mail já em uso)."
+        );
+      } else {
+        setError("Erro ao salvar: " + errorResponse);
+      }
     } finally {
       setIsSaving(false);
     }
@@ -271,7 +290,7 @@ const EditProfilePage = () => {
       case "textarea":
         return <EditableTextarea {...commonProps} />;
       case "schedule":
-        return <EditableSchedule {...commonProps} />;
+        return null;
       default:
         return null;
     }
