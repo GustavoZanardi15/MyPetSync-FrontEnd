@@ -11,7 +11,7 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
-describe('AgendaCalendar', () => {
+describe('AgendaCalendar Component', () => {
     it('deve renderizar o mês e ano atuais', () => {
         render(<AgendaCalendar />);
         expect(screen.getByText(/maio de 2024/i)).toBeInTheDocument();
