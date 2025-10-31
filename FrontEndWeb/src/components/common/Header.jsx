@@ -1,12 +1,15 @@
 import { VscBell, VscSearch } from "react-icons/vsc";
 import InputWithIcon from "./InputWithIcon";
-
-const clinicData = {
-  name: "Clínica Veterinária São José",
-  email: "saojose@gmail.com",
-};
+import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
+  const { currentUser } = useAuth();
+
+  const displayName = currentUser?.nome || "Carregando...";
+  const displayEmail = currentUser?.email || "usuario@dominio.com";
+  const avatarText = displayName.charAt(0).toUpperCase();
+  const avatarUrl = currentUser?.profilePictureUrl;
+
   return (
     <header className="flex justify-between items-center h-20 px-6 pb-4 pt-4 bg-[#058789] w-full sticky top-0 z-10 text-white ">
       <div className="flex items-center flex-grow max-w-xl w-full mr-8">
@@ -25,15 +28,21 @@ const Header = () => {
         </button>
         <div className="w-px h-8 bg-white/50 mx-2"></div>
         <div className="text-right">
-          <p className="text-sm font-semibold text-white">{clinicData.name}</p>
-          <p className="text-xs text-white/80">{clinicData.email}</p>
+          <p className="text-sm font-semibold text-white">{displayName}</p>
+          <p className="text-xs text-white/80">{displayEmail}</p>
         </div>
         <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-lg font-bold">
-          <img
-            src="/path-to-avatar-dog.png"
-            alt="Avatar"
-            className="w-full h-full object-cover rounded-full"
-          />
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt="Avatar"
+              className="w-full h-full object-cover rounded-full"
+            />
+          ) : (
+            <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
+              {avatarText}
+            </div>
+          )}
         </div>
       </div>
     </header>
