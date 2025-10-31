@@ -7,19 +7,23 @@ const ProfileCard = ({
   reviewCount,
   children,
 }) => {
+  const avatarText = name ? name.charAt(0).toUpperCase() : "P";
+  const isImageValid =
+    imageUrl &&
+    imageUrl !== "https://placehold.co/128x128/FFBD70/ffffff?text=PET";
+
   return (
     <div className="bg-[#058789] p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col items-center text-center h-full">
-      <div className="w-32 h-32 rounded-full bg-orange-400 overflow-hidden mb-4 border-4 border-white shadow-md">
-        <img
-          src={imageUrl}
-          alt={`Logo de ${name}`}
-          onError={(e) => {
-            e.currentTarget.src =
-              "https://placehold.co/128x128/FFBD70/ffffff?text=PET";
-            e.currentTarget.onerror = null;
-          }}
-          className="w-full h-full object-cover"
-        />
+      <div className="w-32 h-32 rounded-full bg-orange-400 overflow-hidden mb-4 border-4 border-white shadow-md flex items-center justify-center">
+        {isImageValid ? (
+          <img
+            src={imageUrl}
+            alt={`Logo de ${name}`}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <span className="text-6xl font-bold text-white">{avatarText}</span>
+        )}
       </div>
       {children}
       <h2 className="text-xl font-bold text-white">{name}</h2>
