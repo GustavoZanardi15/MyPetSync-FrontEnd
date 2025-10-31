@@ -42,11 +42,8 @@ const translateProviderType = (type) => {
 
 const mapProviderData = (data) => {
   if (!data) return {};
-
   const registrationType = translateProviderType(data.type);
-  const rawServiceCategory =
-    data.service || data.serviceCategory || data.mainService || data.category;
-  const serviceCategory = rawServiceCategory || "Categoria não definida";
+  const serviceCategory = data.service || "Adicione o serviço principal";
   const displayServiceCategory = serviceCategory.toUpperCase();
   let address = "Adicionar endereço completo (Rua, Cidade, Estado)";
   if (data.street && data.number && data.city && data.state) {
