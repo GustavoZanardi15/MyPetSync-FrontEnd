@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ProfileCard from "../components/profile/ProfileCard";
 import ProfileInfoBlock from "../components/profile/ProfileInfoBlock";
 import { fetchProviderProfile } from "../services/providerService";
@@ -52,10 +52,9 @@ const mapProviderData = (data) => {
   const cityAndState =
     data.city && data.state ? `${data.city}, ${data.state}` : "";
 
-  // Correção de exibição: garantir que openingHours seja um array para mapear
   let openingHoursDisplay = data.openingHours;
   if (Array.isArray(data.openingHours)) {
-    openingHoursDisplay = data.openingHours.join(" | "); // Junta o array para exibição em uma linha
+    openingHoursDisplay = data.openingHours.join(" | ");
   } else if (!openingHoursDisplay) {
     openingHoursDisplay = "Horário indisponível. Clientes não podem agendar.";
   }
@@ -154,9 +153,7 @@ const mapProviderData = (data) => {
         label: "Horário de Funcionamento",
         value: (
           <div className="space-y-2">
-            <StyledDataDisplay
-              value={openingHoursDisplay} // Usando o valor formatado
-            />
+            <StyledDataDisplay value={openingHoursDisplay} />
           </div>
         ),
       },
@@ -176,22 +173,25 @@ const mapProviderData = (data) => {
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [providerData, setProviderData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const loadProfile = async () => {
+    setIsLoading(true);
+    try {
+      const data = await fetchProviderProfile();
+      setProviderData(data);
+    } catch (error) {
+      console.error("Erro ao carregar perfil do prestador:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const data = await fetchProviderProfile();
-        setProviderData(data);
-      } catch (error) {
-        console.error("Erro ao carregar perfil do prestador:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     loadProfile();
-  }, []);
+  }, [location.key]);
 
   const mappedData = useMemo(
     () => mapProviderData(providerData),

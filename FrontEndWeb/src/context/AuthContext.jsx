@@ -9,20 +9,25 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
-
+  const [refreshKey, setRefreshKey] = useState(0);
   const loadUser = async () => {
     try {
       const user = await fetchCurrentUser();
       setCurrentUser(user);
     } catch (error) {
       console.error("Erro ao carregar dados do usuário:", error);
-      logoutContext();
+      setCurrentUser(null);
     }
+  };
+
+  const forceProfileReload = () => {
+    setRefreshKey((prev) => prev + 1);
   };
 
   useEffect(() => {
     const checkAuth = async () => {
       const authStatus = isAuthenticated();
+
       if (authStatus) {
         await loadUser();
       } else {
@@ -33,7 +38,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoading(false);
     };
     checkAuth();
-  }, []);
+  }, [refreshKey]);
 
   const loginContext = async () => {
     setIsLoggedIn(true);
@@ -52,6 +57,7 @@ export const AuthProvider = ({ children }) => {
     currentUser,
     loginContext,
     logoutContext,
+    forceProfileReload,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

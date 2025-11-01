@@ -6,6 +6,7 @@ import {
   fetchProviderProfile,
   updateProviderProfile,
 } from "../services/providerService";
+import { useAuth } from "../context/AuthContext";
 
 const EditableInput = ({
   value,
@@ -41,24 +42,6 @@ const EditableTextarea = ({ value, name, onChange, placeholder }) => {
     </div>
   );
 };
-const EditableSchedule = ({ value, name, onChange }) => {
-  const scheduleArray = Array.isArray(value) ? value : value ? [value] : [""];
-
-  return (
-    <div className="flex flex-col w-full">
-      {scheduleArray.map((item, index) => (
-        <input
-          key={index}
-          defaultValue={item}
-          name={`${name}_${index}`}
-          onChange={onChange}
-          placeholder={`Horário ${index + 1}`}
-          className="mb-2 p-3 rounded-lg bg-white border border-gray-300 focus:border-[#058789] focus:ring focus:ring-[#058789]/50 transition-colors text-teal-800 font-medium"
-        />
-      ))}
-    </div>
-  );
-};
 
 const translateProviderType = (type) => {
   if (!type) return "Tipo Pendente";
@@ -81,14 +64,6 @@ const mapApiDataToForm = (data) => {
     data.street && data.number ? `${data.street}, ${data.number}` : "";
   const cityAndState =
     data.city && data.state ? `${data.city}, ${data.state}` : "";
-  let openingHoursArray = [];
-  if (Array.isArray(data.openingHours)) {
-    openingHoursArray = data.openingHours;
-  } else if (typeof data.openingHours === "string" && data.openingHours) {
-    openingHoursArray = [data.openingHours];
-  } else {
-    openingHoursArray = ["Segunda a Sexta: 8h às 18h.", "Sábado: 8h às 12h."];
-  }
 
   return {
     profile: {
@@ -158,9 +133,11 @@ const mapApiDataToForm = (data) => {
       },
       {
         label: "Horário de Funcionamento",
-        value: openingHoursArray,
+        value: data.openingHours?.join(", ") || "Seg-Sex: 8h-18h, Sáb: 8h-12h",
         name: "openingHours",
-        renderAs: "schedule",
+        renderAs: "textarea",
+        placeholder:
+          "Liste os horários separados por vírgula (Ex: Seg-Sex: 8h-18h, Sáb: 8h-12h)",
       },
       {
         label: "Serviços",
@@ -177,6 +154,7 @@ const mapApiDataToForm = (data) => {
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
+  const { forceProfileReload } = useAuth();
   const [formData, setFormData] = useState(null);
   const [initialData, setInitialData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -202,28 +180,9 @@ const EditProfilePage = () => {
   const handleInputChange = (e, blockType, itemIndex) => {
     const { name, value } = e.target;
     setError(null);
+
     setFormData((prevData) => {
       const newBlock = prevData[blockType].map((item, idx) => {
-        if (
-          item.name === "openingHours" &&
-          item.renderAs === "schedule" &&
-          name.startsWith("openingHours_")
-        ) {
-          const scheduleIndex = parseInt(name.split("_")[1], 10);
-          let newScheduleArray = Array.isArray(item.value)
-            ? [...item.value]
-            : [item.value];
-
-          newScheduleArray[scheduleIndex] = value;
-
-          newScheduleArray = newScheduleArray.filter((s) => s.trim() !== "");
-          if (newScheduleArray.length === 0 && scheduleIndex === 0) {
-            newScheduleArray = [""];
-          }
-
-          return { ...item, value: newScheduleArray };
-        }
-
         if (idx === itemIndex) {
           return { ...item, value: value };
         }
@@ -236,12 +195,19 @@ const EditProfilePage = () => {
   const extractApiData = (form) => {
     const data = {};
     const blocks = ["basicInfo", "contactInfo", "additionalInfo"];
+
     const acceptedFields = [
       "name",
       "email",
       "whatsapp",
       "bio",
+      "city",
+      "state",
       "servicesOffered",
+      "street",
+      "number",
+      "openingHours",
+      "phone",
     ];
 
     blocks.forEach((blockType) => {
@@ -253,7 +219,15 @@ const EditProfilePage = () => {
         ) {
           return;
         }
-        if (
+        if (item.name === "streetAndNumber" && item.value) {
+          const parts = item.value.split(",").map((s) => s.trim());
+          data.street = parts[0] || undefined;
+          data.number = parts[1] || undefined;
+        } else if (item.name === "cityAndState" && item.value) {
+          const parts = item.value.split(",").map((s) => s.trim());
+          data.city = parts[0] || undefined;
+          data.state = parts[1] || undefined;
+        } else if (
           item.name &&
           acceptedFields.includes(item.name) &&
           item.value !== null &&
@@ -264,7 +238,6 @@ const EditProfilePage = () => {
         }
       });
     });
-
     if (data.servicesOffered && typeof data.servicesOffered === "string") {
       data.servicesOffered = data.servicesOffered
         .split(",")
@@ -273,16 +246,25 @@ const EditProfilePage = () => {
     } else {
       delete data.servicesOffered;
     }
+    if (data.openingHours && typeof data.openingHours === "string") {
+      data.openingHours = data.openingHours
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+      if (data.openingHours.length === 0) delete data.openingHours;
+    } else {
+      delete data.openingHours;
+    }
 
-    delete data.city;
-    delete data.state;
-    delete data.street;
-    delete data.number;
-    delete data.openingHours;
+    if (!data.city) delete data.city;
+    if (!data.state) delete data.state;
+    if (!data.street) delete data.street;
+    if (!data.number) delete data.number;
+    if (!data.phone) delete data.phone;
+
     delete data.service;
     delete data.cnpj;
     delete data.cpf;
-    delete data.phone;
 
     return data;
   };
@@ -301,19 +283,19 @@ const EditProfilePage = () => {
     try {
       const dataToSave = extractApiData(formData);
       await updateProviderProfile(dataToSave);
+
+      forceProfileReload();
+
       navigate("/profile");
     } catch (err) {
       const errorResponse = err.response?.data?.message || err.message;
-      const formattedError = Array.isArray(errorResponse)
-        ? errorResponse.join("; ")
-        : errorResponse;
 
       if (err.response?.status === 409) {
         setError(
           err.response.data.message || "Erro de conflito (E-mail já em uso)."
         );
       } else {
-        setError("Erro ao salvar: " + formattedError);
+        setError("Erro ao salvar: " + errorResponse);
       }
     } finally {
       setIsSaving(false);
@@ -333,8 +315,6 @@ const EditProfilePage = () => {
         return <EditableInput {...commonProps} type={item.type || "text"} />;
       case "textarea":
         return <EditableTextarea {...commonProps} />;
-      case "schedule":
-        return <EditableSchedule {...commonProps} />;
       default:
         return null;
     }
@@ -392,8 +372,8 @@ const EditProfilePage = () => {
         </div>
       </div>
       {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded font-medium">
-          ⚠️ **Erro ao Salvar:** {error}
+        <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50">
+          {error}
         </div>
       )}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -405,14 +385,7 @@ const EditProfilePage = () => {
             clientCount={formData.profile.clientCount}
             rating={formData.profile.rating}
             reviewCount={formData.profile.reviewCount}
-          >
-            <button
-              type="button"
-              className="text-sm text-white font-medium mb-4 hover:underline"
-            >
-              Alterar Foto
-            </button>
-          </ProfileCard>
+          />
         </div>
         <div className="lg:col-span-2 space-y-6">
           <ProfileInfoBlock
