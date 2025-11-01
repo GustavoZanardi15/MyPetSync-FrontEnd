@@ -42,7 +42,6 @@ const EditableTextarea = ({ value, name, onChange, placeholder }) => {
     </div>
   );
 };
-
 const translateProviderType = (type) => {
   if (!type) return "Tipo Pendente";
   const upperCaseType = type.toUpperCase();
@@ -59,11 +58,10 @@ const translateProviderType = (type) => {
 const mapApiDataToForm = (data) => {
   if (!data) return null;
 
-  const serviceCategory = data.service || "Adicionar serviço principal";
   const streetAndNumber =
     data.street && data.number ? `${data.street}, ${data.number}` : "";
   const cityAndState =
-    data.city && data.state ? `${data.city}, ${data.state}` : "";
+    data.city && data.state ? `${data.city}, ${data.state}` : data.city || "";
 
   return {
     profile: {
@@ -219,14 +217,14 @@ const EditProfilePage = () => {
         ) {
           return;
         }
-        if (item.name === "streetAndNumber" && item.value) {
+        if (item.name === "streetAndNumber") {
           const parts = item.value.split(",").map((s) => s.trim());
-          data.street = parts[0] || undefined;
-          data.number = parts[1] || undefined;
-        } else if (item.name === "cityAndState" && item.value) {
+          data.street = parts[0] || null;
+          data.number = parts[1] || null;
+        } else if (item.name === "cityAndState") {
           const parts = item.value.split(",").map((s) => s.trim());
-          data.city = parts[0] || undefined;
-          data.state = parts[1] || undefined;
+          data.city = parts[0] || null;
+          data.state = parts[1] || null;
         } else if (
           item.name &&
           acceptedFields.includes(item.name) &&
@@ -255,11 +253,6 @@ const EditProfilePage = () => {
     } else {
       delete data.openingHours;
     }
-
-    if (!data.city) delete data.city;
-    if (!data.state) delete data.state;
-    if (!data.street) delete data.street;
-    if (!data.number) delete data.number;
     if (!data.phone) delete data.phone;
 
     delete data.service;

@@ -46,11 +46,10 @@ const mapProviderData = (data) => {
   const registrationType = translateProviderType(data.type);
   const serviceCategory = data.service || "Adicione o serviço principal";
   const displayServiceCategory = serviceCategory.toUpperCase();
-
   const streetAndNumber =
     data.street && data.number ? `${data.street}, ${data.number}` : "";
   const cityAndState =
-    data.city && data.state ? `${data.city}, ${data.state}` : "";
+    data.city && data.state ? `${data.city}, ${data.state}` : data.city || "";
 
   let openingHoursDisplay = data.openingHours;
   if (Array.isArray(data.openingHours)) {
