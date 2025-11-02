@@ -9,3 +9,13 @@ export const fetchCurrentUser = async () => {
     throw new Error("Não foi possível carregar o perfil do usuário.");
   }
 };
+
+export const updateCurrentUser = async (userData) => {
+  try {
+    const response = await api.patch("/users/me", userData);
+    return response.data;
+  } catch (error) {
+    console.error("Falha ao atualizar o usuário:", error);
+    throw error;
+  }
+};
