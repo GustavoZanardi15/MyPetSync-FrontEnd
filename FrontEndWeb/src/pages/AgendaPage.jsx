@@ -1,19 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { VscAdd } from "react-icons/vsc";
 import AgendaCalendar from "../components/agenda/AgendaCalendar";
 import DailySchedule from "../components/agenda/DailySchedule";
 import DailySummary from "../components/agenda/DailySummary";
 import NewAppointmentModal from "../components/agenda/NewAppointmentModal";
 import { useSearchParams } from "react-router-dom";
+import { getAppointments } from "../services/agendaService";
+import api from "../../src/utils/Api.jsx";
 
 const AgendaPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const shouldOpenModal = searchParams.get("new") === "true";
   const selectedTime = searchParams.get("time");
   const [isModalOpen, setIsModalOpen] = useState(shouldOpenModal);
+  const [appointments, setAppointments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
+  const fetchAppointments = useCallback(async () => {
+    setIsLoading(true);
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+      .toISOString()
+      .split("T")[0];
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+      .toISOString()
+      .split("T")[0];
+
+    try {
+      const data = await getAppointments(startOfMonth, endOfMonth);
+      setAppointments(data);
+    } catch (error) {
+      console.error("Falha ao carregar agendamentos", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAppointments();
+  }, [fetchAppointments]);
+
   useEffect(() => {
     setIsModalOpen(shouldOpenModal);
   }, [shouldOpenModal]);
+
   const handleNewAppointmentClick = (time = null) => {
     if (time) {
       setSearchParams({ new: true, time: time });
@@ -27,6 +60,10 @@ const AgendaPage = () => {
     setSearchParams({});
     setIsModalOpen(false);
   };
+
+  const dailyAppointments = appointments.filter(
+    (appt) => new Date(appt.date).toISOString().split("T")[0] === selectedDate
+  );
 
   return (
     <div className="p-8">
@@ -45,17 +82,32 @@ const AgendaPage = () => {
           Novo Agendamento
         </button>
       </div>
-      <div className="flex gap-8 mt-6">
-        <div className="flex-grow">
-          <AgendaCalendar />
-          <DailySchedule onAddAppointment={handleNewAppointmentClick} />
+      {isLoading ? (
+        <div className="text-center py-10 text-xl text-gray-500">
+          Carregando Agendamentos...
         </div>
-        <DailySummary />
-      </div>
+      ) : (
+        <div className="flex gap-8 mt-6">
+          <div className="flex-grow">
+            <AgendaCalendar
+              appointments={appointments}
+              onDateSelect={setSelectedDate}
+              selectedDate={selectedDate}
+            />
+            <DailySchedule
+              appointments={dailyAppointments}
+              selectedDate={selectedDate}
+              onAddAppointment={handleNewAppointmentClick}
+            />
+          </div>
+          <DailySummary appointments={dailyAppointments} />
+        </div>
+      )}
       <NewAppointmentModal
         isOpen={isModalOpen}
         onClose={closeModal}
         initialTime={selectedTime}
+        onAppointmentSaved={fetchAppointments}
       />
     </div>
   );
