@@ -191,7 +191,7 @@ const NewAppointmentModal = ({
     setSelectedPetId(pet._id);
     setFormData((prev) => ({
       ...prev,
-      petName: pet.nome, // Se o pet tiver o nome do tutor populado (ex: owner.nome), use, senão use o ID do tutor.
+      petName: pet.nome,
       clientName: pet.tutor?.nome || `ID:${pet.tutorId.substring(0, 4)}...`,
     }));
     setSearchResults([]);
