@@ -36,8 +36,8 @@ export const fetchNextAppointments = async () => {
 
     return appointments.map((app) => ({
       id: app._id,
-      petName: app.pet?.name || "Pet Desconhecido",
-      tutorName: app.pet?.owner?.name || "Tutor Desconhecido",
+      petName: app.pet?.nome || "Pet Desconhecido",
+      tutorName: app.pet?.tutorId?.name || "Tutor Desconhecido",
       date: new Date(app.dateTime).toLocaleDateString("pt-BR"),
       time: new Date(app.dateTime).toLocaleTimeString("pt-BR", {
         hour: "2-digit",
