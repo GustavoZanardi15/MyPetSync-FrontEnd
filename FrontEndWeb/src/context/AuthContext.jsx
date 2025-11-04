@@ -6,61 +6,68 @@ import api from "../utils/Api";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const loadUser = async () => {
-    try {
-      const user = await fetchCurrentUser();
-      setCurrentUser(user);
-    } catch (error) {
-      console.error("Erro ao carregar dados do usuário:", error);
-      setCurrentUser(null);
-    }
-  };
+ const [isLoggedIn, setIsLoggedIn] = useState(false);
+ const [isLoading, setIsLoading] = useState(true);
+ const [currentUser, setCurrentUser] = useState(null);
+ const [refreshKey, setRefreshKey] = useState(0);
+ 
+ const loadUser = async () => {
+  try {
+   const user = await fetchCurrentUser();
+      
+      const rawJsonString = JSON.stringify(user);
+      const cleanedUser = JSON.parse(rawJsonString);
+      const primaryId = String(cleanedUser.id || cleanedUser.userId || cleanedUser._id || '');
+      cleanedUser.id = primaryId; 
+      
+   setCurrentUser(cleanedUser);
+      
+  } catch (error) {
+   console.error("Erro ao carregar dados do usuário:", error);
+   setCurrentUser(null);
+  }
+ };
 
-  const forceProfileReload = () => {
-    setRefreshKey((prev) => prev + 1);
-  };
+ const forceProfileReload = () => {
+  setRefreshKey((prev) => prev + 1);
+ };
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const authStatus = isAuthenticated();
-
-      if (authStatus) {
-        await loadUser();
-      } else {
-        delete api.defaults.headers.common["Authorization"];
-      }
-
-      setIsLoggedIn(authStatus);
-      setIsLoading(false);
-    };
-    checkAuth();
-  }, [refreshKey]);
-
-  const loginContext = async () => {
-    setIsLoggedIn(true);
+ useEffect(() => {
+  const checkAuth = async () => {
+   const authStatus = isAuthenticated();
+   if (authStatus) {
     await loadUser();
-  };
+   } else {
+    delete api.defaults.headers.common["Authorization"];
+   }
 
-  const logoutContext = () => {
-    apiLogout();
-    setIsLoggedIn(false);
-    setCurrentUser(null);
+   setIsLoggedIn(authStatus);
+   setIsLoading(false);
   };
+  checkAuth();
+ }, [refreshKey]);
 
-  const value = {
-    isLoggedIn,
-    isLoading,
-    currentUser,
-    loginContext,
-    logoutContext,
-    forceProfileReload,
-  };
+ const loginContext = async () => {
+  setIsLoggedIn(true);
+  await loadUser();
+ };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+ const logoutContext = () => {
+  apiLogout();
+  setIsLoggedIn(false);
+  setCurrentUser(null);
+ };
+
+ const value = {
+  isLoggedIn,
+  isLoading,
+  currentUser,
+  loginContext,
+  logoutContext,
+  forceProfileReload,
+ };
+
+ return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);
