@@ -1,43 +1,58 @@
 import { VscAdd, VscEdit } from "react-icons/vsc";
+import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const scheduleHours = Array.from({ length: 11 }, (_, i) => {
   const hour = 8 + i;
   return `${hour < 10 ? "0" : ""}${hour}:00`;
 });
 
-const mockDailyAppointments = [
-  {
-    time: "09:00",
-    pet: "Rex",
-    client: "Mário Silva",
-    status: "Confirmado",
-    id: 1,
-  },
-  {
-    time: "16:00",
-    pet: "Luna",
-    client: "João Santos",
-    status: "Pendente",
-    id: 2,
-  },
-];
-const DailySchedule = ({ onAddAppointment }) => {
+const statusMap = {
+  scheduled: { text: "Agendado", color: "bg-yellow-100 text-yellow-700" },
+  confirmed: { text: "Confirmado", color: "bg-green-100 text-green-700" },
+  completed: { text: "Concluído", color: "bg-blue-100 text-blue-700" },
+  canceled: { text: "Cancelado", color: "bg-red-100 text-red-700" },
+};
+
+const DailySchedule = ({ appointments, selectedDate, onAddAppointment }) => {
+  const dateObj = parseISO(selectedDate);
+  const formattedDate = format(dateObj, "d 'de' MMMM 'de' yyyy", {
+    locale: ptBR,
+  });
+
+  const appointmentsByTime = appointments.reduce((acc, appt) => {
+    const time = format(parseISO(appt.dateTime), "HH:mm");
+    const simplifiedAppt = {
+      id: appt._id,
+      time: time,
+      pet: appt.pet.name,
+      clientInfo: appt.reason || appt.location || "Detalhe não informado",
+      status: appt.status,
+    };
+
+    if (!acc[time]) {
+      acc[time] = [];
+    }
+    acc[time].push(simplifiedAppt);
+    return acc;
+  }, {});
+
   const getAppointmentByTime = (time) => {
-    return mockDailyAppointments.find((appt) => appt.time === time);
+    return appointmentsByTime[time] || [];
   };
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg mt-6">
       <div className="flex justify-between items-center mb-6 border-b pb-4">
-        <h2 className="text-xl font-semibold text-gray-700">
-          26 de Agosto de 2025
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-700">{formattedDate}</h2>
         <span className="text-gray-500 font-medium">
-          {mockDailyAppointments.length} agendamentos
+          {appointments.length} agendamentos
         </span>
       </div>
       <div className="flex flex-col gap-2">
         {scheduleHours.map((time) => {
-          const appointment = getAppointmentByTime(time);
+          const appointmentsAtTime = getAppointmentByTime(time);
+
           return (
             <div
               key={time}
@@ -47,30 +62,32 @@ const DailySchedule = ({ onAddAppointment }) => {
                 {time}
               </div>
               <div className="flex-grow ml-4 border-l border-teal-600 pl-4">
-                {appointment ? (
-                  <div className="flex justify-between items-center text-teal-700">
-                    <div>
-                      <p className="font-bold">{appointment.pet}</p>
-                      <p className="text-sm text-gray-500">
-                        {appointment.client}
-                      </p>
+                {appointmentsAtTime.length > 0 ? (
+                  appointmentsAtTime.map((appointment) => (
+                    <div
+                      key={appointment.id}
+                      className="flex justify-between items-center text-teal-700 mb-2 last:mb-0"
+                    >
+                      <div>
+                        <p className="font-bold">{appointment.pet}</p>
+                        <p className="text-sm text-gray-500">
+                          {appointment.clientInfo}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                            statusMap[appointment.status]?.color
+                          }`}
+                        >
+                          {statusMap[appointment.status]?.text}
+                        </span>
+                        <button className="text-gray-500 hover:text-teal-600 p-1 rounded">
+                          <VscEdit className="w-5 h-5" />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`px-3 py-1 text-xs font-semibold rounded-full 
-                               ${
-                                 appointment.status === "Confirmado"
-                                   ? "bg-green-100 text-green-700"
-                                   : "bg-yellow-100 text-yellow-700"
-                               }`}
-                      >
-                        {appointment.status}
-                      </span>
-                      <button className="text-gray-500 hover:text-teal-600 p-1 rounded">
-                        <VscEdit className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
+                  ))
                 ) : (
                   <button
                     onClick={() => onAddAppointment(time)}

@@ -1,65 +1,122 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import HomeHeader from "../../../components/home/HomeHeader";
 import SpaCard from "../../../components/home/SpaCard";
 import PetSelector from "../../../components/home/PetSelector";
 import LembretesSection from "../../../components/home/LembretesSection";
 import VeterinariosSection from "../../../components/home/VeterinariosSection";
 import BottomNav from "../../../components/home/BottomNav";
+import { API_BASE_URL } from "../../../src/config/api"; 
+
+async function getAuthToken() {
+    try {
+        const token = await AsyncStorage.getItem('userToken'); 
+        return token;
+    } catch (error) {
+        console.error("Erro ao ler token do AsyncStorage:", error);
+        return null;
+    }
+}
 
 export default function HomeScreen() {
-  const [selectedPet, setSelectedPet] = useState(0);
+    const [selectedPet, setSelectedPet] = useState(0);
+    const [userName, setUserName] = useState("Usuário"); 
+    const [authToken, setAuthToken] = useState(null); 
 
-  const pets = [
-    { id: 0, image: require("../../../assets/images/home/DogHomePet1.png") },
-    { id: 1, image: require("../../../assets/images/home/DogHomePet2.png") },
-    { id: 2, image: require("../../../assets/images/home/CatHomePet.png") }
-  ];
+    const pets = [
+        { id: 0, image: require("../../../assets/images/home/DogHomePet1.png") },
+        { id: 1, image: require("../../../assets/images/home/DogHomePet2.png") },
+        { id: 2, image: require("../../../assets/images/home/CatHomePet.png") }
+    ];
 
-  const reminders = [
-    [
-      { title: "Colírio Ocular", subtitle: "Aplicar 3 gotas, manhã e noite", time: "08:45 - 20:45", repeat: "Diariamente" },
-      { title: "Passeio", subtitle: "Lembrar de levar água", time: "18:00 - 19:00", repeat: "Quarta-feira" }
-    ],
-    [
-      { title: "Petshop", subtitle: "Banho e tosa", time: "09:00", repeat: "Sexta-feira" }
-    ],
-    [
-      { title: "Vacina", subtitle: "Levar ao veterinário", time: "10:00", repeat: "Anual" }
-    ]
-  ];
+    const reminders = [
+        [
+            { title: "Colírio Ocular", subtitle: "Aplicar 3 gotas, manhã e noite", time: "08:45 - 20:45", repeat: "Diariamente" },
+            { title: "Passeio", subtitle: "Lembrar de levar água", time: "18:00 - 19:00", repeat: "Quarta-feira" }
+        ],
+        [
+            { title: "Petshop", subtitle: "Banho e tosa", time: "09:00", repeat: "Sexta-feira" }
+        ],
+        [
+            { title: "Vacina", subtitle: "Levar ao veterinário", time: "10:00", repeat: "Anual" }
+        ]
+    ];
 
-  const vets = [
-    { name: "Carolina Vivaz", image: require("../../../assets/images/home/Vet1.png"), rating: 4 },
-    { name: "José Augusto", image: require("../../../assets/images/home/Vet2.png"), rating: 4 },
-    { name: "Alisson Dias", image: require("../../../assets/images/home/Vet3.png"), rating: 3 }
-  ];
+    const vets = [
+        { name: "Carolina Vivaz", image: require("../../../assets/images/home/Vet1.png"), rating: 4 },
+        { name: "José Augusto", image: require("../../../assets/images/home/Vet2.png"), rating: 4 },
+        { name: "Alisson Dias", image: require("../../../assets/images/home/Vet3.png"), rating: 3 }
+    ];
 
-  return (
-    <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <HomeHeader/>
+    useEffect(() => {
+        async function loadToken() {
+            const token = await getAuthToken();
+            setAuthToken(token);
+        }
+        loadToken();
+    }, []); 
 
-        <SpaCard />
+    useEffect(() => {
+        if (!authToken) {
+            setUserName("Usuário"); 
+            return; 
+        }
 
-        <PetSelector pets={pets} selectedPet={selectedPet} setSelectedPet={setSelectedPet} />
+        async function fetchUserName() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`, 
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-        <LembretesSection reminders={reminders[selectedPet] || []} />
+                if (!response.ok) {
+                    console.error("Erro no fetch: Status", response.status);
+                    throw new Error('Falha na autenticação ou servidor.');
+                }
 
-        <VeterinariosSection vets={vets} />
-      </ScrollView>
+                const data = await response.json();
+                
+                if (data.nome) {
+                    setUserName(data.nome); 
+                }
+            } catch (error) {
+                console.error("Erro ao buscar nome:", error);
+                setUserName("Usuário"); 
+            }
+        }
 
-      <BottomNav />
-    </View>
-  );
+        fetchUserName();
+    }, [authToken]);
+
+    return (
+        <View style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+                <HomeHeader userName={userName} /> 
+
+                <SpaCard />
+
+                <PetSelector pets={pets} selectedPet={selectedPet} setSelectedPet={setSelectedPet} />
+
+                <LembretesSection reminders={reminders[selectedPet] || []} />
+
+                <VeterinariosSection vets={vets} />
+            </ScrollView>
+
+            <BottomNav />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9F9F9"
-  },
-  scrollContent: {
-    paddingBottom: 80
-  }
+    container: {
+        flex: 1,
+        backgroundColor: "#F9F9F9"
+    },
+    scrollContent: {
+        paddingBottom: 80
+    }
 });

@@ -6,6 +6,7 @@ import {
   fetchProviderProfile,
   updateProviderProfile,
 } from "../services/providerService";
+import { updateCurrentUser } from "../services/userService";
 import { useAuth } from "../context/AuthContext";
 
 const EditableInput = ({
@@ -275,7 +276,21 @@ const EditProfilePage = () => {
 
     try {
       const dataToSave = extractApiData(formData);
-      await updateProviderProfile(dataToSave);
+
+      const userData = {
+        name: dataToSave.name,
+        email: dataToSave.email,
+      };
+
+      const providerData = { ...dataToSave };
+
+      const updatePromises = [];
+      if (userData.name || userData.email) {
+        updatePromises.push(updateCurrentUser(userData));
+      }
+      updatePromises.push(updateProviderProfile(providerData));
+
+      await Promise.all(updatePromises);
 
       forceProfileReload();
 
