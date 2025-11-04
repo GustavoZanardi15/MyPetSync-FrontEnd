@@ -17,6 +17,8 @@ const NewAppointmentModal = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
         className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
@@ -78,6 +80,7 @@ const NewAppointmentModal = ({ isOpen, onClose }) => {
             <Select
               label="Tipo de Serviço"
               options={["Consulta", "Tosa", "Banho", "Vacinação"]}
+              defaultMessage="Selecione o serviço..."
             />
           </Section>
           <Section
@@ -162,34 +165,44 @@ const Input = ({ label, icon: Icon, placeholder, type = "text" }) => (
 const Select = ({
   label,
   options,
+  id,
   defaultMessage = "Selecione o serviço...",
-}) => (
-  <div className="flex flex-col">
-    <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
-    <select className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 appearance-none bg-white">
-      <option value="">{defaultMessage}</option>
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
-  </div>
-);
+}) => {
+  const selectId = id || label.replace(/\s+/g, "-").toLowerCase();
+
+  return (
+    <div className="flex flex-col">
+      <label
+        htmlFor={selectId}
+        className="text-sm font-medium text-[#F0F0F0] mb-1"
+      >
+        {label}
+      </label>
+      <select
+        id={selectId}
+        className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500"
+      >
+        <option value="">{defaultMessage}</option>
+        {options.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
 const TextArea = ({ placeholder }) => (
   <div className="flex flex-col mt-4">
     <textarea
       placeholder={placeholder}
       rows="3"
-      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 bg-wh"
+      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 bg-white"
     ></textarea>
   </div>
 );
 const StatusRadios = () => (
   <div className="mb-4">
-    <label className="text-sm font-medium text-gray-700 block mb-2">
-      Status do Agendamento
-    </label>
     <div className="flex gap-6">
       <label className="flex items-center space-x-2 text-gray-800">
         <input
