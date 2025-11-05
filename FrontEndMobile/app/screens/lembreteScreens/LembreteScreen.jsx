@@ -5,6 +5,8 @@ import SelectMonth from "../../../components/lembrete/LembreteScreen/SelectMonth
 import SelectDay from "../../../components/lembrete/LembreteScreen/SelectDay";
 import LembretesList from "../../../components/lembrete/LembreteScreen/LembreteList";
 import BottomNav from "../../../components/lembrete/LembreteScreen/BottomNav";
+import { useNavigation } from '@react-navigation/native';
+
 
 export default function LembretesScreen() {
   const [dataAtual, setDataAtual] = useState(new Date());
@@ -29,6 +31,13 @@ export default function LembretesScreen() {
   };
 
   const [dias, setDias] = useState(gerarDiasDoMes(dataAtual));
+  const navigation = useNavigation();
+
+return (<Button
+    title="Adicionar Lembrete"
+    onPress={() => navigation.navigate('Adicionar Lembrete')} // Aqui você navega para a tela de Adicionar Lembrete
+  />
+  );
 
   const mudarMes = (direcao) => {
     const novaData = new Date(dataAtual);
