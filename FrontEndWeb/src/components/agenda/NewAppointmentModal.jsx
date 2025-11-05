@@ -13,8 +13,98 @@ import { createAppointment } from "../../services/agendaService";
 import { searchPets } from "../../services/petService";
 import { useAuth } from "../../context/AuthContext";
 
+<<<<<<< HEAD
 const STATUS_MAP = { Agendado: "scheduled", Confirmado: "confirmed" };
 const DURATION_MAP = { "30 min": 30, "60 min": 90, "90 min": 90 };
+=======
+const NewAppointmentModal = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b flex justify-between items-center sticky top-0 bg-[#A8E6CF] z-10">
+          <div>
+            <h2 className="text-2xl font-bold text-[#003637] flex items-center">
+              <VscCalendar className="w-6 h-6 mr-2 text-[#003637]" />
+              Novo Agendamento
+            </h2>
+            <p className="text-sm text-[#003637] mt-1">
+              Preencha os dados do agendamento
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-800 p-2 rounded-full transition-colors"
+          >
+            <VscClose className="w-6 h-6" />
+          </button>
+        </div>
+        <div className="p-6 space-y-8">
+          <Section
+            title="Informações do Cliente"
+            icon={VscPerson}
+            color="text-[#F0F0F0]"
+            className="bg-[#058789]"
+          >
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Nome do Pet"
+                icon={MdOutlinePets}
+                placeholder="Nome do Pet"
+              />
+              <Input
+                label="Nome do Tutor"
+                icon={VscPerson}
+                placeholder="Nome do Tutor"
+              />
+              <Input
+                label="Telefone"
+                icon={FiPhoneCall}
+                placeholder="Telefone"
+                type="tel"
+              />
+              <Input
+                label="Email"
+                icon={VscMail}
+                placeholder="Email"
+                type="email"
+              />
+            </div>
+          </Section>
+          <Section
+            title="Informações do Serviço"
+            icon={VscTag}
+            color="text-[#F0F0F0]"
+            className="bg-[#058789]"
+          >
+            <Select
+              label="Tipo de Serviço"
+              options={["Consulta", "Tosa", "Banho", "Vacinação"]}
+              defaultMessage="Selecione o serviço..."
+            />
+          </Section>
+          <Section
+            title="Data e Horário"
+            icon={MdOutlineWatchLater}
+            color="text-[#F0F0F0]"
+            className="bg-[#058789]"
+          >
+            <div className="grid grid-cols-3 gap-4">
+              <Input label="Data" placeholder="DD/MM/AAAA" type="date" />
+              <Select
+                label="Horário"
+                options={["09:00", "10:00", "11:00"]}
+                defaultMessage="Selecione o horário..."
+              />
+>>>>>>> dev/anna
 
 const Section = ({ title, icon: Icon, color, children, className = "" }) => (
   <div className={`p-4 rounded-lg ${className}`}>
@@ -56,6 +146,7 @@ const Input = ({
   </div>
 );
 const Select = ({
+<<<<<<< HEAD
   label,
   options,
   defaultMessage = "Selecione o serviço...",
@@ -124,6 +215,70 @@ const StatusRadios = ({ value, onChange }) => (
       </label>
     </div>
   </div>
+=======
+  label,
+  options,
+  id,
+  defaultMessage = "Selecione o serviço...",
+}) => {
+  const selectId = id || label.replace(/\s+/g, "-").toLowerCase();
+
+  return (
+    <div className="flex flex-col">
+      <label
+        htmlFor={selectId}
+        className="text-sm font-medium text-[#F0F0F0] mb-1"
+      >
+        {label}
+      </label>
+      <select
+        id={selectId}
+        className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500"
+      >
+        <option value="">{defaultMessage}</option>
+        {options.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+const TextArea = ({ placeholder }) => (
+  <div className="flex flex-col mt-4">
+    <textarea
+      placeholder={placeholder}
+      rows="3"
+      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 bg-white"
+    ></textarea>
+  </div>
+);
+const StatusRadios = () => (
+  <div className="mb-4">
+    <div className="flex gap-6">
+      <label className="flex items-center space-x-2 text-gray-800">
+        <input
+          type="radio"
+          name="status"
+          value="Agendado"
+          defaultChecked
+          className="text-teal-600 focus:ring-teal-500"
+        />
+        <span>Agendado</span>
+      </label>
+      <label className="flex items-center space-x-2 text-gray-800">
+        <input
+          type="radio"
+          name="status"
+          value="Confirmado"
+          className="text-teal-600 focus:ring-teal-500"
+        />
+        <span>Confirmado</span>
+      </label>
+    </div>
+  </div>
+>>>>>>> dev/anna
 );
 
 const NewAppointmentModal = ({
