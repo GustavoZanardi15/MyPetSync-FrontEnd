@@ -18,7 +18,7 @@ export default function PetAvatarSelector({ pets, selectedPet, setSelectedPet, r
         ))}
         <Pressable
           style={[styles.petAvatarWrapper, styles.addPetButton]}
-          onPress={() => router.push("/screens/addPetScreens/NomePetScreen")}
+          onPress={() => router.push("/screens/addPetScreens/AddPetScreen")}
         >
           <Ionicons name="add" size={24} color="#2F8B88" />
         </Pressable>
