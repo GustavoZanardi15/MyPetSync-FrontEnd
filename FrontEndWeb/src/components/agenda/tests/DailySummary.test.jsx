@@ -1,5 +1,7 @@
 import { render, screen , within } from "@testing-library/react";
 import DailySummary from "../DailySummary";
+import { VscCheck, VscCalendar, VscHistory } from "react-icons/vsc";
+
 
 describe('DailySummary Component', () => {
     it('deve renderizar o título "Resumo do Dia"', () => {

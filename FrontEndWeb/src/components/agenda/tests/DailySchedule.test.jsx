@@ -1,5 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import DailySchedule from "../DailySchedule";
+import { VscCheck, VscCalendar, VscHistory } from "react-icons/vsc";
+
 
 describe('DailySchedule Component', () => {
     it('deve renderizar o título com a data e o total de agendamentos', () => {

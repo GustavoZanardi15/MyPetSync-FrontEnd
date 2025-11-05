@@ -1,6 +1,8 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import AgendaCalendar from "../AgendaCalendar";
+import { VscCheck, VscCalendar, VscHistory } from "react-icons/vsc";
+
 
 beforeAll(() => {
   jest.useFakeTimers();
