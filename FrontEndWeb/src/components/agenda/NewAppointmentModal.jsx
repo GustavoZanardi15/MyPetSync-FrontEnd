@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createAppointment } from "../../services/appointments";
+import { createAppointment } from "@/services/appointmentService";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 

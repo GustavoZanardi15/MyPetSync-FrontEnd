@@ -4,6 +4,11 @@ import { VscCheck, VscCalendar, VscHistory } from "react-icons/vsc";
 
 
 describe('DailySummary Component', () => {
+    const mockAppointments = [
+        { id: 1, status: "confirmed" },
+        { id: 2, status: "pending" },
+    ];
+
     it('deve renderizar o título "Resumo do Dia"', () => {
         render(<DailySummary />);
         expect(screen.getByText("Resumo do Dia")).toBeInTheDocument();
@@ -11,7 +16,7 @@ describe('DailySummary Component', () => {
 
 
     it('deve exibir o total de agendamentos', () => {
-        render(<DailySummary />);
+        render(<DailySummary appointments={mockAppointments} />);
         const totalSection = screen.getByText("Total de agendamentos").closest("div");
         expect(totalSection).toBeInTheDocument();
         expect(within(totalSection).getByText("2")).toBeInTheDocument();
@@ -19,7 +24,7 @@ describe('DailySummary Component', () => {
 
 
     it('deve exibir o total de agendamentos confirmados', () => {
-        render(<DailySummary />);
+        render(<DailySummary appointments={mockAppointments} />);
         const confirmedSection = screen.getByText("Confirmados").closest("div");
         expect(confirmedSection).toBeInTheDocument();
         expect(within(confirmedSection).getByText("1")).toBeInTheDocument();
@@ -27,13 +32,13 @@ describe('DailySummary Component', () => {
 
 
     it('deve exibir o total de agendamentos pendentes', () => {
-        render(<DailySummary />);
-        const pendingSection = screen.getByText("Pendentes").closest("div");
+        render(<DailySummary appointments={mockAppointments} />);
+        const pendingSection = screen.getByText("Agendados/Pendentes").closest("div");
         expect(pendingSection).toBeInTheDocument();
         expect(within(pendingSection).getByText("1")).toBeInTheDocument();
     });
 
-
+    
     it('deve conter os ícones correspondentes de cada seção', () => {
         render(<DailySummary />);
         

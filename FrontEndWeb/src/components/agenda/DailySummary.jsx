@@ -1,20 +1,17 @@
 import React, { useMemo } from "react";
 import { VscCheck, VscCalendar, VscHistory } from "react-icons/vsc";
 
-const DailySummary = ({ appointments }) => {
+const DailySummary = ({ appointments = [] }) => {
   const summaryData = useMemo(() => {
     const total = appointments.length;
     const confirmed = appointments.filter(
       (appt) => appt.status === "confirmed"
     ).length;
-    const scheduled = appointments.filter(
-      (appt) => appt.status === "scheduled"
+    const pending = appointments.filter(
+      (appt) => appt.status === "pending"
     ).length;
-    return {
-      total: total,
-      confirmed: confirmed,
-      pending: scheduled,
-    };
+
+    return { total, confirmed, pending };
   }, [appointments]);
 
   return (
