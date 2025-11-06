@@ -5,41 +5,38 @@ import { router, useLocalSearchParams } from "expo-router";
 const screenHeight = Dimensions.get("window").height;
 
 export default function FinalPetScreen() {
-  // Recebe os parâmetros da tela anterior
   const params = useLocalSearchParams();
-  const petNome = params.petNome || "Seu Pet"; // fallback se não vier o nome
+  const petNome = params.petNome || "Pet";
   
   return (
     <View style={styles.container}>
-      {/* Fundo ilustrativo */}
       <Image
         source={require("../../../assets/images/telaInicial/ilustracao_fundo.png")}
         style={[styles.illustration, { height: screenHeight * 0.7 }]}
         resizeMode="cover"
       />
 
-      {/* Conteúdo principal */}
       <View style={styles.contentWrapper}>
-        <Image
-          source={require("../../../assets/images/telaInicial/Logo.png")}
-          style={styles.logo}
-        />
+        <Image source={require("../../../assets/images/telaInicial/Logo.png")} style={styles.logo} />
+
         <Text style={styles.text}>
-          {petNome} adicionado com sucesso!{"\n"}
-          <Text style={styles.secondText}>
-            Agora você pode aproveitar {"\n"} todos os nossos serviços.
+          <Text style={styles.successText}>{petNome}</Text> adicionado com sucesso!{"\n"}
+            <Pressable onPress={() => router.push("/screens/perfilPetScreens/PerfilPetScreen")}>
+              <Text style={styles.linkText}>Agora você pode visualizar todos os pets</Text>
+            </Pressable>
           </Text>
-        </Text>
       </View>
 
-      {/* Botões de ação */}
       <View style={styles.actionsContainer}>
-        <Pressable style={styles.button} onPress={() => router.push("/screens/homeScreens/HomeScreen")}>
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/screens/homeScreens/HomeScreen")}
+        >
           <Text style={styles.buttonText}>Ir para a página inicial</Text>
         </Pressable>
 
-        <Pressable onPress={() => router.push("/screens/perfilPetScreens/PerfilPetScreen")}>
-          <Text style={styles.skipText}>Adicione outro Pet</Text>
+        <Pressable onPress={() => router.push("/screens/addPetScreens/AddPetScreen")}>
+          <Text style={styles.skipText}>Adicionar outro Pet</Text>
         </Pressable>
       </View>
     </View>
@@ -80,12 +77,14 @@ const styles = StyleSheet.create({
     marginTop: 24,
     lineHeight: 32,
   },
-  secondText: {
-    fontSize: 18,
-    fontWeight: "400",
+  successText: {
+    fontWeight: "bold",
+    fontSize: 28,
     color: "#2F8B88",
-    textAlign: "center",
-    lineHeight: 24,
+  },
+  linkText: {
+    fontSize: 17,
+    color: "#89CFF0",
   },
   actionsContainer: {
     flex: 1,
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     marginTop: 12,
-    color: "#87CEEB",
+    color: "#89CFF0",
     fontSize: 15,
   },
 });
