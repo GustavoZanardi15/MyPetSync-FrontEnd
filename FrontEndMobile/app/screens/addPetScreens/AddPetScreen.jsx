@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import { View, Text, StyleSheet, ScrollView, Image, Alert, Animated } from "react-native";
 import { useRouter } from "expo-router";
-import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../src/service/api";
 import AddPetHeader from "../../../components/addPet/AddPetHeader";
@@ -86,7 +85,7 @@ export default function AddPetScreen() {
 
       console.log("✅ Pet cadastrado:", response.data);
       Alert.alert("Sucesso", `${nome} foi salvo com sucesso!`);
-      router.back();
+      router.push("screens/addPetScreens/FinalPetScreen");
     } catch (error) {
       console.error("❌ Erro ao salvar pet:", error.response?.data || error);
 
