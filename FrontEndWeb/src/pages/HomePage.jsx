@@ -5,10 +5,7 @@ import NextAppointments from "../components/home/NextAppointments";
 import HomeSidePanel from "../components/home/HomeSidePanel";
 import { useAuth } from "../context/AuthContext";
 import * as providerService from "../services/providerService";
-import {
-  fetchDashboardStats,
-  fetchRecentActivities,
-} from "../services/dashboardService";
+import { fetchDashboardStats } from "../services/dashboardService";
 import { FiCheckCircle, FiUsers, FiStar } from "react-icons/fi";
 import { VscStarFull } from "react-icons/vsc";
 
@@ -45,35 +42,14 @@ const HomePage = () => {
         }
 
         const [statsData] = await Promise.all([fetchDashboardStats()]);
-        const recentActivitiesData = [];
-
         const appointments = statsData.appointments || {
           total: 0,
           confirmed: 0,
         };
         const reviews = statsData.reviews || { average: 0, count: 0 };
         const clients = statsData.clients || 0;
-
-        const activitiesToMap =
-          recentActivitiesData && Array.isArray(recentActivitiesData)
-            ? recentActivitiesData
-            : [];
-
-        const mappedActivities = activitiesToMap
-          .map((activity) => ({
-            id: activity._id,
-            type: "Avaliação Recebida",
-            detail: `${formatRating(activity.rating)} por ${
-              activity.author?.name || activity.pet?.nome || "Cliente"
-            }`,
-            iconName: "VscStarFull",
-            color: "bg-yellow-500",
-          }))
-          .map((activity) => ({
-            ...activity,
-            icon: IconComponents[activity.iconName],
-          }));
-
+        const activitiesToMap = [];
+        const mappedActivities = activitiesToMap;
         const mappedStats = [
           {
             id: 1,
@@ -110,7 +86,6 @@ const HomePage = () => {
         setIsLoading(false);
       }
     };
-
     if (isLoggedIn && user && user.userId) {
       loadDashboardData();
     }
