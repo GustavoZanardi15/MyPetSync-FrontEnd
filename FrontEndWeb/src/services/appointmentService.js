@@ -34,18 +34,28 @@ export const fetchNextAppointments = async () => {
       );
     }
 
-    return appointments.map((app) => ({
-      id: app._id,
-      petName: app.pet?.nome || "Pet Desconhecido",
-      tutorName: app.pet?.tutorId?.name || "Tutor Desconhecido",
-      date: new Date(app.dateTime).toLocaleDateString("pt-BR"),
-      time: new Date(app.dateTime).toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      phone: app.provider?.whatsapp || "(Não informado)",
-      status: mapStatusToPortuguese(app.status),
-    }));
+    return appointments.map((app) => {
+      const dateObject = app.dateTime ? new Date(app.dateTime) : null;
+
+      return {
+        id: app._id,
+        petName: app.pet?.nome || "Pet Desconhecido",
+        tutorName: app.pet?.tutorId?.name || "Tutor Desconhecido",
+        date:
+          dateObject && !isNaN(dateObject)
+            ? dateObject.toLocaleDateString("pt-BR")
+            : "Data Inválida",
+        time:
+          dateObject && !isNaN(dateObject)
+            ? dateObject.toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "Hora Inválida",
+        phone: app.provider?.whatsapp || "(Não informado)",
+        status: mapStatusToPortuguese(app.status),
+      };
+    });
   } catch (error) {
     console.error("Falha ao buscar agendamentos:", error);
     throw new Error("Não foi possível carregar os agendamentos.");
