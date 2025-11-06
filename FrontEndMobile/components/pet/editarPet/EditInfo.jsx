@@ -1,38 +1,23 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from "react";
+import { View, Text, StyleSheet, TextInput } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
-export default function EditInfo({ label, initialValue, onValueChange, iconName = "pencil" }) {
-    const [value, setValue] = useState(initialValue);
-    const [isEditing, setIsEditing] = useState(false);
+export default function EditInfo({ label, initialValue, onValueChange }) {
+    
+    const keyboardType = label.includes("Idade") || label.includes("Peso") ? "numeric" : "default";
 
     return (
         <View style={styles.editableContainer}>
             <Text style={styles.editableLabel}>{label}</Text>
-
             <TextInput
-                style={[styles.editableValue, !isEditing && { color: "#2F8B88" }]}
-                value={value ? value : "Não"} 
-                editable={isEditing}
-                onChangeText={(text) => {
-                    setValue(text);
-                    onValueChange?.(text);
-                }}
-                placeholderTextColor="#8E8E8E"
-                keyboardType={label.includes("Peso") ? "numeric" : "default"}
+                style={[styles.editableValue]} 
+                value={initialValue} 
+                editable={true}
+                onChangeText={onValueChange}
+                placeholderTextColor="#A9A9A9"
+                keyboardType={keyboardType}
             />
-
-            <Pressable
-                onPress={() => setIsEditing(!isEditing)}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-                <MaterialCommunityIcons
-                    name={isEditing ? "check" : iconName}
-                    size={18}
-                    color={isEditing ? "#2F8B88" : "#A9A9A9"}
-                    style={styles.editIcon}
-                />
-            </Pressable>
+            <MaterialCommunityIcons name="pencil" size={18} color="#A9A9A9"  style={styles.editIcon}/>
         </View>
     );
 }
@@ -63,8 +48,9 @@ const styles = StyleSheet.create({
         fontWeight: "medium",
         color: "#2F8B88",
         textAlign: "left",
+        paddingRight: 4, 
     },
     editIcon: {
-        marginLeft: 8
+        marginLeft: 8 
     },
 });
