@@ -214,11 +214,11 @@ export default function PerfilPetScreen() {
                 petColor={selectedPetColor}
               />
               <View>
-                <PetInfo label="Espécie" value={selectedPet.especie} />
-                <PetInfo label="Raça" value={selectedPet.race} />
-                <PetInfo label="Idade" value={selectedPet.age} />
-                <PetInfo label="Peso atual" value={selectedPet.weight} />
-                <PetInfo label="Castrado?" value={selectedPet.neutered} />
+                <PetInfo label="Espécie:" value={selectedPet.especie} />
+                <PetInfo label="Raça:" value={selectedPet.race} />
+                <PetInfo label="Idade:" value={selectedPet.age} />
+                <PetInfo label="Peso atual:" value={selectedPet.weight} />
+                <PetInfo label="Castrado:" value={selectedPet.neutered} />
                 <PetInfo label="Condições especiais:" value={selectedPet.specialCondition} />
               </View>
             </View>
