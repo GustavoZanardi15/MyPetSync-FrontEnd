@@ -7,25 +7,15 @@ import api from "../../../src/service/api";
 import AddPetHeader from "../../../components/addPet/AddPetHeader";
 import PetForm from "../../../components/addPet/PetForm";
 import SelectionModal from "../../../components/addPet/SelectionModal";
+import PlaceholderFotoCard from "../../../components/addPet/PlaceholderFotoCard";
 
 const VALID_GENEROS = ["Macho", "Fêmea"];
 const PET_ASSETS = {
   Cachorro: require("../../../assets/images/addPet/Dog.png"),
   Gato: require("../../../assets/images/addPet/Cat.png"),
 };
+const PHOTO_FALLBACK_COLOR = "#A9E4D4"; 
 
-const BACKGROUND_COLORS = [
-  "#A9E4D4",
-  "#B0C4DE",
-  "#FFC0CB",
-  "#F0E68C",
-  "#ADD8E6",
-  "#FAFAD2",
-  "#DDA0DD",
-];
-
-const getRandomColor = () =>
-  BACKGROUND_COLORS[Math.floor(Math.random() * BACKGROUND_COLORS.length)];
 
 export default function AddPetScreen() {
   const router = useRouter();
@@ -36,17 +26,16 @@ export default function AddPetScreen() {
   const [raca, setRaca] = useState("");
   const [genero, setGenero] = useState("");
   const [idade, setIdade] = useState("");
-  const [fotoUri, setFotoUri] = useState(null);
+  const [peso, setPeso] = useState(""); 
+  const [fotoUri, setFotoUri] = useState(null); 
   const [castrado, setCastrado] = useState(false);
   const [condicoesEspeciais, setCondicoesEspeciais] = useState("");
-  const [backgroundColor, setBackgroundColor] = useState(getRandomColor());
   const [modalGeneroVisible, setModalGeneroVisible] = useState(false);
-  const [petPhoto, setPetPhoto] = useState(null);
+  const [petPhoto, setPetPhoto] = useState(null); 
 
   const handleSelectEspecie = (selectedEspecie) => {
     setEspecie(selectedEspecie);
     setPetPhoto(PET_ASSETS[selectedEspecie]);
-    setBackgroundColor(getRandomColor());
   };
 
   const handleSalvar = async () => {
@@ -64,20 +53,26 @@ export default function AddPetScreen() {
         setIsLoading(false);
         return;
       }
+      
+      const specialConditionsArray = condicoesEspeciais
+        ? condicoesEspeciais
+          .split(",")
+          .map((c) => c.trim())
+          .filter((c) => c.length > 0)
+        : [];
+
+      const photoToSend = fotoUri || petPhoto ? fotoUri : undefined;
 
       const petData = {
         nome: nome.trim(),
-        especie, 
+        especie,
         raca: raca.trim(),
-        genero, 
+        genero,
         idade: Number(idade),
+        peso: peso ? Number(peso) : undefined, 
         castrado: Boolean(castrado),
-        condicoes_especiais: condicoesEspeciais
-          ? condicoesEspeciais
-              .split(",")
-              .map((c) => c.trim())
-              .filter((c) => c.length > 0)
-          : [],
+        condicoes_especiais: specialConditionsArray,
+        foto: photoToSend,
       };
 
       console.log("📤 Enviando petData:", JSON.stringify(petData, null, 2));
@@ -98,7 +93,7 @@ export default function AddPetScreen() {
       const messages = Array.isArray(error.response?.data?.message)
         ? error.response.data.message.join("\n")
         : error.response?.data?.message ||
-          "Não foi possível salvar o pet. Tente novamente.";
+        "Não foi possível salvar o pet. Tente novamente.";
 
       Alert.alert("Erro", messages);
     } finally {
@@ -113,30 +108,30 @@ export default function AddPetScreen() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.cardContainer}>
-          <Animated.View
-            style={[
-              styles.photoCard,
-              { backgroundColor: backgroundColor, transform: [{ scale: scaleAnim }] },
-            ]}
-          >
-            {fotoUri ? (
-              <Image source={{ uri: fotoUri }} style={styles.petPhoto} />
-            ) : petPhoto ? (
-              <Image source={petPhoto} style={styles.petPhoto} />
+            {fotoUri || petPhoto ? (
+                <Animated.View
+                    style={[
+                        styles.photoCard,
+                        { backgroundColor: PHOTO_FALLBACK_COLOR, transform: [{ scale: scaleAnim }] }, 
+                    ]}
+                >
+                    <Image 
+                        source={fotoUri ? { uri: fotoUri } : petPhoto} 
+                        style={styles.petPhoto} 
+                    />
+                </Animated.View>
             ) : (
-              <>
-                <Feather
-                  name="plus-square"
-                  size={80}
-                  color="#343434"
-                  style={{ opacity: 0.6 }}
-                />
-                <Text style={styles.placeholderText}>Selecione a espécie</Text>
-              </>
+                <PlaceholderFotoCard scaleAnim={scaleAnim} />
             )}
-          </Animated.View>
+            
+            {(!fotoUri && !petPhoto) && (
+                <View style={styles.placeholderOverlay}>
+                    <Text style={styles.placeholderText}>Selecione a espécie</Text>
+                </View>
+            )}
         </View>
 
         <PetForm
@@ -148,8 +143,11 @@ export default function AddPetScreen() {
           setRaca={setRaca}
           genero={genero}
           setGenero={setGenero}
+          setModalGeneroVisible={setModalGeneroVisible}
           idade={idade}
           setIdade={setIdade}
+          peso={peso} 
+          setPeso={setPeso} 
           castrado={castrado}
           setCastrado={setCastrado}
           condicoesEspeciais={condicoesEspeciais}
@@ -165,7 +163,10 @@ export default function AddPetScreen() {
         onClose={() => setModalGeneroVisible(false)}
         title="Selecione o gênero"
         data={VALID_GENEROS}
-        onSelect={setGenero}
+        onSelect={(selectedGenero) => {
+          setGenero(selectedGenero);
+          setModalGeneroVisible(false);
+        }}
       />
     </View>
   );
@@ -185,8 +186,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 10,
     marginBottom: 20,
+    position: "relative",
   },
-  photoCard: {
+  photoCard: { 
     width: 250,
     height: 250,
     borderRadius: 15,
@@ -204,9 +206,21 @@ const styles = StyleSheet.create({
     height: "80%",
     resizeMode: "contain",
   },
+  placeholderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 100, 
+  },
   placeholderText: {
     marginTop: 10,
     fontSize: 14,
     color: "#343434",
+    fontWeight: "600",
+    opacity: 0.7,
   },
 });
