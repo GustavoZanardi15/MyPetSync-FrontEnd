@@ -1,22 +1,38 @@
 const InputWithIcon = ({
-  Icon,
+  icon: Icon,
   placeholder,
-  type,
-  inputClassName = "",
-  iconClassName = "",
-  ...rest
+  type = "text",
+  value,
+  onChange,
+  onBlur,
+  error,
+  id,
+  name,
 }) => {
   return (
-    <div className="relative">
-      <Icon
-        className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${iconClassName}`}
-      />
-      <input
-        type={type}
-        placeholder={placeholder}
-        className={`w-full p-3 pl-10 rounded-lg border-none bg-gray-200 text-gray-800 placeholder-gray-500 ${inputClassName}`}
-        {...rest}
-      />
+    <div className="relative w-full">
+      <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition duration-150 ease-in-out">
+        {Icon && (
+          <div className="absolute left-0 pl-3 flex items-center pointer-events-none">
+            <Icon className="w-5 h-5 text-gray-400" />
+          </div>
+        )}
+        <input
+          id={id}
+          name={name}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          className={`w-full py-2 ${
+            Icon ? "pl-10" : "pl-4"
+          } pr-4 bg-white rounded-lg text-gray-700 leading-tight focus:outline-none focus:ring-0 ${
+            error ? "border-red-500" : ""
+          }`}
+        />
+      </div>
+      {error && <p className="text-red-500 text-xs mt-1 ml-1">{error}</p>}
     </div>
   );
 };
