@@ -81,18 +81,21 @@ const AgendaCalendar = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={goToPreviousWeek}
+            aria-label="Anterior"
             className="text-gray-600 hover:text-teal-600 p-1 transition-colors"
           >
             <VscChevronLeft className="w-6 h-6" />
           </button>
           <button
             onClick={goToToday}
+            aria-label="Hoje"
             className="bg-[#058789] hover:bg-teal-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors"
           >
             Hoje
           </button>
           <button
             onClick={goToNextWeek}
+            aria-label="Próximo"
             className="text-gray-600 hover:text-teal-600 p-1 transition-colors"
           >
             <VscChevronRight className="w-6 h-6" />

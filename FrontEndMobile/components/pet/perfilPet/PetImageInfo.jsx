@@ -2,10 +2,18 @@ import React from "react";
 import { View, Text, Image, Pressable, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function PetImageInfo({ pet, router }) {
+export default function PetImageInfo({ pet, router, petColor }) {
   return (
     <View style={styles.mainImageWrapper}>
-      <Image source={pet.mainImage} style={styles.mainPetImage} resizeMode="cover" />
+      <View
+        style={[
+          styles.mainPetImageCard,
+          { backgroundColor: petColor || "#FFE9E9" }
+        ]}
+      >
+        <Image source={pet.mainImage} style={styles.mainPetImage} resizeMode="contain" />
+      </View>
+
       <View style={styles.nameAgeBox}>
         <Text style={styles.petNameText}>{pet.name}</Text>
         <Text style={styles.petAgeText}>{pet.age}</Text>
@@ -16,14 +24,14 @@ export default function PetImageInfo({ pet, router }) {
         onPress={() =>
           router.push({
             pathname: "/screens/perfilPetScreens/EditarPetScreen",
-            params: { pet: JSON.stringify(pet) }, 
+            params: { pet: JSON.stringify(pet) },
           })
         }
       >
         <MaterialCommunityIcons name="pencil" size={24} color="#2F8B88" />
       </Pressable>
 
-      <Pressable style={[styles.actionButton, styles.vetButton]} 
+      <Pressable style={[styles.actionButton, styles.vetButton]}
         onPress={() => router.push("/screens/perfilPetScreens/SaudePetScreen")}
       >
         <MaterialCommunityIcons name="stethoscope" size={24} color="#2F8B88" />
@@ -39,11 +47,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: "100%",
   },
-  mainPetImage: {
+  mainPetImageCard: {
     width: 240,
     height: 350,
     borderRadius: 20,
-    backgroundColor: "#FFE9E9",
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  mainPetImage: {
+    width: "85%",
+    height: "85%",
   },
   nameAgeBox: {
     position: "absolute",
