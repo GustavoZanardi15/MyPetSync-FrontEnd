@@ -17,6 +17,10 @@ export const fetchDashboardStats = async () => {
 export const fetchRecentActivities = async () => {
   const activitiesRes = await api.get(`/reviews/recent`);
 
+  if (!Array.isArray(activitiesRes.data)) {
+    return [];
+  }
+
   return activitiesRes.data.map((activity) => ({
     id: activity._id,
     type: "Avaliação Recebida",
