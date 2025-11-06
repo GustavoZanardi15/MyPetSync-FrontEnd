@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react"; 
 import { View, ScrollView, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HomeHeader from "../../../components/home/HomeHeader";
@@ -7,7 +7,10 @@ import PetSelector from "../../../components/home/PetSelector";
 import LembretesSection from "../../../components/home/LembretesSection";
 import VeterinariosSection from "../../../components/home/VeterinariosSection";
 import BottomNav from "../../../components/home/BottomNav";
+import api from "../../../src/service/api";
 import { API_BASE_URL } from "../../../src/config/api";
+import { useFocusEffect } from "expo-router";
+
 
 async function getAuthToken() {
   try {
@@ -18,16 +21,58 @@ async function getAuthToken() {
   }
 }
 
+const PET_COLORS = [
+  "#A9E4D4",
+  "#B0C4DE",
+  "#FFC0CB",
+  "#F0E68C",
+  "#ADD8E6",
+  "#FAFAD2",
+  "#DDA0DD",
+];
+
+const petColorMap = new Map();
+
+const getStablePetColor = (petId) => {
+  if (petColorMap.has(petId)) {
+    return petColorMap.get(petId);
+  }
+
+  const hash = petId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const colorIndex = hash % PET_COLORS.length;
+  const color = PET_COLORS[colorIndex];
+
+  petColorMap.set(petId, color);
+  return color;
+};
+
+const DEFAULT_AVATAR_DOG = require("../../../assets/images/addPet/Dog.png");
+const DEFAULT_AVATAR_CAT = require("../../../assets/images/addPet/Cat.png");
+
+const formatPetDataForHome = (petFromApi) => {
+  const getPetImageSource = (photoPath, specie) => {
+    if (photoPath) {
+      return { uri: `${API_BASE_URL}${photoPath}` };
+    }
+
+    const isDog = petFromApi.especie?.toLowerCase() === "cachorro" || petFromApi.especie?.toLowerCase() === "cão";
+    return isDog ? DEFAULT_AVATAR_DOG : DEFAULT_AVATAR_CAT;
+  };
+
+  return {
+    id: petFromApi._id,
+    name: petFromApi.nome,
+    image: getPetImageSource(petFromApi.foto, petFromApi.especie),
+    color: getStablePetColor(petFromApi._id),
+  };
+};
+
+
 export default function HomeScreen() {
-  const [selectedPet, setSelectedPet] = useState(0);
+  const [pets, setPets] = useState([]);
+  const [selectedPetIndex, setSelectedPetIndex] = useState(0);
   const [userName, setUserName] = useState("Usuário");
   const [authToken, setAuthToken] = useState(null);
-
-  const pets = [
-    { id: 0, image: require("../../../assets/images/home/DogHomePet1.png") },
-    { id: 1, image: require("../../../assets/images/home/DogHomePet2.png") },
-    { id: 2, image: require("../../../assets/images/home/CatHomePet.png") },
-  ];
 
   const reminders = [
     [
@@ -81,66 +126,89 @@ export default function HomeScreen() {
   ];
 
   useEffect(() => {
-  async function loadToken() {
-    const token = await getAuthToken();
-    setAuthToken(token);
-  }
-  loadToken();
-}, []);
+    async function loadToken() {
+      const token = await getAuthToken();
+      setAuthToken(token);
+    }
+    loadToken();
+  }, []);
 
-useEffect(() => {
-  if (!authToken) {
-    console.warn("Sem token, usando nome padrão.");
-    setUserName("Usuário");
-    return;
-  }
+  const fetchPets = useCallback(async () => {
+    if (!authToken) return;
 
-  async function fetchUserName() {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/me`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          "Content-Type": "application/json",
-        },
+      const response = await api.get("/pets", {
+        headers: { Authorization: `Bearer ${authToken}` },
       });
 
-      const data = await response.json();
+      const fetchedPets = response.data.map(formatPetDataForHome);
+      setPets(fetchedPets);
 
-      if (data?.nome) {
-        setUserName(data.nome);
+      if (fetchedPets.length > 0) {
+        setSelectedPetIndex(0);
       } else {
-        console.warn("Campo 'nome' não retornado:", data);
+        setSelectedPetIndex(-1);
+      }
+
+    } catch (error) {
+      console.error("Erro ao buscar pets:", error.response?.data || error.message);
+      setPets([]);
+      setSelectedPetIndex(-1);
+    }
+  }, [authToken]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPets();
+    }, [fetchPets]) 
+  );
+
+  useEffect(() => {
+    if (!authToken) {
+      console.warn("Sem token, usando nome padrão.");
+      setUserName("Usuário");
+      return;
+    }
+
+    async function fetchUserName() {
+      try {
+        const response = await api.get("/users/me", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        const data = response.data;
+
+        if (data?.nome) {
+          setUserName(data.nome);
+        } else {
+          console.warn("Campo 'nome' não retornado:", data);
+          setUserName("Usuário");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar nome do usuário:", error.response?.data || error.message);
         setUserName("Usuário");
       }
-    } catch (error) {
-      console.error("Erro ao buscar nome do usuário:", error);
-      setUserName("Usuário");
     }
-  }
 
-  fetchUserName();
-}, [authToken]);
+    fetchUserName();
+  }, [authToken]);
+
+
+  const currentReminders = pets.length > 0 && selectedPetIndex !== -1
+    ? reminders[selectedPetIndex] || []
+    : [];
 
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent} >
         <HomeHeader userName={userName} />
-
         <SpaCard />
-
-        <PetSelector
-          pets={pets}
-          selectedPet={selectedPet}
-          setSelectedPet={setSelectedPet}
-        />
-
-        <LembretesSection reminders={reminders[selectedPet] || []} />
-
+        <PetSelector pets={pets} selectedPet={selectedPetIndex} setSelectedPet={setSelectedPetIndex} />
+        <LembretesSection reminders={currentReminders} />
         <VeterinariosSection vets={vets} />
       </ScrollView>
 

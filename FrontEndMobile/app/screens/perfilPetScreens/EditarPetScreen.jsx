@@ -1,51 +1,41 @@
 import React, { useState } from "react";
-import { View, ScrollView, StyleSheet, Text, Pressable, Platform, StatusBar, Alert } from "react-native";
+import { View, ScrollView, StyleSheet, Text, Pressable, Platform, StatusBar } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage"; 
-import api from "../../../src/service/api"; 
 import EditInfo from "../../../components/pet/editarPet/EditInfo";
 import EditPetHeader from "../../../components/pet/editarPet/EditPetHeader";
 import EditPetImage from "../../../components/pet/editarPet/EditPetImage";
 import BottomNav from "../../../components/pet/editarPet/BottomNav";
 
+const PET_COLORS = [
+    "#A9E4D4",
+    "#B0C4DE",
+    "#FFC0CB",
+    "#F0E68C",
+    "#ADD8E6",
+    "#FAFAD2",
+    "#DDA0DD",
+];
 
-const createUpdateDto = (data) => {
-    const castrado = data.neutered?.toLowerCase() === "sim";
+const petColorMap = new Map();
 
-    let condicoes_especiais = [];
-    if (data.specialCondition) {
-        condicoes_especiais = data.specialCondition
-            .split(',')
-            .map(s => s.trim())
-            .filter(s => s.length > 0);
+const getStablePetColor = (petId) => {
+    if (petColorMap.has(petId)) {
+        return petColorMap.get(petId);
     }
-    
-    const updateDto = {
-        nome: data.name,
-        raca: data.race,
-        idade: data.age ? Number(data.age) : undefined, 
-        peso: data.weight ? Number(data.weight) : undefined,
-        castrado: castrado,
-        condicoes_especiais: condicoes_especiais.length > 0 ? condicoes_especiais : undefined,
-        foto: typeof data.profileImage === 'string' ? data.profileImage : undefined,
-    };
-    
-    Object.keys(updateDto).forEach(key => {
-        const value = updateDto[key];
-        if (value === undefined || value === null || value === "" || (typeof value === 'number' && isNaN(value))) {
-            delete updateDto[key];
-        }
-    });
 
-    return updateDto;
+    const hash = petId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const colorIndex = hash % PET_COLORS.length;
+    const color = PET_COLORS[colorIndex];
+
+    petColorMap.set(petId, color);
+    return color;
 };
-
 
 export default function EditarPetScreen() {
     const { pet } = useLocalSearchParams();
-
     const selectedPet = pet ? JSON.parse(pet) : {};
-    const petId = selectedPet.id; 
+    const petId = selectedPet.id;
+    const petColor = petId ? getStablePetColor(petId) : "#FFE9E9"; 
 
     const [petData, setPetData] = useState({
         profileImage: selectedPet.mainImage || require("../../../assets/images/home/DogHomePet1.png"),
@@ -53,86 +43,13 @@ export default function EditarPetScreen() {
         race: selectedPet.race || "",
         age: selectedPet.age || "",
         weight: selectedPet.weight || "",
-        neutered: selectedPet.neutered || "Não", 
+        neutered: selectedPet.neutered || "",
         specialCondition: selectedPet.specialCondition || "",
     });
-
-    const [isLoading, setIsLoading] = useState(false);
 
     const handleFieldChange = (field, value) => {
         setPetData({ ...petData, [field]: value });
     };
-
-    const handleImageChange = (newImageUri) => {
-        handleFieldChange("profileImage", newImageUri);
-    };
-
-
-    const handleUpdatePet = async () => {
-        if (!petId) {
-            Alert.alert("Erro", "ID do pet não encontrado para atualização.");
-            return;
-        }
-        
-        setIsLoading(true);
-        const updateDto = createUpdateDto(petData);
-
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            
-            if (!token) {
-                Alert.alert("Erro de Autenticação", "Usuário não autenticado. Faça login novamente.");
-                setIsLoading(false);
-                return;
-            }
-
-            const response = await api.put(`/pets/${petId}`, updateDto, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            
-            const updatedPetFromApi = response.data;
-            const finalUpdatedPet = {
-                ...selectedPet, 
-                ...updatedPetFromApi, 
-                id: petId,
-                name: updatedPetFromApi.nome || selectedPet.name,
-                age: updatedPetFromApi.idade ? String(updatedPetFromApi.idade) : selectedPet.age,
-                race: updatedPetFromApi.raca || selectedPet.race,
-                weight: updatedPetFromApi.peso ? String(updatedPetFromApi.peso) : selectedPet.weight,
-                neutered: updatedPetFromApi.castrado ? "Sim" : "Não",
-                specialCondition: Array.isArray(updatedPetFromApi.condicoes_especiais) 
-                    ? updatedPetFromApi.condicoes_especiais.join(', ') 
-                    : "",
-                mainImage: updatedPetFromApi.foto || selectedPet.mainImage,
-            };
-
-            Alert.alert("Sucesso", "Dados do pet atualizados com sucesso!");
-
-            router.push({
-                pathname: "/screens/perfilPetScreens/PerfilPetScreen",
-                params: { 
-                    updatedPet: JSON.stringify(finalUpdatedPet) 
-                },
-            });
-
-        } catch (error) {
-            console.error("Erro ao atualizar pet:", error.response?.data || error);
-
-            const errorMessage = error.response?.data?.message
-                ? Array.isArray(error.response.data.message) 
-                    ? error.response.data.message.join("\n")
-                    : error.response.data.message
-                : "Não foi possível salvar as alterações. Verifique sua conexão, as regras de validação ou tente novamente.";
-
-            Alert.alert("Erro", errorMessage);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
 
     return (
         <View style={styles.fullScreen}>
@@ -140,28 +57,24 @@ export default function EditarPetScreen() {
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: 40 }]}
             >
-                <EditPetImage 
-                    imageSource={petData.profileImage} 
-                    onImageChange={handleImageChange} 
-                /> 
+                <EditPetImage imageSource={petData.profileImage} petColor={petColor} />
 
                 <View style={styles.fieldsWrapper}>
                     <EditInfo label="Nome:" initialValue={petData.name} onValueChange={(v) => handleFieldChange("name", v)} />
                     <EditInfo label="Raça:" initialValue={petData.race} onValueChange={(v) => handleFieldChange("race", v)} />
-                    <EditInfo label="Idade:" initialValue={petData.age} onValueChange={(v) => handleFieldChange("age", v)} keyboardType="numeric" />
-                    <EditInfo label="Peso atual:" initialValue={petData.weight} onValueChange={(v) => handleFieldChange("weight", v)} keyboardType="numeric" />
-                    <EditInfo label="Castrado:" initialValue={petData.neutered} onValueChange={(v) => handleFieldChange("neutered", v)} />
+                    <EditInfo label="Idade (anos):" initialValue={petData.age} onValueChange={(v) => handleFieldChange("age", v)} />
+                    <EditInfo label="Peso (kg):" initialValue={petData.weight} onValueChange={(v) => handleFieldChange("weight", v)} />
+                    <EditInfo label="Castrado?" initialValue={petData.neutered} onValueChange={(v) => handleFieldChange("neutered", v)} />
                     <EditInfo label="Condição especial:" initialValue={petData.specialCondition} onValueChange={(v) => handleFieldChange("specialCondition", v)} />
                 </View>
 
                 <Pressable
                     style={styles.saveButton}
-                    onPress={handleUpdatePet}
-                    disabled={isLoading}
+                    onPress={() => { router.push("/screens/perfilPetScreens/PerfilPetScreen") }}
                 >
-                    <Text style={styles.saveButtonText}>{isLoading ? "Salvando..." : "Salvar"}</Text>
+                    <Text style={styles.saveButtonText}>Salvar</Text>
                 </Pressable>
             </ScrollView>
 
@@ -192,14 +105,14 @@ const styles = StyleSheet.create({
         width: 200,
         alignSelf: "center",
         shadowColor: "#2F8B88",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
-        elevation: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
+        elevation: 8,
     },
     saveButtonText: {
-        color: "#FFF",
-        fontSize: 15,
+        color: "#FFFFFF",
+        fontSize: 16,
         fontWeight: "bold",
     },
 });
