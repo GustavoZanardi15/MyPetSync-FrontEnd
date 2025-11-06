@@ -3,7 +3,6 @@ import DashboardStats from "../components/home/DashboardStats";
 import WelcomeBanner from "../components/home/WelcomeBanner";
 import NextAppointments from "../components/home/NextAppointments";
 import HomeSidePanel from "../components/home/HomeSidePanel";
-import RecentActivities from "../components/home/RecentActivities";
 import { useAuth } from "../context/AuthContext";
 import * as providerService from "../services/providerService";
 import {
@@ -45,10 +44,8 @@ const HomePage = () => {
           throw new Error("ID do Prestador não encontrado no perfil.");
         }
 
-        const [statsData, recentActivitiesData] = await Promise.all([
-          fetchDashboardStats(),
-          fetchRecentActivities(),
-        ]);
+        const [statsData] = await Promise.all([fetchDashboardStats()]);
+        const recentActivitiesData = [];
 
         const appointments = statsData.appointments || {
           total: 0,
@@ -121,7 +118,7 @@ const HomePage = () => {
 
   return (
     <div className="px-8 pt-4 pb-8">
-      <WelcomeBanner userName={user?.name} />
+      <WelcomeBanner />
       {isLoading && (
         <p className="text-center text-gray-500 py-8">
           Carregando estatísticas...
@@ -132,15 +129,7 @@ const HomePage = () => {
       {!isLoading && !error && stats && <DashboardStats stats={stats} />}
 
       <div className="flex gap-8 mt-8">
-        <div className="flex-grow">
-          {isLoggedIn && <NextAppointments />}
-
-          {!isLoading && !error && (
-            <div className="mt-8">
-              <RecentActivities activitiesData={activities} />
-            </div>
-          )}
-        </div>
+        <div className="flex-grow">{isLoggedIn && <NextAppointments />}</div>
         <div className="w-80">
           <HomeSidePanel />
         </div>
