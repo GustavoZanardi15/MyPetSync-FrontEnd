@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { View, ScrollView, StyleSheet, Platform, StatusBar, Pressable, Text, ActivityIndicator, Alert } from "react-native";
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,24 +15,25 @@ const DEFAULT_MAIN_IMAGE_DOG = require("../../../assets/images/addPet/Dog.png");
 const DEFAULT_MAIN_IMAGE_CAT = require("../../../assets/images/addPet/Cat.png");
 
 const PET_COLORS = [
-    "#A9E4D4",
-    "#B0C4DE",
-    "#FFC0CB",
-    "#F0E68C",
-    "#ADD8E6",
-    "#FAFAD2",
-    "#DDA0DD",
+    '#A9E4D4',
+    '#B0C4DE',
+    '#FFC0CB',
+    '#F0E68C',
+    '#ADD8E6',
+    '#FAFAD2',
+    '#DDA0DD',
 ];
 
 const petColorMap = new Map();
 
 const formatPetData = (petFromApi) => {
-    const getPetImageSource = (photoPath, isMainImage = false) => {
+
+    const getPetImageSource = (photoPath, specie, isMainImage = false) => {
         if (photoPath) {
             return { uri: `${API_BASE_URL}${photoPath}` };
         }
 
-        const isDog = petFromApi.especie?.toLowerCase() === "cachorro" || petFromApi.especie?.toLowerCase() === "cão";
+        const isDog = petFromApi.especie?.toLowerCase() === 'cachorro' || petFromApi.especie?.toLowerCase() === 'cão';
         if (isMainImage) {
             return isDog ? DEFAULT_MAIN_IMAGE_DOG : DEFAULT_MAIN_IMAGE_CAT;
         } else {
@@ -41,18 +42,18 @@ const formatPetData = (petFromApi) => {
     };
 
     let formattedConditions = petFromApi.condicoes_especiais;
-    if (typeof formattedConditions === "string") {
-        formattedConditions = formattedConditions.split(",").map(c => c.trim()).filter(c => c.length > 0);
+    if (typeof formattedConditions === 'string') {
+        formattedConditions = formattedConditions.split(',').map(c => c.trim()).filter(c => c.length > 0);
     }
 
     return {
         id: petFromApi._id,
         name: petFromApi.nome,
-        age: petFromApi.idade ? `${petFromApi.idade} anos` : "Não informado",
-        race: petFromApi.raca || "Não informado",
-        weight: petFromApi.peso && !isNaN(petFromApi.peso) ? `${parseFloat(petFromApi.peso).toFixed(2)} kg` : "Não informado",
-        neutered: petFromApi.castrado ? "Sim" : "Não",
-        specialCondition: formattedConditions?.join(", ") || "Nenhuma",
+        age: petFromApi.idade ? `${petFromApi.idade} anos` : 'Não informado',
+        race: petFromApi.raca || 'Não informado',
+        weight: petFromApi.peso && !isNaN(petFromApi.peso) ? `${parseFloat(petFromApi.peso).toFixed(2)} kg` : 'Não informado',
+        neutered: petFromApi.castrado ? 'Sim' : 'Não',
+        specialCondition: formattedConditions?.join(', ') || 'Nenhuma',
         especie: petFromApi.especie,
 
         mainImage: getPetImageSource(petFromApi.foto, petFromApi.especie, true),
@@ -65,14 +66,13 @@ const getStablePetColor = (petId) => {
         return petColorMap.get(petId);
     }
 
-    const hash = petId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hash = petId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const colorIndex = hash % PET_COLORS.length;
     const color = PET_COLORS[colorIndex];
 
     petColorMap.set(petId, color);
     return color;
 };
-
 
 export default function PerfilPetScreen() {
     const router = useRouter();
@@ -87,14 +87,14 @@ export default function PerfilPetScreen() {
     const fetchPets = useCallback(async () => {
         setIsLoading(true);
         try {
-            const token = await AsyncStorage.getItem("userToken");
+            const token = await AsyncStorage.getItem('userToken');
             if (!token) {
                 Alert.alert("Erro de autenticação", "Sessão expirada. Faça login novamente.");
-                router.replace("/screens/loginScreens/LoginScreen"); 
+                router.replace('screens/loginScreens/LoginScreen');
                 return;
             }
 
-            const response = await api.get("/pets", {
+            const response = await api.get('/pets', {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -131,9 +131,13 @@ export default function PerfilPetScreen() {
                     newSelectedPet = fetchedPets[0] || null;
                     lastSelectedPetIdRef.current = fetchedPets[0]?.id || null;
                 }
-            } else {
-                newSelectedPet = null;
-                lastSelectedPetIdRef.current = null;
+            }
+
+            if (newSelectedPet?.id !== selectedPet?.id) {
+                setSelectedPet(newSelectedPet);
+            }
+            if (!newSelectedPet && selectedPet) {
+                setSelectedPet(null);
             }
 
         } catch (error) {
@@ -153,51 +157,66 @@ export default function PerfilPetScreen() {
         }, [fetchPets])
     );
 
-    const handlePetDeleted = useCallback(() => {
-
-        const deletedPetId = selectedPet?.id;
-        const petsAfterDeletion = pets.filter(p => p.id !== deletedPetId);
-
-        if (petsAfterDeletion.length === 0) {
-            router.push("/screens/perfilPetScreens/PerfilPetScreen"); 
-        } else {
-            const nextPet = petsAfterDeletion[0]; 
-            router.push({ 
-                pathname: "/screens/perfilPetScreens/PerfilPetScreen", 
-                params: { updatedPet: JSON.stringify(nextPet) } 
-            });
-        }
-    }, [pets, selectedPet, router]);
-
-
     const handlePetSelection = useCallback((pet) => {
         setSelectedPet(pet);
         lastSelectedPetIdRef.current = pet ? pet.id : null;
     }, []);
 
-    const selectedPetColor = selectedPet ? getStablePetColor(selectedPet.id) : "#FFE9E9";
+    const handlePetDeleted = useCallback(() => {
+        fetchPets();
+    }, [fetchPets]);
+
+
+    const selectedPetColor = selectedPet ? getStablePetColor(selectedPet.id) : '#FFE9E9';
 
     if (isLoading) {
         return (
-            <View style={styles.loadingContainer}>
+            <View style={[styles.fullScreen, styles.loadingContainer]}>
                 <ActivityIndicator size="large" color="#2F8B88" />
-                <Text style={styles.loadingText}>Carregando pets...</Text>
+                <Text style={styles.loadingText}>Carregando seus pets...</Text>
             </View>
         );
+    }
 
+    if (!isLoading && pets.length === 0) {
+        return (
+            <View style={styles.fullScreen}>
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyTitle}>Nenhum Pet Encontrado 🐶</Text>
+                    <Text style={styles.emptyText}>Parece que você ainda não cadastrou nenhum pet.</Text>
+                    <Text style={styles.emptyText}>Adicione o seu primeiro companheiro(a)!</Text>
+                    <Pressable
+                        style={styles.addButton}
+                        onPress={() => router.push("/screens/addPetScreens/AddPetScreen")}
+                    >
+                        <Text style={styles.addButtonText}>CADASTRAR PET</Text>
+                    </Pressable>
+                </View>
+                <BottomNav />
+            </View>
+        );
     }
 
     return (
         <View style={styles.fullScreen}>
             <ScrollView showsVerticalScrollIndicator={false}>
 
-                <PetAvatarSelector pets={pets} selectedPet={selectedPet} setSelectedPet={handlePetSelection} 
-                router={router} petColors={PET_COLORS} />
+                <PetAvatarSelector
+                    pets={pets}
+                    selectedPet={selectedPet}
+                    setSelectedPet={handlePetSelection}
+                    router={router}
+                    petColors={PET_COLORS}
+                />
 
                 <View style={styles.contentContainer}>
                     {selectedPet && (
                         <View>
-                            <PetImageInfo pet={selectedPet} router={router} petColor={selectedPetColor} />
+                            <PetImageInfo
+                                pet={selectedPet}
+                                router={router}
+                                petColor={selectedPetColor}
+                            />
                             <View>
                                 <PetInfo label="Espécie:" value={selectedPet.especie} />
                                 <PetInfo label="Raça:" value={selectedPet.race} />
@@ -206,13 +225,13 @@ export default function PerfilPetScreen() {
                                 <PetInfo label="Castrado:" value={selectedPet.neutered} />
                                 <PetInfo label="Condições especiais:" value={selectedPet.specialCondition} />
                             </View>
-
-                            <DeletePetButton pet={selectedPet} onPetDeleted={handlePetDeleted} />
-
+                            <DeletePetButton
+                                pet={selectedPet}
+                                onPetDeleted={handlePetDeleted}
+                            />
                         </View>
                     )}
                 </View>
-                <View style={{ height: 10 }} />
             </ScrollView>
             <BottomNav />
         </View>
