@@ -1,43 +1,30 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 
 export default function EditPerfilScreen() {
-  const navigation = useNavigation();
-
   const [nome, setNome] = useState("Matheus Heichemback Santos");
   const [email, setEmail] = useState("matheuscheich@gmail.com");
   const [celular, setCelular] = useState("44 9989-8950");
 
   const handleSalvar = () => {
-    
     Alert.alert("Sucesso", "Perfil atualizado com sucesso!", [
-      {
-        text: "OK",
-        onPress: () => navigation.goBack(), 
-      },
+      { text: "OK", onPress: () => router.back() },
     ]);
   };
 
   return (
     <View style={styles.container}>
-     
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#064E46" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Editar Perfil</Text>
       </View>
 
-      
       <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Nome"
-          value={nome}
-          onChangeText={setNome}
-        />
+        <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
         <TextInput
           style={styles.input}
           placeholder="E-mail"

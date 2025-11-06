@@ -13,12 +13,12 @@ const tiposLembrete = [
   { name: "Remédios", icon: "pill", iconColor: BRAND, iconBg: "#D9F5EE" },
   { name: "Vacinas", icon: "needle", iconColor: BRAND, iconBg: "#EDE6FB" },
   { name: "Exercícios", icon: "dumbbell", iconColor: BRAND, iconBg: "#D9F5EE" },
-  { name: "Água", icon: "cup-water", iconColor: BRAND, iconBg: "#FFE6A9" }
+  { name: "Água", icon: "cup-water", iconColor: BRAND, iconBg: "#FFE6A9" },
 ];
 
 export default function EditLembreteScreen() {
   const { id } = useLocalSearchParams();
-  const isEdit = true; 
+  const isEdit = true;
 
   const [selectedTipo, setSelectedTipo] = useState("Remédios");
   const [selectedPet, setSelectedPet] = useState(null);
@@ -38,7 +38,6 @@ export default function EditLembreteScreen() {
 
   return (
     <View style={styles.container}>
-    
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={26} color={BRAND} />
@@ -48,19 +47,12 @@ export default function EditLembreteScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        
-        <TiposLembrete
-          tipos={tiposLembrete}
-          selectedTipo={selectedTipo}
-          setSelectedTipo={setSelectedTipo}
-        />
+        <TiposLembrete tipos={tiposLembrete} selectedTipo={selectedTipo} setSelectedTipo={setSelectedTipo} />
 
-        
         <View style={styles.cardShadow}>
           <PetDropdown selectedPet={selectedPet} setSelectedPet={setSelectedPet} />
         </View>
 
-       
         <View style={styles.cardShadow}>
           <TextInput
             style={styles.input}
@@ -71,7 +63,6 @@ export default function EditLembreteScreen() {
           />
         </View>
 
-        
         <Pressable style={styles.listItem} onPress={() => Alert.alert("Duração", "Abrir seletor de duração (mock).")}>
           <View>
             <Text style={styles.label}>Duração</Text>
@@ -80,7 +71,6 @@ export default function EditLembreteScreen() {
           <Ionicons name="chevron-forward" size={20} color={BRAND} />
         </Pressable>
 
-        
         <Pressable style={styles.listItem} onPress={() => Alert.alert("Horário", "Abrir seletor de horário (mock).")}>
           <View>
             <Text style={styles.label}>Horário</Text>
@@ -89,7 +79,6 @@ export default function EditLembreteScreen() {
           <Ionicons name="chevron-forward" size={20} color={BRAND} />
         </Pressable>
 
-      
         <View style={{ gap: 8 }}>
           <Text style={styles.label}>Quantidade</Text>
           <View style={styles.qtyRow}>
@@ -105,7 +94,6 @@ export default function EditLembreteScreen() {
           </View>
         </View>
 
-        
         <Pressable style={styles.saveBtn} onPress={onSalvar}>
           <Text style={styles.saveText}>Salvar</Text>
         </Pressable>
@@ -121,12 +109,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingVertical: 12
+    paddingVertical: 12,
   },
   backBtn: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
   title: { color: BRAND, fontSize: 22, fontWeight: "800" },
   scroll: { paddingHorizontal: 16, paddingBottom: 24, gap: 14 },
-
   cardShadow: {
     backgroundColor: CARD,
     borderRadius: 18,
@@ -136,13 +123,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
-    elevation: 2
+    elevation: 2,
   },
-  input: {
-    height: 48,
-    color: "#2B3338"
-  },
-
+  input: { height: 48, color: "#2B3338" },
   listItem: {
     backgroundColor: CARD,
     borderRadius: 18,
@@ -155,16 +138,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
-    elevation: 2
+    elevation: 2,
   },
   label: { color: "#8796A1", fontSize: 13 },
   value: { color: BRAND, fontSize: 18, fontWeight: "700" },
-
-  qtyRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
+  qtyRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   circleBtn: {
     width: 56,
     height: 56,
@@ -173,17 +151,16 @@ const styles = StyleSheet.create({
     borderColor: "#CBD5D8",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#FFFFFF",
   },
   qtyText: { color: BRAND, fontSize: 22, fontWeight: "800" },
-
   saveBtn: {
     backgroundColor: BRAND,
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: "center",
     marginTop: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
-  saveText: { color: "#FFFFFF", fontSize: 18, fontWeight: "700" }
+  saveText: { color: "#FFFFFF", fontSize: 18, fontWeight: "700" },
 });
