@@ -1,12 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
-export default function PerfilTutorHeader({ onEdit }) {
+export default function PerfilTutorHeader({  }) {
   return (
     <View style={styles.headerContainer}>
       <Text style={styles.title}>Perfil do Tutor</Text>
-      <Pressable style={styles.editButton} onPress={onEdit}>
+      <Pressable style={styles.editButton} onPress={() => router.push("/screens/perfilTutorScreens/EditarTutorScreen")}>
         <Ionicons name="pencil" size={22} color="#2F8B88" />
       </Pressable>
     </View>
