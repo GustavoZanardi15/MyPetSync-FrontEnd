@@ -14,7 +14,7 @@ const statusMap = {
   canceled: { text: "Cancelado", color: "bg-red-100 text-red-700" },
 };
 
-const DailySchedule = ({ appointments, selectedDate, onAddAppointment }) => {
+const DailySchedule = ({ appointments, selectedDate, onAddAppointment, onAppointmentClick }) => {
   const dateObj = parseISO(selectedDate);
   const formattedDate = format(dateObj, "d 'de' MMMM 'de' yyyy", {
     locale: ptBR,
@@ -22,18 +22,19 @@ const DailySchedule = ({ appointments, selectedDate, onAddAppointment }) => {
 
   const appointmentsByTime = appointments.reduce((acc, appt) => {
     const time = format(parseISO(appt.dateTime), "HH:mm");
-    const simplifiedAppt = {
-      id: appt._id,
-      time: time,
-      pet: appt.pet.name,
-      clientInfo: appt.reason || appt.location || "Detalhe não informado",
-      status: appt.status,
-    };
+    const fullApptData = {
+       ...appt,
+       id: appt._id,
+       time: time,
+       petName: appt.pet?.nome,
+       clientInfo: appt.reason || appt.location || "Detalhe não informado",
+       status: appt.status,
+     };
 
     if (!acc[time]) {
       acc[time] = [];
     }
-    acc[time].push(simplifiedAppt);
+    acc[time].push(fullApptData);
     return acc;
   }, {});
 
@@ -69,7 +70,7 @@ const DailySchedule = ({ appointments, selectedDate, onAddAppointment }) => {
                       className="flex justify-between items-center text-teal-700 mb-2 last:mb-0"
                     >
                       <div>
-                        <p className="font-bold">{appointment.pet}</p>
+                        <p className="font-bold">{appointment.petName}</p>
                         <p className="text-sm text-gray-500">
                           {appointment.clientInfo}
                         </p>
@@ -82,7 +83,10 @@ const DailySchedule = ({ appointments, selectedDate, onAddAppointment }) => {
                         >
                           {statusMap[appointment.status]?.text}
                         </span>
-                        <button className="text-gray-500 hover:text-teal-600 p-1 rounded">
+                        <button
+                          onClick={() => onAppointmentClick(appointment)} 
+                          className="text-gray-500 hover:text-teal-600 p-1 rounded"
+                        >
                           <VscEdit className="w-5 h-5" />
                         </button>
                       </div>
