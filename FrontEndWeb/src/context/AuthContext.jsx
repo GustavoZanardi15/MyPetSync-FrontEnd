@@ -25,6 +25,9 @@ export const AuthProvider = ({ children }) => {
 
       cleanedUser.id = primaryId;
       cleanedUser.userId = primaryId;
+      cleanedUser.name = cleanedUser.nome || cleanedUser.name;
+      cleanedUser.email = cleanedUser.email;
+
       setUser(cleanedUser);
       return cleanedUser;
     } catch (error) {
