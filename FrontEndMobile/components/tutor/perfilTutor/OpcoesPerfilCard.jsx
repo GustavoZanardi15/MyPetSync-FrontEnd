@@ -1,33 +1,33 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function OpcoesPerfilCard({ onLogout, onEndereco, onServicos, onLembretes }) {
   return (
     <View style={styles.card}>
       <Pressable style={styles.option} onPress={onEndereco}>
-        <View style={[styles.iconContainer, { backgroundColor: "#FFE7A3" }]}>
-          <Ionicons name="home-outline" size={20} color="#2F7A67" />
+        <View style={[styles.iconWrapper, { backgroundColor: "#FFE7A3" }]}>
+          <Ionicons name="home-outline" size={24} color="#2F7A67" />
         </View>
         <Text style={styles.optionText}>Endereço</Text>
       </Pressable>
 
       <Pressable style={styles.option} onPress={onServicos}>
-        <View style={[styles.iconContainer, { backgroundColor: "#E5D4FF" }]}>
-          <Ionicons name="briefcase-outline" size={20} color="#2F7A67" />
+        <View style={[styles.iconWrapper, { backgroundColor: "#E5D4FF" }]}>
+          <Image source={require("../../../assets/images/home/NavBarServico.png")} style={styles.iconImage} />
         </View>
         <Text style={styles.optionText}>Serviços</Text>
       </Pressable>
 
       <Pressable style={styles.option} onPress={onLembretes}>
-        <View style={[styles.iconContainer, { backgroundColor: "#C8E8E0" }]}>
-          <Ionicons name="calendar-outline" size={20} color="#2F7A67" />
+        <View style={[styles.iconWrapper, { backgroundColor: "#C8E8E0" }]}>
+          <Image source={require("../../../assets/images/home/NavBarCalendar.png")} style={styles.iconImage} />
         </View>
         <Text style={styles.optionText}>Lembretes</Text>
       </Pressable>
 
-      <Pressable onPress={onLogout} style={styles.logout}>
-        <Text style={styles.logoutText}>Sair</Text>
+      <Pressable onPress={onLogout} style={styles.logoutButton}>
+        <Text style={styles.logoutButtonText}>Sair</Text>
       </Pressable>
     </View>
   );
@@ -47,27 +47,39 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomColor: "#eee",
     borderBottomWidth: 1,
   },
-  iconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  iconWrapper: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
+  },
+  iconImage: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
   },
   optionText: {
     fontSize: 15,
     color: "#2F7A67",
-    marginLeft: 10,
-  },
-  logout: {
-    paddingVertical: 12,
-  },
-  logoutText: {
-    color: "#D9534F",
+    marginLeft: 16,
     fontWeight: "500",
+  },
+  logoutButton: {
+    marginTop: 16,
+    backgroundColor: "#FF3B30",
+    paddingVertical: 10,
+    paddingHorizontal: 70, 
+    borderRadius: 12, 
+    alignSelf: "center", 
+  },
+  logoutButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "bold",
   },
 });
