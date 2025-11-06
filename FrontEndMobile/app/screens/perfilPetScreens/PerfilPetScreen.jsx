@@ -14,7 +14,7 @@ const DEFAULT_AVATAR_CAT = require("../../../assets/images/addPet/Cat.png");
 const DEFAULT_MAIN_IMAGE_DOG = require("../../../assets/images/addPet/Dog.png");
 const DEFAULT_MAIN_IMAGE_CAT = require("../../../assets/images/addPet/Cat.png");
 
-const PET_COLORS = [
+const PET_COLORS = [ 
     '#A9E4D4',
     '#B0C4DE',
     '#FFC0CB',
