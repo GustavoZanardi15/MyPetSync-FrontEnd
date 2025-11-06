@@ -34,8 +34,6 @@ const HomePage = () => {
 
   useEffect(() => {
     const loadDashboardData = async () => {
-      if (!user || !user.userId) return;
-
       setIsLoading(true);
       setError(null);
 
@@ -69,7 +67,7 @@ const HomePage = () => {
             id: activity._id,
             type: "Avaliação Recebida",
             detail: `${formatRating(activity.rating)} por ${
-              activity.author?.name || "Cliente"
+              activity.author?.name || activity.pet?.nome || "Cliente"
             }`,
             iconName: "VscStarFull",
             color: "bg-yellow-500",
@@ -119,11 +117,11 @@ const HomePage = () => {
     if (isLoggedIn && user && user.userId) {
       loadDashboardData();
     }
-  }, [isLoggedIn, refreshKey]);
+  }, [isLoggedIn, user, refreshKey]);
 
   return (
     <div className="px-8 pt-4 pb-8">
-      <WelcomeBanner />
+      <WelcomeBanner userName={user?.name} />
       {isLoading && (
         <p className="text-center text-gray-500 py-8">
           Carregando estatísticas...

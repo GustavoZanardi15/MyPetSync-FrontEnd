@@ -8,12 +8,13 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+
   const loadUser = async () => {
     try {
-      const user = await fetchCurrentUser();
-      const rawJsonString = JSON.stringify(user);
+      const userData = await fetchCurrentUser();
+      const rawJsonString = JSON.stringify(userData);
       const cleanedUser = JSON.parse(rawJsonString);
       const primaryId = String(
         cleanedUser.id || cleanedUser.userId || cleanedUser._id || ""
@@ -24,10 +25,11 @@ export const AuthProvider = ({ children }) => {
 
       cleanedUser.id = primaryId;
       cleanedUser.userId = primaryId;
-      setCurrentUser(cleanedUser);
+      setUser(cleanedUser);
+      return cleanedUser;
     } catch (error) {
       console.error("Erro ao carregar dados do usuário:", error);
-      setCurrentUser(null);
+      setUser(null);
       throw error;
     }
   };
@@ -72,13 +74,13 @@ export const AuthProvider = ({ children }) => {
   const logoutContext = () => {
     apiLogout();
     setIsLoggedIn(false);
-    setCurrentUser(null);
+    setUser(null);
   };
 
   const value = {
     isLoggedIn,
     isLoading,
-    currentUser,
+    user,
     loginContext,
     logoutContext,
     forceProfileReload,
