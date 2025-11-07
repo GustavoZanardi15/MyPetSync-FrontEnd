@@ -9,22 +9,21 @@ import {
 } from "react-icons/vsc";
 import { MdOutlinePets, MdOutlineWatchLater } from "react-icons/md";
 import { FiPhoneCall } from "react-icons/fi";
-import { createAppointment, updateAppointment } from "../../services/agendaService";
+import {
+  createAppointment,
+  updateAppointment,
+} from "../../services/agendaService";
 import { searchPets } from "../../services/petService";
 import { useAuth } from "../../context/AuthContext";
 import { fetchProviderProfile } from "../../services/providerService";
-import React, { useState } from "react";
-import { createAppointment } from "@/services/appointmentService";
-import { useAuth } from "../../context/AuthContext";
-import { toast } from "react-toastify";
 
 const STATUS_MAP = { Agendado: "scheduled", Confirmado: "confirmed" };
 const DURATION_MAP = { "30 min": 30, "60 min": 60, "90 min": 90 };
 const STATUS_MAP_REVERSE = {
-    'scheduled': 'Agendado',
-    'confirmed': 'Confirmado',
-    'completed': 'Concluído',
-    'canceled': 'Cancelado',
+  scheduled: "Agendado",
+  confirmed: "Confirmado",
+  completed: "Concluído",
+  canceled: "Cancelado",
 };
 
 const Section = ({ title, icon: Icon, color, children, className = "" }) => (
@@ -98,14 +97,13 @@ const TextArea = ({ placeholder, name, value, onChange }) => (
     <textarea
       placeholder={placeholder}
       rows="3"
-      name="notes"  
+      name="notes"
       value={value}
       onChange={onChange}
       className="w-full p-3 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 bg-wh"
     ></textarea>
   </div>
 );
-
 const StatusRadios = ({ value, onChange }) => (
   <div className="mb-4">
     <label className="text-sm font-medium text-gray-700 block mb-2">
@@ -146,7 +144,7 @@ const NewAppointmentModal = ({
   appointmentToEdit,
 }) => {
   const { currentUser } = useAuth();
-  const [providerDocumentId, setProviderDocumentId] = useState(null); 
+  const [providerDocumentId, setProviderDocumentId] = useState(null);
   const [selectedPetId, setSelectedPetId] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -156,65 +154,82 @@ const NewAppointmentModal = ({
   const currentUserId = currentUser?.id || currentUser?.userId;
 
   const getInitialFormData = (appt) => {
-        if (appt && appt._id) {
-            const date = new Date(appt.dateTime);
-            const durationInMin = appt.duration; // Duração em minutos do backend
-            
-            const clientName = appt.pet.tutorId?.name || ''; 
+    if (appt && appt._id) {
+      // MODO EDIÇÃO
+      const date = new Date(appt.dateTime);
+      const durationInMin = appt.duration; // Duração em minutos do backend
 
-            return {
-                petName: appt.pet.nome || '',
-                clientName: clientName,
-                date: date.toISOString().split("T")[0],
-                time: date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false }),
-                serviceType: appt.reason || '',
-                notes: appt.notes || '',
-                duration: Object.keys(DURATION_MAP).find(key => DURATION_MAP[key] === durationInMin) || "60 min",
-                status: STATUS_MAP_REVERSE[appt.status] || "Agendado",
-            };
-        }
+      // Note que o backend popula pet.tutorId.name
+      const clientName = appt.pet.tutorId?.name || "";
 
-        return {
-            petName: "",
-            clientName: "",
-            phone: "",
-            email: "",
-            serviceType: "",
-            date: new Date().toISOString().split("T")[0],
-            time: initialTime || "09:00",
-            duration: "60 min",
-            status: "Agendado",
-            notes: "",
-        };
+      return {
+        // IDs: O modal precisa do ID do pet existente
+        petName: appt.pet.nome || "",
+        clientName: clientName,
+
+        // DATA/HORA
+        date: date.toISOString().split("T")[0],
+        time: date.toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }), // Ex: 09:30
+
+        // OUTROS CAMPOS
+        serviceType: appt.reason || "",
+        notes: appt.notes || "",
+        duration:
+          Object.keys(DURATION_MAP).find(
+            (key) => DURATION_MAP[key] === durationInMin
+          ) || "60 min", // Busca a string correspondente
+        status: STATUS_MAP_REVERSE[appt.status] || "Agendado", // Converte enum para string Pt-BR
+      };
+    }
+
+    // MODO CRIAÇÃO (Lógica existente)
+    return {
+      petName: "",
+      clientName: "",
+      phone: "",
+      email: "",
+      serviceType: "",
+      date: new Date().toISOString().split("T")[0],
+      time: initialTime || "09:00",
+      duration: "60 min",
+      status: "Agendado",
+      notes: "",
     };
+  };
 
-    const [formData, setFormData] = useState(getInitialFormData(appointmentToEdit));
+  const [formData, setFormData] = useState(
+    getInitialFormData(appointmentToEdit)
+  );
 
-    useEffect(() => {
-        setFormData(getInitialFormData(appointmentToEdit)); 
+  useEffect(() => {
+    // Quando o modal abre ou o item de edição muda (ou o initialTime muda, ex: clique no slot)
+    setFormData(getInitialFormData(appointmentToEdit));
 
-        if (appointmentToEdit) {
-            setSelectedPetId(appointmentToEdit.pet._id);
-        } else {
-            setSelectedPetId("");
-        }
-        setError(null);
-    }, [appointmentToEdit, initialTime, isOpen]);
-
+    // Também define o ID do Pet selecionado
+    if (appointmentToEdit) {
+      setSelectedPetId(appointmentToEdit.pet._id); // Define o ID do Pet existente
+    } else {
+      setSelectedPetId(""); // Limpa para modo criação
+    }
+    setError(null);
+  }, [appointmentToEdit, initialTime, isOpen]);
 
   useEffect(() => {
     if (currentUserId) {
       fetchProviderProfile()
-        .then(profile => {
-            setProviderDocumentId(profile._id); 
+        .then((profile) => {
+          setProviderDocumentId(profile._id);
         })
-        .catch(err => {
-            console.error("Falha ao carregar perfil do Prestador:", err);
-            setProviderDocumentId(null);
+        .catch((err) => {
+          console.error("Falha ao carregar perfil do Prestador:", err);
+          setProviderDocumentId(null);
         });
     }
   }, [currentUserId]);
-
 
   useEffect(() => {
     if (initialTime) {
@@ -231,7 +246,7 @@ const NewAppointmentModal = ({
       setSelectedPetId("");
     }
   }, []);
-  
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (formData.petName.length > 2) {
@@ -252,7 +267,7 @@ const NewAppointmentModal = ({
     setFormData((prev) => ({
       ...prev,
       petName: pet.nome,
-      clientName: pet.tutorId?.name || '',
+      clientName: pet.tutorId?.name || "",
     }));
     setSearchResults([]);
   }, []);
@@ -268,22 +283,30 @@ const NewAppointmentModal = ({
     setIsSaving(true);
     setError(null);
 
-    const currentPetId = appointmentToEdit ? appointmentToEdit.pet._id : selectedPetId;
+    const currentPetId = appointmentToEdit
+      ? appointmentToEdit.pet._id
+      : selectedPetId;
 
     if (!currentPetId) {
-     setError("Por favor, selecione um Pet válido da lista de sugestões.");
-     setIsSaving(false);
-     return;
+      setError("Por favor, selecione um Pet válido da lista de sugestões.");
+      setIsSaving(false);
+      return;
     }
 
-    const isEditing = !!appointmentToEdit?._id; 
-    
-    if (!isEditing && (!providerId || providerId === 'null' || providerId === 'undefined' || providerId === '')) {
-     setError(
-       "Erro de autenticação: ID do prestador não encontrado. Tente logar novamente."
-     );
-     setIsSaving(false);
-     return;
+    const isEditing = !!appointmentToEdit?._id;
+
+    if (
+      !isEditing &&
+      (!providerId ||
+        providerId === "null" ||
+        providerId === "undefined" ||
+        providerId === "")
+    ) {
+      setError(
+        "Erro de autenticação: ID do prestador não encontrado. Tente logar novamente."
+      );
+      setIsSaving(false);
+      return;
     }
 
     const payload = {
@@ -297,36 +320,45 @@ const NewAppointmentModal = ({
     };
 
     try {
-        if (isEditing) {
-            await updateAppointment(appointmentToEdit._id, payload);
-        } else {
-            await createAppointment(payload, providerId); 
-        }
-     onAppointmentSaved();
-     onClose();
+      if (isEditing) {
+        // CHAMA EDIÇÃO (PATCH): /appointments/:id
+        await updateAppointment(appointmentToEdit._id, payload);
+      } else {
+        // CHAMA CRIAÇÃO (POST): /providers/:providerId/appointments
+        await createAppointment(payload, providerId);
+      }
+      onAppointmentSaved();
+      onClose();
     } catch (err) {
-     console.error("Erro ao salvar agendamento:", err);
-     const responseData = err.response?.data;
-     let displayError = "Falha ao salvar o agendamento. Verifique a validade dos IDs ou a conexão.";
-        if (responseData) {
-            if (Array.isArray(responseData.message)) {
-                displayError = `Erro de Validação: ${responseData.message.join(', ')}`;
-            } else if (responseData.message) {
-                displayError = responseData.message;
-            } else if (responseData.statusCode === 401 || responseData.statusCode === 403) {
-                displayError = "Sessão expirada ou acesso negado. Faça login novamente.";
-            }
+      console.error("Erro ao salvar agendamento:", err);
+      // ... (lógica de erro robusta)
+      const responseData = err.response?.data;
+      let displayError =
+        "Falha ao salvar o agendamento. Verifique a validade dos IDs ou a conexão.";
+      if (responseData) {
+        if (Array.isArray(responseData.message)) {
+          displayError = `Erro de Validação: ${responseData.message.join(
+            ", "
+          )}`;
+        } else if (responseData.message) {
+          displayError = responseData.message;
+        } else if (
+          responseData.statusCode === 401 ||
+          responseData.statusCode === 403
+        ) {
+          displayError =
+            "Sessão expirada ou acesso negado. Faça login novamente.";
         }
-     setError(displayError);
-        
+      }
+      setError(displayError);
     } finally {
-     setIsSaving(false);
+      setIsSaving(false);
     }
   };
 
   if (!isOpen) return null;
 
-return (
+  return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
       onClick={onClose}
@@ -387,8 +419,7 @@ return (
                         className="p-2 cursor-pointer hover:bg-teal-100"
                         onClick={() => handlePetSelect(pet)}
                       >
-                        {pet.nome} ({pet.especie}) - Tutor:{" "}
-                        {pet.tutorId.name}
+                        {pet.nome} ({pet.especie}) - Tutor: {pet.tutorId.name}
                       </div>
                     ))}
                   </div>

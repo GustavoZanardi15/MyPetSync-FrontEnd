@@ -26,5 +26,7 @@ export const fetchRecentActivities = async () => {
     type: "Avaliação Recebida",
     detail: `Nota ${activity.rating} por ${activity.author?.name || "Cliente"}`,
     rating: activity.rating,
+    iconName: "VscStarFull",
+    color: "bg-yellow-500",
   }));
 };
