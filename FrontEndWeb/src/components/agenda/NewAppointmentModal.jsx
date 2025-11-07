@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  VscClose,
-  VscCalendar,
-  VscTag,
-  VscInfo,
-  VscPerson,
-  VscMail,
-} from "react-icons/vsc";
+import { VscClose, VscTag, VscInfo, VscPerson, VscMail } from "react-icons/vsc";
 import { MdOutlinePets, MdOutlineWatchLater } from "react-icons/md";
 import { FiPhoneCall } from "react-icons/fi";
 import {
@@ -14,8 +7,6 @@ import {
   updateAppointment,
 } from "../../services/agendaService";
 import { searchPets } from "../../services/petService";
-import { useAuth } from "../../context/AuthContext";
-import { fetchProviderProfile } from "../../services/providerService";
 
 const STATUS_MAP = { Agendado: "scheduled", Confirmado: "confirmed" };
 const DURATION_MAP = { "30 min": 30, "60 min": 60, "90 min": 90 };
@@ -136,108 +127,79 @@ const StatusRadios = ({ value, onChange }) => (
   </div>
 );
 
+const getInitialFormData = (appt, initialTime) => {
+  if (appt && appt._id) {
+    const date = new Date(appt.dateTime);
+    const durationInMin = appt.duration;
+
+    const clientName = appt.pet.tutorId?.name || "";
+    const clientPhone = appt.pet.tutorId?.phone || "";
+    const clientEmail = appt.pet.tutorId?.email || "";
+
+    return {
+      petName: appt.pet.nome || "",
+      clientName: clientName,
+      phone: clientPhone,
+      email: clientEmail,
+      date: date.toISOString().split("T")[0],
+      time: date.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }),
+      serviceType: appt.reason || "",
+      notes: appt.notes || "",
+      duration:
+        Object.keys(DURATION_MAP).find(
+          (key) => DURATION_MAP[key] === durationInMin
+        ) || "60 min",
+      status: STATUS_MAP_REVERSE[appt.status] || "Agendado",
+    };
+  }
+
+  return {
+    petName: "",
+    clientName: "",
+    phone: "",
+    email: "",
+    serviceType: "",
+    date: new Date().toISOString().split("T")[0],
+    time: initialTime || "09:00",
+    duration: "60 min",
+    status: "Agendado",
+    notes: "",
+  };
+};
+
 const NewAppointmentModal = ({
   isOpen,
   onClose,
   initialTime,
   onAppointmentSaved,
   appointmentToEdit,
+  providerId,
+  isLoadingProvider,
 }) => {
-  const { currentUser } = useAuth();
-  const [providerDocumentId, setProviderDocumentId] = useState(null);
   const [selectedPetId, setSelectedPetId] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const currentUserId = currentUser?.id || currentUser?.userId;
-
-  const getInitialFormData = (appt) => {
-    if (appt && appt._id) {
-      // MODO EDIÇÃO
-      const date = new Date(appt.dateTime);
-      const durationInMin = appt.duration; // Duração em minutos do backend
-
-      // Note que o backend popula pet.tutorId.name
-      const clientName = appt.pet.tutorId?.name || "";
-
-      return {
-        // IDs: O modal precisa do ID do pet existente
-        petName: appt.pet.nome || "",
-        clientName: clientName,
-
-        // DATA/HORA
-        date: date.toISOString().split("T")[0],
-        time: date.toLocaleTimeString("pt-BR", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        }), // Ex: 09:30
-
-        // OUTROS CAMPOS
-        serviceType: appt.reason || "",
-        notes: appt.notes || "",
-        duration:
-          Object.keys(DURATION_MAP).find(
-            (key) => DURATION_MAP[key] === durationInMin
-          ) || "60 min", // Busca a string correspondente
-        status: STATUS_MAP_REVERSE[appt.status] || "Agendado", // Converte enum para string Pt-BR
-      };
-    }
-
-    // MODO CRIAÇÃO (Lógica existente)
-    return {
-      petName: "",
-      clientName: "",
-      phone: "",
-      email: "",
-      serviceType: "",
-      date: new Date().toISOString().split("T")[0],
-      time: initialTime || "09:00",
-      duration: "60 min",
-      status: "Agendado",
-      notes: "",
-    };
-  };
-
   const [formData, setFormData] = useState(
-    getInitialFormData(appointmentToEdit)
+    getInitialFormData(appointmentToEdit, initialTime)
   );
 
   useEffect(() => {
-    // Quando o modal abre ou o item de edição muda (ou o initialTime muda, ex: clique no slot)
-    setFormData(getInitialFormData(appointmentToEdit));
+    setFormData(getInitialFormData(appointmentToEdit, initialTime));
 
-    // Também define o ID do Pet selecionado
     if (appointmentToEdit) {
-      setSelectedPetId(appointmentToEdit.pet._id); // Define o ID do Pet existente
+      setSelectedPetId(appointmentToEdit.pet._id);
     } else {
-      setSelectedPetId(""); // Limpa para modo criação
+      setSelectedPetId("");
     }
     setError(null);
   }, [appointmentToEdit, initialTime, isOpen]);
-
-  useEffect(() => {
-    if (currentUserId) {
-      fetchProviderProfile()
-        .then((profile) => {
-          setProviderDocumentId(profile._id);
-        })
-        .catch((err) => {
-          console.error("Falha ao carregar perfil do Prestador:", err);
-          setProviderDocumentId(null);
-        });
-    }
-  }, [currentUserId]);
-
-  useEffect(() => {
-    if (initialTime) {
-      setFormData((prev) => ({ ...prev, time: initialTime }));
-    }
-    setSelectedPetId("");
-    setError(null);
-  }, [initialTime, isOpen]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -249,7 +211,7 @@ const NewAppointmentModal = ({
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
-      if (formData.petName.length > 2) {
+      if (formData.petName.length > 2 && !selectedPetId) {
         setIsSearching(true);
         const results = await searchPets(formData.petName);
         setSearchResults(results);
@@ -260,7 +222,7 @@ const NewAppointmentModal = ({
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [formData.petName]);
+  }, [formData.petName, selectedPetId]);
 
   const handlePetSelect = useCallback((pet) => {
     setSelectedPetId(pet._id);
@@ -268,6 +230,8 @@ const NewAppointmentModal = ({
       ...prev,
       petName: pet.nome,
       clientName: pet.tutorId?.name || "",
+      phone: pet.tutorId?.phone || "",
+      email: pet.tutorId?.email || "",
     }));
     setSearchResults([]);
   }, []);
@@ -276,24 +240,18 @@ const NewAppointmentModal = ({
     setFormData((prev) => ({ ...prev, status: statusValue }));
   }, []);
 
-  const providerId = providerDocumentId;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
     setError(null);
 
-    const currentPetId = appointmentToEdit
-      ? appointmentToEdit.pet._id
-      : selectedPetId;
+    const isEditing = !!appointmentToEdit?._id;
 
-    if (!currentPetId) {
+    if (!selectedPetId) {
       setError("Por favor, selecione um Pet válido da lista de sugestões.");
       setIsSaving(false);
       return;
     }
-
-    const isEditing = !!appointmentToEdit?._id;
 
     if (
       !isEditing &&
@@ -303,7 +261,7 @@ const NewAppointmentModal = ({
         providerId === "")
     ) {
       setError(
-        "Erro de autenticação: ID do prestador não encontrado. Tente logar novamente."
+        "Erro crítico: ID do prestador não encontrado no perfil. Recarregue a página."
       );
       setIsSaving(false);
       return;
@@ -311,7 +269,6 @@ const NewAppointmentModal = ({
 
     const payload = {
       pet: selectedPetId,
-      // provider: providerId,
       dateTime: new Date(`${formData.date}T${formData.time}:00`).toISOString(),
       duration: DURATION_MAP[formData.duration],
       reason: formData.serviceType,
@@ -321,17 +278,14 @@ const NewAppointmentModal = ({
 
     try {
       if (isEditing) {
-        // CHAMA EDIÇÃO (PATCH): /appointments/:id
         await updateAppointment(appointmentToEdit._id, payload);
       } else {
-        // CHAMA CRIAÇÃO (POST): /providers/:providerId/appointments
         await createAppointment(payload, providerId);
       }
       onAppointmentSaved();
       onClose();
     } catch (err) {
       console.error("Erro ao salvar agendamento:", err);
-      // ... (lógica de erro robusta)
       const responseData = err.response?.data;
       let displayError =
         "Falha ao salvar o agendamento. Verifique a validade dos IDs ou a conexão.";
@@ -342,6 +296,9 @@ const NewAppointmentModal = ({
           )}`;
         } else if (responseData.message) {
           displayError = responseData.message;
+        } else if (responseData.statusCode === 400) {
+          displayError =
+            "Dados inválidos: Verifique se todos os campos estão corretos (ex: datas, IDs).";
         } else if (
           responseData.statusCode === 401 ||
           responseData.statusCode === 403
@@ -357,6 +314,9 @@ const NewAppointmentModal = ({
   };
 
   if (!isOpen) return null;
+
+  const isProviderMissingAndNotLoading =
+    !appointmentToEdit && !providerId && !isLoadingProvider;
 
   return (
     <div
@@ -382,6 +342,12 @@ const NewAppointmentModal = ({
           {error && (
             <div className="p-3 bg-red-100 text-red-700 rounded font-medium">
               {error}
+            </div>
+          )}
+          {isProviderMissingAndNotLoading && (
+            <div className="p-3 bg-red-100 text-red-700 rounded font-medium">
+              Erro: O ID do Prestador não foi carregado. Recarregue a página ou
+              faça login novamente.
             </div>
           )}
           <Section

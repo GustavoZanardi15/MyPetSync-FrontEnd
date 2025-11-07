@@ -1,5 +1,7 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useMemo, useCallback } from "react";
 import { VscChevronLeft, VscChevronRight } from "react-icons/vsc";
+import { format, startOfWeek, addDays, subDays, isSameDay } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const ptDayNames = [
   "Segunda",
@@ -11,41 +13,41 @@ const ptDayNames = [
   "Domingo",
 ];
 
-const getWeekData = (startDate) => {
+const getWeekData = (startDate, appointments) => {
   const weekData = [];
   const current = new Date(startDate);
-  const startOfWeek =
-    current.getDate() - current.getDay() + (current.getDay() === 0 ? -6 : 1);
-  current.setDate(startOfWeek);
+
+  const start = startOfWeek(current, { weekStartsOn: 1 });
 
   for (let i = 0; i < 7; i++) {
-    const date = new Date(current);
-    date.setDate(current.getDate() + i);
+    const date = addDays(start, i);
+    const dateString = format(date, "yyyy-MM-dd");
 
-    const mockAppointments =
-      date.getDate() === 25
-        ? [
-            { pet: "Rex", time: "09:00" },
-            { pet: "Luna", time: "16:00" },
-          ]
-        : date.getDate() === 28
-        ? [{ pet: "Buddy", time: "10:00" }]
-        : [];
+    const dailyAppointments = appointments.filter(
+      (appt) => format(new Date(appt.dateTime), "yyyy-MM-dd") === dateString
+    );
 
     weekData.push({
       date: date,
       dayNumber: date.getDate(),
       dayName: ptDayNames[i],
-      appointments: mockAppointments,
+      dateString: dateString,
+      appointments: dailyAppointments,
     });
   }
   return weekData;
 };
 
-const AgendaCalendar = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const weekData = useMemo(() => getWeekData(currentDate), [currentDate]);
+const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
+  const selectedDateObj = useMemo(() => new Date(selectedDate), [selectedDate]);
+
+  const weekData = useMemo(
+    () => getWeekData(selectedDateObj, appointments),
+    [selectedDateObj, appointments]
+  );
+
   const weekReferenceDate = weekData[0].date;
+
   const currentMonthYear = useMemo(() => {
     return new Intl.DateTimeFormat("pt-BR", {
       month: "long",
@@ -56,20 +58,25 @@ const AgendaCalendar = () => {
   }, [weekReferenceDate]);
 
   const goToNextWeek = useCallback(() => {
-    const nextDate = new Date(currentDate);
-    nextDate.setDate(currentDate.getDate() + 7);
-    setCurrentDate(nextDate);
-  }, [currentDate]);
+    const nextDate = addDays(selectedDateObj, 7);
+    onDateSelect(format(nextDate, "yyyy-MM-dd"));
+  }, [selectedDateObj, onDateSelect]);
 
   const goToPreviousWeek = useCallback(() => {
-    const prevDate = new Date(currentDate);
-    prevDate.setDate(currentDate.getDate() - 7);
-    setCurrentDate(prevDate);
-  }, [currentDate]);
+    const prevDate = subDays(selectedDateObj, 7);
+    onDateSelect(format(prevDate, "yyyy-MM-dd"));
+  }, [selectedDateObj, onDateSelect]);
 
   const goToToday = useCallback(() => {
-    setCurrentDate(new Date());
-  }, []);
+    onDateSelect(format(new Date(), "yyyy-MM-dd"));
+  }, [onDateSelect]);
+
+  const handleDayClick = useCallback(
+    (dateString) => {
+      onDateSelect(dateString);
+    },
+    [onDateSelect]
+  );
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg mb-6">
@@ -103,33 +110,46 @@ const AgendaCalendar = () => {
         </div>
       </div>
       <div className="grid grid-cols-7 gap-1 mt-4">
-        {weekData.map((day, index) => (
-          <div
-            key={day.date.toISOString()}
-            className={`flex flex-col h-60 text-white rounded-lg overflow-hidden transition-all
-                                                                ${
-                                                                  day.date.toDateString() ===
-                                                                  new Date().toDateString()
-                                                                    ? "bg-teal-700 ring-4 ring-teal-500 shadow-xl"
-                                                                    : "bg-teal-600"
-                                                                }`}
-          >
-            <div className="p-2 border-b border-teal-500">
-              <div className="font-bold text-base">{day.dayName}</div>
-              <div className="text-2xl font-semibold">{day.dayNumber}</div>
+        {weekData.map((day) => {
+          const isToday = isSameDay(day.date, new Date());
+          const isSelected = isSameDay(day.date, selectedDateObj);
+
+          let dayClass = "bg-teal-600 cursor-pointer hover:bg-teal-500";
+          if (isToday) {
+            dayClass =
+              "bg-teal-700 ring-4 ring-teal-500 shadow-xl cursor-pointer hover:bg-teal-700";
+          } else if (isSelected) {
+            dayClass =
+              "bg-teal-500 ring-2 ring-teal-400 shadow-lg cursor-pointer hover:bg-teal-500";
+          }
+
+          return (
+            <div
+              key={day.dateString}
+              onClick={() => handleDayClick(day.dateString)}
+              className={`flex flex-col h-60 text-white rounded-lg overflow-hidden transition-all ${dayClass}`}
+            >
+              <div className="p-2 border-b border-teal-500">
+                <div className="font-bold text-base">{day.dayName}</div>
+                <div className="text-2xl font-semibold">{day.dayNumber}</div>
+              </div>
+              <div className="flex flex-col p-1 overflow-y-auto flex-grow gap-1">
+                {day.appointments.map((appt) => {
+                  const time = format(new Date(appt.dateTime), "HH:mm");
+                  const petName = appt.pet?.nome || "Pet";
+                  return (
+                    <div
+                      key={appt._id}
+                      className="bg-white text-teal-700 p-1 rounded text-xs font-medium text-center hover:bg-gray-100 cursor-pointer transition-colors"
+                    >
+                      {petName} {time}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="flex flex-col p-1 overflow-y-auto flex-grow gap-1">
-              {day.appointments.map((appt, idx) => (
-                <div
-                  key={idx}
-                  className="bg-white text-teal-700 p-1 rounded text-xs font-medium text-center hover:bg-gray-100 cursor-pointer transition-colors"
-                >
-                  {appt.pet} {appt.time}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

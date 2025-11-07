@@ -14,7 +14,12 @@ const statusMap = {
   canceled: { text: "Cancelado", color: "bg-red-100 text-red-700" },
 };
 
-const DailySchedule = ({ appointments, selectedDate, onAddAppointment, onAppointmentClick }) => {
+const DailySchedule = ({
+  appointments,
+  selectedDate,
+  onAddAppointment,
+  onAppointmentClick,
+}) => {
   const dateObj = parseISO(selectedDate);
   const formattedDate = format(dateObj, "d 'de' MMMM 'de' yyyy", {
     locale: ptBR,
@@ -23,13 +28,13 @@ const DailySchedule = ({ appointments, selectedDate, onAddAppointment, onAppoint
   const appointmentsByTime = appointments.reduce((acc, appt) => {
     const time = format(parseISO(appt.dateTime), "HH:mm");
     const fullApptData = {
-       ...appt,
-       id: appt._id,
-       time: time,
-       petName: appt.pet?.nome,
-       clientInfo: appt.reason || appt.location || "Detalhe não informado",
-       status: appt.status,
-     };
+      ...appt,
+      id: appt._id,
+      time: time,
+      petName: appt.pet?.nome,
+      clientInfo: appt.reason || appt.location || "Detalhe não informado",
+      status: appt.status,
+    };
 
     if (!acc[time]) {
       acc[time] = [];
@@ -84,7 +89,7 @@ const DailySchedule = ({ appointments, selectedDate, onAddAppointment, onAppoint
                           {statusMap[appointment.status]?.text}
                         </span>
                         <button
-                          onClick={() => onAppointmentClick(appointment)} 
+                          onClick={() => onAppointmentClick(appointment)}
                           className="text-gray-500 hover:text-teal-600 p-1 rounded"
                         >
                           <VscEdit className="w-5 h-5" />
