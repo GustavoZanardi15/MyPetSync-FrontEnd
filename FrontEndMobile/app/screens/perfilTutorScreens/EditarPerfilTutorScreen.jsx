@@ -1,55 +1,35 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-<<<<<<< HEAD
-import { router } from "expo-router";
-
-export default function EditPerfilScreen() {
-=======
 import { useNavigation } from "@react-navigation/native";
 
 export default function EditPerfilScreen() {
   const navigation = useNavigation();
 
->>>>>>> origin/main
   const [nome, setNome] = useState("Matheus Heichemback Santos");
   const [email, setEmail] = useState("matheuscheich@gmail.com");
   const [celular, setCelular] = useState("44 9989-8950");
 
   const handleSalvar = () => {
-<<<<<<< HEAD
-    Alert.alert("Sucesso", "Perfil atualizado com sucesso!", [
-      { text: "OK", onPress: () => router.back() },
-=======
     
     Alert.alert("Sucesso", "Perfil atualizado com sucesso!", [
       {
         text: "OK",
         onPress: () => navigation.goBack(), 
       },
->>>>>>> origin/main
     ]);
   };
 
   return (
     <View style={styles.container}>
-<<<<<<< HEAD
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-=======
      
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
->>>>>>> origin/main
           <Ionicons name="arrow-back" size={24} color="#064E46" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Editar Perfil</Text>
       </View>
 
-<<<<<<< HEAD
-      <View style={styles.form}>
-        <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
-=======
       
       <View style={styles.form}>
         <TextInput
@@ -58,7 +38,6 @@ export default function EditPerfilScreen() {
           value={nome}
           onChangeText={setNome}
         />
->>>>>>> origin/main
         <TextInput
           style={styles.input}
           placeholder="E-mail"
