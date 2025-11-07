@@ -13,6 +13,10 @@ import { createAppointment, updateAppointment } from "../../services/agendaServi
 import { searchPets } from "../../services/petService";
 import { useAuth } from "../../context/AuthContext";
 import { fetchProviderProfile } from "../../services/providerService";
+import React, { useState } from "react";
+import { createAppointment } from "@/services/appointmentService";
+import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 const STATUS_MAP = { Agendado: "scheduled", Confirmado: "confirmed" };
 const DURATION_MAP = { "30 min": 30, "60 min": 60, "90 min": 90 };
@@ -101,6 +105,7 @@ const TextArea = ({ placeholder, name, value, onChange }) => (
     ></textarea>
   </div>
 );
+
 const StatusRadios = ({ value, onChange }) => (
   <div className="mb-4">
     <label className="text-sm font-medium text-gray-700 block mb-2">
@@ -152,31 +157,23 @@ const NewAppointmentModal = ({
 
   const getInitialFormData = (appt) => {
         if (appt && appt._id) {
-            // MODO EDIÇÃO
             const date = new Date(appt.dateTime);
             const durationInMin = appt.duration; // Duração em minutos do backend
             
-            // Note que o backend popula pet.tutorId.name
             const clientName = appt.pet.tutorId?.name || ''; 
 
             return {
-                // IDs: O modal precisa do ID do pet existente
                 petName: appt.pet.nome || '',
                 clientName: clientName,
-                
-                // DATA/HORA
                 date: date.toISOString().split("T")[0],
-                time: date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false }), // Ex: 09:30
-                
-                // OUTROS CAMPOS
+                time: date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false }),
                 serviceType: appt.reason || '',
                 notes: appt.notes || '',
-                duration: Object.keys(DURATION_MAP).find(key => DURATION_MAP[key] === durationInMin) || "60 min", // Busca a string correspondente
-                status: STATUS_MAP_REVERSE[appt.status] || "Agendado", // Converte enum para string Pt-BR
+                duration: Object.keys(DURATION_MAP).find(key => DURATION_MAP[key] === durationInMin) || "60 min",
+                status: STATUS_MAP_REVERSE[appt.status] || "Agendado",
             };
         }
-        
-        // MODO CRIAÇÃO (Lógica existente)
+
         return {
             petName: "",
             clientName: "",
@@ -194,14 +191,12 @@ const NewAppointmentModal = ({
     const [formData, setFormData] = useState(getInitialFormData(appointmentToEdit));
 
     useEffect(() => {
-        // Quando o modal abre ou o item de edição muda (ou o initialTime muda, ex: clique no slot)
         setFormData(getInitialFormData(appointmentToEdit)); 
-        
-        // Também define o ID do Pet selecionado
+
         if (appointmentToEdit) {
-            setSelectedPetId(appointmentToEdit.pet._id); // Define o ID do Pet existente
+            setSelectedPetId(appointmentToEdit.pet._id);
         } else {
-            setSelectedPetId(""); // Limpa para modo criação
+            setSelectedPetId("");
         }
         setError(null);
     }, [appointmentToEdit, initialTime, isOpen]);
@@ -303,17 +298,14 @@ const NewAppointmentModal = ({
 
     try {
         if (isEditing) {
-            // CHAMA EDIÇÃO (PATCH): /appointments/:id
             await updateAppointment(appointmentToEdit._id, payload);
         } else {
-            // CHAMA CRIAÇÃO (POST): /providers/:providerId/appointments
             await createAppointment(payload, providerId); 
         }
      onAppointmentSaved();
      onClose();
     } catch (err) {
      console.error("Erro ao salvar agendamento:", err);
-     // ... (lógica de erro robusta)
      const responseData = err.response?.data;
      let displayError = "Falha ao salvar o agendamento. Verifique a validade dos IDs ou a conexão.";
         if (responseData) {

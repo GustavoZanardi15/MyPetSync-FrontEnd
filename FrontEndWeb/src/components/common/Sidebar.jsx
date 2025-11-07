@@ -32,7 +32,7 @@ const Sidebar = () => {
       <div className="flex items-center gap-8 bg-[#058789] p-8 text-white">
         <img src={Logo} alt="Logo My Pet Sync" className="w-14 h-14" />
         <div>
-          <p className="font-bold text-lg">My Pet Sync</p>
+          <p className="font-bold text-lg">MyPetSync</p>
           <p className="text-sm">Portal Prestador de serviço</p>
         </div>
       </div>
