@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "target": "es6",
+    "jsx": "react",
+    "baseUrl": ".", // Diz que a raiz para a resolução de módulos é a pasta atual
+    "paths": {
+      // Se você usa aliases, mapeie-os aqui. Ex:
+      // "@services/*": ["src/services/*"],
+      // Se não usa, o 'baseUrl: "."' é o suficiente para caminhos relativos.
+    }
+  },
+  "exclude": ["node_modules"],
+  "include": ["src/**/*"] // Inclua todos os arquivos que o VS Code deve analisar
+}
