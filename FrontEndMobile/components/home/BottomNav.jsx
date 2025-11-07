@@ -23,7 +23,7 @@ export default function BottomNav() {
         <Image source={require("../../assets/images/home/NavBarPet.png")} />
       </Pressable>
 
-      <Pressable onPress={() => router.push()}>
+      <Pressable onPress={() => router.push("/screens/perfilTutorScreens/PerfilTutorScreen")}>
         <Image source={require("../../assets/images/home/NavBarPerfil.png")} />
       </Pressable>
     </View>
