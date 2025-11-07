@@ -11,7 +11,7 @@ const InputWithIcon = ({
 }) => {
   return (
     <div className="relative w-full">
-      <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition duration-150 ease-in-out">
+      <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-teal-600 focus-within:border-teal-600 transition duration-150 ease-in-out">
         {Icon && (
           <div className="absolute left-0 pl-3 flex items-center pointer-events-none">
             <Icon className="w-5 h-5 text-gray-400" />
