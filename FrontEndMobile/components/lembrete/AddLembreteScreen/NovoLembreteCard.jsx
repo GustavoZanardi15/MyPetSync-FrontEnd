@@ -1,44 +1,42 @@
 import React from "react";
-import { View, Pressable, Text, StyleSheet } from "react-native";
-import { router } from "expo-router";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
 
-export default function NovoLembreteCard() {
-    return (
-        <View style={styles.container}>
-            <Pressable style={styles.card} onPress={() => router.push("/screens/lembreteScreens/NovoLembreteScreen")}>
-                <Text style={styles.text}>Adicione um novo lembrete</Text>
-            </Pressable>
-            <Pressable style={styles.card} onPress={() => router.push("/screens/lembreteScreens/NovoLembreteScreen")}>
-                <Text style={styles.text}>Adicione um novo lembrete</Text>
-            </Pressable>
-        </View>
-    );
+export default function NovoLembreteCard({ selectedTipo, selectedPet }) {
+  const router = useRouter();
+
+  const handlePress = () => {
+    if (!selectedTipo || !selectedPet) {
+      alert("Selecione um tipo de lembrete e um pet antes de continuar.");
+      return;
+    }
+
+    router.push({
+      pathname: "/screens/lembreteScreens/AddLembreteDetalheScreen",
+      params: { tipo: selectedTipo?.name, pet: JSON.stringify(selectedPet) },
+    });
+  };
+
+  return (
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
+      <Text style={styles.text}>Adicione um novo lembrete</Text>
+    </TouchableOpacity>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        marginTop: 16,
-        marginBottom: 24
-    },
-    card: {
-        flexDirection: "row",
-        width: 350,
-        height: 56,
-        justifyContent: "center",
-        alignItems: "center",
-        alignSelf: "center",
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 12,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 2
-    },
-    text: {
-        fontSize: 15,
-        color: "#8E8E8E"
-    }
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 2,
+  },
+  text: {
+    fontSize: 14,
+    color: "#2F8B88",
+    fontWeight: "500",
+  },
 });

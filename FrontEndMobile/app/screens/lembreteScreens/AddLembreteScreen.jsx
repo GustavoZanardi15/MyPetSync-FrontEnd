@@ -29,7 +29,10 @@ export default function AddLembreteScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <TiposLembrete tipos={tiposLembrete} selectedTipo={selectedTipo} setSelectedTipo={setSelectedTipo} />
         <PetDropdown pets={pets} selectedPet={selectedPet} setSelectedPet={setSelectedPet} />
-        <NovoLembreteCard />
+        <NovoLembreteCard
+          selectedTipo={selectedTipo}
+          selectedPet={selectedPet}
+        />
       </ScrollView>
       <BottomNav />
     </View>

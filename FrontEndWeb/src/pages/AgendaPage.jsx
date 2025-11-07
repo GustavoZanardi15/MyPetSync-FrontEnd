@@ -18,6 +18,7 @@ const AgendaPage = () => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [appointmentToEdit, setAppointmentToEdit] = useState(null);
 
   const fetchAppointments = useCallback(async () => {
     setIsLoading(true);
@@ -53,16 +54,23 @@ const AgendaPage = () => {
     } else {
       setSearchParams({ new: true });
     }
+    setAppointmentToEdit(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditAppointment = (appointment) => {
+    setAppointmentToEdit(appointment);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setSearchParams({});
     setIsModalOpen(false);
+    setAppointmentToEdit(null);
   };
 
   const dailyAppointments = appointments.filter(
-    (appt) => new Date(appt.date).toISOString().split("T")[0] === selectedDate
+    (appt) => new Date(appt.dateTime).toISOString().split("T")[0] === selectedDate
   );
 
   return (
@@ -98,6 +106,7 @@ const AgendaPage = () => {
               appointments={dailyAppointments}
               selectedDate={selectedDate}
               onAddAppointment={handleNewAppointmentClick}
+              onAppointmentClick={handleEditAppointment}
             />
           </div>
           <DailySummary appointments={dailyAppointments} />
@@ -108,6 +117,7 @@ const AgendaPage = () => {
         onClose={closeModal}
         initialTime={selectedTime}
         onAppointmentSaved={fetchAppointments}
+        appointmentToEdit={appointmentToEdit}
       />
     </div>
   );

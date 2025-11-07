@@ -6,10 +6,36 @@ import EditPetHeader from "../../../components/pet/editarPet/EditPetHeader";
 import EditPetImage from "../../../components/pet/editarPet/EditPetImage";
 import BottomNav from "../../../components/pet/editarPet/BottomNav";
 
+const PET_COLORS = [
+    "#A9E4D4",
+    "#B0C4DE",
+    "#FFC0CB",
+    "#F0E68C",
+    "#ADD8E6",
+    "#FAFAD2",
+    "#DDA0DD",
+];
+
+const petColorMap = new Map();
+
+const getStablePetColor = (petId) => {
+    if (petColorMap.has(petId)) {
+        return petColorMap.get(petId);
+    }
+
+    const hash = petId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const colorIndex = hash % PET_COLORS.length;
+    const color = PET_COLORS[colorIndex];
+
+    petColorMap.set(petId, color);
+    return color;
+};
+
 export default function EditarPetScreen() {
     const { pet } = useLocalSearchParams();
-
     const selectedPet = pet ? JSON.parse(pet) : {};
+    const petId = selectedPet.id;
+    const petColor = petId ? getStablePetColor(petId) : "#FFE9E9"; 
 
     const [petData, setPetData] = useState({
         profileImage: selectedPet.mainImage || require("../../../assets/images/home/DogHomePet1.png"),
@@ -31,22 +57,22 @@ export default function EditarPetScreen() {
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: 40 }]}
             >
-                <EditPetImage imageSource={petData.profileImage} />
+                <EditPetImage imageSource={petData.profileImage} petColor={petColor} />
 
                 <View style={styles.fieldsWrapper}>
-                    <EditInfo label="Nome" initialValue={petData.name} onValueChange={(v) => handleFieldChange("name", v)} />
-                    <EditInfo label="Raça" initialValue={petData.race} onValueChange={(v) => handleFieldChange("race", v)} />
-                    <EditInfo label="Idade" initialValue={petData.age} onValueChange={(v) => handleFieldChange("age", v)} />
-                    <EditInfo label="Peso atual" initialValue={petData.weight} onValueChange={(v) => handleFieldChange("weight", v)} />
+                    <EditInfo label="Nome:" initialValue={petData.name} onValueChange={(v) => handleFieldChange("name", v)} />
+                    <EditInfo label="Raça:" initialValue={petData.race} onValueChange={(v) => handleFieldChange("race", v)} />
+                    <EditInfo label="Idade (anos):" initialValue={petData.age} onValueChange={(v) => handleFieldChange("age", v)} />
+                    <EditInfo label="Peso (kg):" initialValue={petData.weight} onValueChange={(v) => handleFieldChange("weight", v)} />
                     <EditInfo label="Castrado?" initialValue={petData.neutered} onValueChange={(v) => handleFieldChange("neutered", v)} />
                     <EditInfo label="Condição especial:" initialValue={petData.specialCondition} onValueChange={(v) => handleFieldChange("specialCondition", v)} />
                 </View>
 
                 <Pressable
                     style={styles.saveButton}
-                    onPress={() => {router.push("/screens/perfilPetScreens/PerfilPetScreen")}}
+                    onPress={() => { router.push("/screens/perfilPetScreens/PerfilPetScreen") }}
                 >
                     <Text style={styles.saveButtonText}>Salvar</Text>
                 </Pressable>
@@ -79,14 +105,14 @@ const styles = StyleSheet.create({
         width: 200,
         alignSelf: "center",
         shadowColor: "#2F8B88",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
-        elevation: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
+        elevation: 8,
     },
     saveButtonText: {
-        color: "#FFF",
-        fontSize: 15,
+        color: "#FFFFFF",
+        fontSize: 16,
         fontWeight: "bold",
     },
 });
