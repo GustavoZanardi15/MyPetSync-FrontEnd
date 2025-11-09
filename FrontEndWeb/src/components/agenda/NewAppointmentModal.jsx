@@ -1,37 +1,26 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  VscClose,
-  VscCalendar,
-  VscTag,
-  VscInfo,
-  VscPerson,
-  VscMail,
-} from "react-icons/vsc";
+import { VscClose, VscTag, VscInfo, VscPerson, VscMail } from "react-icons/vsc";
 import { MdOutlinePets, MdOutlineWatchLater } from "react-icons/md";
 import { FiPhoneCall } from "react-icons/fi";
-import { createAppointment, updateAppointment } from "../../services/agendaService";
+import {
+  createAppointment,
+  updateAppointment,
+} from "../../services/agendaService";
 import { searchPets } from "../../services/petService";
-import { useAuth } from "../../context/AuthContext";
-import { fetchProviderProfile } from "../../services/providerService";
-import React, { useState } from "react";
-import { createAppointment } from "@/services/appointmentService";
-import { useAuth } from "../../context/AuthContext";
-import { toast } from "react-toastify";
 
 const STATUS_MAP = { Agendado: "scheduled", Confirmado: "confirmed" };
 const DURATION_MAP = { "30 min": 30, "60 min": 60, "90 min": 90 };
 const STATUS_MAP_REVERSE = {
-    'scheduled': 'Agendado',
-    'confirmed': 'Confirmado',
-    'completed': 'Concluído',
-    'canceled': 'Cancelado',
+  scheduled: "Agendado",
+  confirmed: "Confirmado",
+  completed: "Concluído",
+  canceled: "Cancelado",
 };
 
 const Section = ({ title, icon: Icon, color, children, className = "" }) => (
   <div className={`p-4 rounded-lg ${className}`}>
     <h3 className={`font-semibold mb-4 flex items-center ${color}`}>
-      <Icon className="w-5 h-5 mr-2" />
-      {title}
+      <Icon className="w-5 h-5 mr-2" /> {title}
     </h3>
     {children}
   </div>
@@ -48,10 +37,12 @@ const Input = ({
 }) => (
   <div className="flex flex-col">
     <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
+
     <div className="relative">
       {Icon && (
         <Icon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       )}
+
       <input
         type={type}
         name={name}
@@ -76,6 +67,7 @@ const Select = ({
 }) => (
   <div className="flex flex-col">
     <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
+
     <select
       name={name}
       value={value}
@@ -85,6 +77,7 @@ const Select = ({
       <option value="" disabled>
         {defaultMessage}
       </option>
+
       {options.map((option) => (
         <option key={option} value={option}>
           {option}
@@ -98,19 +91,19 @@ const TextArea = ({ placeholder, name, value, onChange }) => (
     <textarea
       placeholder={placeholder}
       rows="3"
-      name="notes"  
+      name="notes"
       value={value}
       onChange={onChange}
       className="w-full p-3 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 bg-wh"
     ></textarea>
   </div>
 );
-
 const StatusRadios = ({ value, onChange }) => (
   <div className="mb-4">
     <label className="text-sm font-medium text-gray-700 block mb-2">
       Status do Agendamento
     </label>
+
     <div className="flex gap-6">
       <label className="flex items-center space-x-2 text-gray-800">
         <input
@@ -123,6 +116,7 @@ const StatusRadios = ({ value, onChange }) => (
         />
         <span>Agendado</span>
       </label>
+
       <label className="flex items-center space-x-2 text-gray-800">
         <input
           type="radio"
@@ -138,91 +132,79 @@ const StatusRadios = ({ value, onChange }) => (
   </div>
 );
 
+const getInitialFormData = (appt, initialTime) => {
+  if (appt && appt._id) {
+    const date = new Date(appt.dateTime);
+    const durationInMin = appt.duration;
+
+    const clientName = appt.pet.tutorId?.name || "";
+    const clientPhone = appt.pet.tutorId?.phone || "";
+    const clientEmail = appt.pet.tutorId?.email || "";
+
+    return {
+      petName: appt.pet.nome || "",
+      clientName: clientName,
+      phone: clientPhone,
+      email: clientEmail,
+      date: date.toISOString().split("T")[0],
+      time: date.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }),
+      serviceType: appt.reason || "",
+      notes: appt.notes || "",
+      duration:
+        Object.keys(DURATION_MAP).find(
+          (key) => DURATION_MAP[key] === durationInMin
+        ) || "60 min",
+      status: STATUS_MAP_REVERSE[appt.status] || "Agendado",
+    };
+  }
+
+  return {
+    petName: "",
+    clientName: "",
+    phone: "",
+    email: "",
+    serviceType: "",
+    date: new Date().toISOString().split("T")[0],
+    time: initialTime || "09:00",
+    duration: "60 min",
+    status: "Agendado",
+    notes: "",
+  };
+};
+
 const NewAppointmentModal = ({
   isOpen,
   onClose,
   initialTime,
   onAppointmentSaved,
   appointmentToEdit,
+  providerId,
+  isLoadingProvider,
 }) => {
-  const { currentUser } = useAuth();
-  const [providerDocumentId, setProviderDocumentId] = useState(null); 
   const [selectedPetId, setSelectedPetId] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const currentUserId = currentUser?.id || currentUser?.userId;
-
-  const getInitialFormData = (appt) => {
-        if (appt && appt._id) {
-            const date = new Date(appt.dateTime);
-            const durationInMin = appt.duration; // Duração em minutos do backend
-            
-            const clientName = appt.pet.tutorId?.name || ''; 
-
-            return {
-                petName: appt.pet.nome || '',
-                clientName: clientName,
-                date: date.toISOString().split("T")[0],
-                time: date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false }),
-                serviceType: appt.reason || '',
-                notes: appt.notes || '',
-                duration: Object.keys(DURATION_MAP).find(key => DURATION_MAP[key] === durationInMin) || "60 min",
-                status: STATUS_MAP_REVERSE[appt.status] || "Agendado",
-            };
-        }
-
-        return {
-            petName: "",
-            clientName: "",
-            phone: "",
-            email: "",
-            serviceType: "",
-            date: new Date().toISOString().split("T")[0],
-            time: initialTime || "09:00",
-            duration: "60 min",
-            status: "Agendado",
-            notes: "",
-        };
-    };
-
-    const [formData, setFormData] = useState(getInitialFormData(appointmentToEdit));
-
-    useEffect(() => {
-        setFormData(getInitialFormData(appointmentToEdit)); 
-
-        if (appointmentToEdit) {
-            setSelectedPetId(appointmentToEdit.pet._id);
-        } else {
-            setSelectedPetId("");
-        }
-        setError(null);
-    }, [appointmentToEdit, initialTime, isOpen]);
-
+  const [formData, setFormData] = useState(
+    getInitialFormData(appointmentToEdit, initialTime)
+  );
 
   useEffect(() => {
-    if (currentUserId) {
-      fetchProviderProfile()
-        .then(profile => {
-            setProviderDocumentId(profile._id); 
-        })
-        .catch(err => {
-            console.error("Falha ao carregar perfil do Prestador:", err);
-            setProviderDocumentId(null);
-        });
-    }
-  }, [currentUserId]);
+    setFormData(getInitialFormData(appointmentToEdit, initialTime));
 
-
-  useEffect(() => {
-    if (initialTime) {
-      setFormData((prev) => ({ ...prev, time: initialTime }));
+    if (appointmentToEdit) {
+      setSelectedPetId(appointmentToEdit.pet._id);
+    } else {
+      setSelectedPetId("");
     }
-    setSelectedPetId("");
     setError(null);
-  }, [initialTime, isOpen]);
+  }, [appointmentToEdit, initialTime, isOpen]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -231,28 +213,36 @@ const NewAppointmentModal = ({
       setSelectedPetId("");
     }
   }, []);
-  
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
-      if (formData.petName.length > 2) {
+      if (formData.petName.length > 2 && !selectedPetId) {
         setIsSearching(true);
-        const results = await searchPets(formData.petName);
-        setSearchResults(results);
-        setIsSearching(false);
+        try {
+          const results = await searchPets(formData.petName);
+          setSearchResults(results);
+        } catch (err) {
+          console.error("Erro na busca de Pets:", err);
+          setSearchResults([]);
+        } finally {
+          setIsSearching(false);
+        }
       } else {
         setSearchResults([]);
       }
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [formData.petName]);
+  }, [formData.petName, selectedPetId]);
 
   const handlePetSelect = useCallback((pet) => {
     setSelectedPetId(pet._id);
     setFormData((prev) => ({
       ...prev,
       petName: pet.nome,
-      clientName: pet.tutorId?.name || '',
+      clientName: pet.tutorId?.name || "",
+      phone: pet.tutorId?.phone || "",
+      email: pet.tutorId?.email || "",
     }));
     setSearchResults([]);
   }, []);
@@ -261,34 +251,35 @@ const NewAppointmentModal = ({
     setFormData((prev) => ({ ...prev, status: statusValue }));
   }, []);
 
-  const providerId = providerDocumentId;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
     setError(null);
 
-    const currentPetId = appointmentToEdit ? appointmentToEdit.pet._id : selectedPetId;
+    const isEditing = !!appointmentToEdit?._id;
 
-    if (!currentPetId) {
-     setError("Por favor, selecione um Pet válido da lista de sugestões.");
-     setIsSaving(false);
-     return;
+    if (!selectedPetId) {
+      setError("Por favor, selecione um Pet válido da lista de sugestões.");
+      setIsSaving(false);
+      return;
     }
 
-    const isEditing = !!appointmentToEdit?._id; 
-    
-    if (!isEditing && (!providerId || providerId === 'null' || providerId === 'undefined' || providerId === '')) {
-     setError(
-       "Erro de autenticação: ID do prestador não encontrado. Tente logar novamente."
-     );
-     setIsSaving(false);
-     return;
+    const providerIdValid =
+      providerId &&
+      providerId !== "null" &&
+      providerId !== "undefined" &&
+      providerId !== "";
+
+    if (!isEditing && !providerIdValid) {
+      setError(
+        "Erro crítico: O ID do Prestador não foi carregado. Recarregue a página e, se o erro persistir, certifique-se de ter um perfil de prestador criado."
+      );
+      setIsSaving(false);
+      return;
     }
 
     const payload = {
       pet: selectedPetId,
-      // provider: providerId,
       dateTime: new Date(`${formData.date}T${formData.time}:00`).toISOString(),
       duration: DURATION_MAP[formData.duration],
       reason: formData.serviceType,
@@ -297,36 +288,54 @@ const NewAppointmentModal = ({
     };
 
     try {
-        if (isEditing) {
-            await updateAppointment(appointmentToEdit._id, payload);
-        } else {
-            await createAppointment(payload, providerId); 
-        }
-     onAppointmentSaved();
-     onClose();
+      if (isEditing) {
+        await updateAppointment(appointmentToEdit._id, payload);
+      } else {
+        const createPayload = { ...payload, provider: providerId };
+        await createAppointment(createPayload, providerId);
+      }
+      onAppointmentSaved();
+      onClose();
     } catch (err) {
-     console.error("Erro ao salvar agendamento:", err);
-     const responseData = err.response?.data;
-     let displayError = "Falha ao salvar o agendamento. Verifique a validade dos IDs ou a conexão.";
-        if (responseData) {
-            if (Array.isArray(responseData.message)) {
-                displayError = `Erro de Validação: ${responseData.message.join(', ')}`;
-            } else if (responseData.message) {
-                displayError = responseData.message;
-            } else if (responseData.statusCode === 401 || responseData.statusCode === 403) {
-                displayError = "Sessão expirada ou acesso negado. Faça login novamente.";
-            }
+      console.error("Erro ao salvar agendamento:", err);
+      const responseData = err.response?.data;
+      let displayError =
+        "Falha ao salvar o agendamento. Verifique a validade dos IDs ou a conexão.";
+      if (responseData) {
+        if (Array.isArray(responseData.message)) {
+          displayError = `Erro de Validação: ${responseData.message.join(
+            ", "
+          )}`;
+        } else if (responseData.message) {
+          displayError = responseData.message;
+        } else if (responseData.statusCode === 400) {
+          displayError =
+            "Dados inválidos: Verifique se todos os campos estão corretos (ex: datas, IDs).";
+        } else if (
+          responseData.statusCode === 401 ||
+          responseData.statusCode === 403
+        ) {
+          displayError =
+            "Sessão expirada ou acesso negado. Faça login novamente.";
         }
-     setError(displayError);
-        
+      }
+      setError(displayError);
     } finally {
-     setIsSaving(false);
+      setIsSaving(false);
     }
   };
 
   if (!isOpen) return null;
 
-return (
+  const isNewAppointment = !appointmentToEdit;
+  const isProviderDataReady = !!providerId && !isLoadingProvider;
+  const isAwaitingProviderId = isNewAppointment && isLoadingProvider;
+  const isProviderMissing =
+    isNewAppointment && !providerId && !isLoadingProvider;
+  const shouldDisableSaveButton =
+    isSaving || (isNewAppointment && !isProviderDataReady);
+
+  return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
       onClick={onClose}
@@ -346,12 +355,28 @@ return (
             <VscClose className="w-6 h-6" />
           </button>
         </div>
+
         <div className="p-6 space-y-8">
           {error && (
             <div className="p-3 bg-red-100 text-red-700 rounded font-medium">
               {error}
             </div>
           )}
+
+          {isProviderMissing && (
+            <div className="p-3 bg-red-100 text-red-700 rounded font-medium">
+              Erro: O ID do Prestador não foi carregado.
+              <a
+                href="#"
+                onClick={() => window.location.reload()}
+                className="font-bold underline"
+              >
+                Recarregue a página
+              </a>
+              ou certifique-se de ter um perfil de prestador criado.
+            </div>
+          )}
+
           <Section
             title="Informações do Cliente"
             icon={VscPerson}
@@ -369,11 +394,13 @@ return (
                   onChange={handleChange}
                   autoComplete="off"
                 />
+
                 {(isSearching || searchResults.length > 0) && (
                   <div className="absolute z-20 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto">
                     {isSearching && (
                       <div className="p-2 text-gray-500">Buscando...</div>
                     )}
+
                     {!isSearching &&
                       searchResults.length === 0 &&
                       formData.petName.length > 2 && (
@@ -381,21 +408,23 @@ return (
                           Pet não encontrado.
                         </div>
                       )}
+
                     {searchResults.map((pet) => (
                       <div
                         key={pet._id}
                         className="p-2 cursor-pointer hover:bg-teal-100"
                         onClick={() => handlePetSelect(pet)}
                       >
-                        {pet.nome} ({pet.especie}) - Tutor:{" "}
-                        {pet.tutorId.name}
+                        {pet.nome} ({pet.especie}) - Tutor: {pet.tutorId.name}
                       </div>
                     ))}
                   </div>
                 )}
+
                 {selectedPetId && (
                   <p className="text-xs text-yellow-300 mt-1">
-                    Pet selecionado (ID: {selectedPetId.substring(0, 4)}...)
+                    Pet selecionado (ID:
+                    {selectedPetId.substring(0, 4)}...)
                   </p>
                 )}
               </div>
@@ -409,6 +438,7 @@ return (
                 onChange={handleChange}
                 disabled={selectedPetId ? true : false}
               />
+
               <Input
                 label="Telefone"
                 icon={FiPhoneCall}
@@ -418,6 +448,7 @@ return (
                 value={formData.phone}
                 onChange={handleChange}
               />
+
               <Input
                 label="Email"
                 icon={VscMail}
@@ -429,6 +460,7 @@ return (
               />
             </div>
           </Section>
+
           <Section
             title="Informações do Serviço"
             icon={VscTag}
@@ -443,6 +475,7 @@ return (
               onChange={handleChange}
             />
           </Section>
+
           <Section
             title="Data e Horário"
             icon={MdOutlineWatchLater}
@@ -458,6 +491,7 @@ return (
                 value={formData.date}
                 onChange={handleChange}
               />
+
               <Select
                 label="Horário"
                 options={["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"]}
@@ -477,6 +511,7 @@ return (
               />
             </div>
           </Section>
+
           <Section
             title="Status do Agendamento"
             icon={VscInfo}
@@ -488,6 +523,7 @@ return (
               onChange={handleStatusChange}
             />
           </Section>
+
           <Section
             title="Observações (opcional)"
             icon={VscInfo}
@@ -502,21 +538,27 @@ return (
             />
           </Section>
         </div>
+
         <div className="p-6 border-t flex justify-end gap-3 sticky bottom-0 bg-white z-10">
           <button
             type="button"
             onClick={onClose}
             className="px-6 py-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-            disabled={isSaving}
+            disabled={isSaving || isAwaitingProviderId}
           >
             Cancelar
           </button>
+
           <button
             type="submit"
             className="px-6 py-2 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md disabled:bg-gray-400"
-            disabled={isSaving}
+            disabled={shouldDisableSaveButton}
           >
-            {isSaving ? "Salvando..." : "Salvar"}
+            {isSaving
+              ? "Salvando..."
+              : isAwaitingProviderId
+              ? "Aguardando ID..."
+              : "Salvar"}
           </button>
         </div>
       </form>

@@ -28,7 +28,6 @@ export const fetchNextAppointments = async () => {
     });
     const appointments = response.data.items;
     if (!Array.isArray(appointments)) {
-      console.error("Resposta do servidor não é um array:", response.data);
       throw new Error(
         "Resposta inesperada do servidor ao carregar agendamentos."
       );
@@ -36,11 +35,13 @@ export const fetchNextAppointments = async () => {
 
     return appointments.map((app) => {
       const dateObject = app.dateTime ? new Date(app.dateTime) : null;
+      const tutorName = app.pet?.tutorId?.name || "Tutor Desconhecido";
+      const tutorPhone = app.pet?.tutorId?.phone || "(Não informado)";
 
       return {
         id: app._id,
         petName: app.pet?.nome || "Pet Desconhecido",
-        tutorName: app.pet?.tutorId?.name || "Tutor Desconhecido",
+        tutorName: tutorName,
         date:
           dateObject && !isNaN(dateObject)
             ? dateObject.toLocaleDateString("pt-BR")
@@ -52,7 +53,7 @@ export const fetchNextAppointments = async () => {
                 minute: "2-digit",
               })
             : "Hora Inválida",
-        phone: app.provider?.whatsapp || "(Não informado)",
+        phone: tutorPhone,
         status: mapStatusToPortuguese(app.status),
       };
     });
