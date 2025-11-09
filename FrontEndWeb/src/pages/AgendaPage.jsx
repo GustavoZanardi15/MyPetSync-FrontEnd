@@ -10,7 +10,7 @@ import { fetchProviderProfile } from "../services/providerService";
 import { useAuth } from "../context/AuthContext";
 
 const AgendaPage = () => {
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const shouldOpenModal = searchParams.get("new") === "true";
   const selectedTime = searchParams.get("time");
@@ -25,14 +25,14 @@ const AgendaPage = () => {
   const [providerDocumentId, setProviderDocumentId] = useState(null);
 
   const fetchProviderId = useCallback(async () => {
-    const instantProviderId = currentUser?.profileId || currentUser?.providerId;
+    const instantProviderId = user?.profileId || user?.providerId;
     if (instantProviderId) {
       setProviderDocumentId(instantProviderId);
       setIsLoadingProvider(false);
       return instantProviderId;
     }
 
-    if (!currentUser) {
+    if (!user) {
       setIsLoadingProvider(false);
       return null;
     }
@@ -50,7 +50,7 @@ const AgendaPage = () => {
     } finally {
       setIsLoadingProvider(false);
     }
-  }, [currentUser]);
+  }, [user]);
 
   const fetchAppointments = useCallback(async (providerId) => {
     if (!providerId) {
@@ -135,6 +135,7 @@ const AgendaPage = () => {
             Gerencie seus agendamentos
           </p>
         </div>
+
         <button
           onClick={() => handleNewAppointmentClick()}
           className="flex items-center p-3 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md"
@@ -144,6 +145,7 @@ const AgendaPage = () => {
           {isLoadingProvider ? "Carregando ID..." : "Novo Agendamento"}
         </button>
       </div>
+
       {isPageLoading ? (
         <div className="text-center py-10 text-xl text-gray-500">
           Carregando Agendamentos...
@@ -156,6 +158,7 @@ const AgendaPage = () => {
               onDateSelect={setSelectedDate}
               selectedDate={selectedDate}
             />
+
             <DailySchedule
               appointments={dailyAppointments}
               selectedDate={selectedDate}
@@ -166,6 +169,7 @@ const AgendaPage = () => {
           <DailySummary appointments={dailyAppointments} />
         </div>
       )}
+
       <NewAppointmentModal
         isOpen={isModalOpen}
         onClose={closeModal}
