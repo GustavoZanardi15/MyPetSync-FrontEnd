@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function EnderecoHeader() {
+
+export default function NovoEnderecoHeader() {
     const router = useRouter();
 
     return (
@@ -11,19 +12,21 @@ export default function EnderecoHeader() {
             <Pressable onPress={() => router.back()} style={styles.backButton}>
                 <Ionicons name="arrow-back" size={24} color="#2F8B88" />
             </Pressable>
-            <Text style={styles.headerTitle}>Endereços</Text>
-            <View style={{ width: 24 }} />
+            <Text style={styles.headerTitle}>Adicionar Endereço</Text>
+            <View style={{ width: 24, height: 24 }} />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     header: {
+        alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
-        marginHorizontal: 24,
-        marginVertical: 16,
+        paddingHorizontal: 24,
+        paddingBottom: 16,
+        paddingTop: 40,
+        backgroundColor: "#F7F7F7"
     },
     backButton: {
         padding: 5
@@ -33,4 +36,4 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#2F8B88"
     }
-}); 
+});
