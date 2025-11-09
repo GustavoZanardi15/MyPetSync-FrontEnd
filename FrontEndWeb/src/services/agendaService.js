@@ -17,7 +17,7 @@ const mapStatusToPortuguese = (status) => {
 
 export const fetchNextAppointments = async () => {
   try {
-    const response = await api.get("/appointments", {
+    const response = await api.get("/providers/me/appointments", {
       params: {
         limit: 5,
         sort: "dateTime",
@@ -64,8 +64,11 @@ export const fetchNextAppointments = async () => {
   }
 };
 
-export const getAppointments = async (startDate, endDate) => {
-  const response = await api.get("/appointments", {
+export const getAppointments = async (startDate, endDate, providerId) => {
+  if (!providerId) {
+    return [];
+  }
+  const response = await api.get(`/providers/${providerId}/appointments`, {
     params: {
       from: startDate,
       to: endDate,

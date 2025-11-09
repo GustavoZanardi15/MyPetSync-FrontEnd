@@ -20,8 +20,7 @@ const STATUS_MAP_REVERSE = {
 const Section = ({ title, icon: Icon, color, children, className = "" }) => (
   <div className={`p-4 rounded-lg ${className}`}>
     <h3 className={`font-semibold mb-4 flex items-center ${color}`}>
-      <Icon className="w-5 h-5 mr-2" />
-      {title}
+      <Icon className="w-5 h-5 mr-2" /> {title}
     </h3>
     {children}
   </div>
@@ -38,10 +37,12 @@ const Input = ({
 }) => (
   <div className="flex flex-col">
     <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
+
     <div className="relative">
       {Icon && (
         <Icon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       )}
+
       <input
         type={type}
         name={name}
@@ -66,6 +67,7 @@ const Select = ({
 }) => (
   <div className="flex flex-col">
     <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
+
     <select
       name={name}
       value={value}
@@ -75,6 +77,7 @@ const Select = ({
       <option value="" disabled>
         {defaultMessage}
       </option>
+
       {options.map((option) => (
         <option key={option} value={option}>
           {option}
@@ -100,6 +103,7 @@ const StatusRadios = ({ value, onChange }) => (
     <label className="text-sm font-medium text-gray-700 block mb-2">
       Status do Agendamento
     </label>
+
     <div className="flex gap-6">
       <label className="flex items-center space-x-2 text-gray-800">
         <input
@@ -112,6 +116,7 @@ const StatusRadios = ({ value, onChange }) => (
         />
         <span>Agendado</span>
       </label>
+
       <label className="flex items-center space-x-2 text-gray-800">
         <input
           type="radio"
@@ -213,9 +218,15 @@ const NewAppointmentModal = ({
     const delayDebounceFn = setTimeout(async () => {
       if (formData.petName.length > 2 && !selectedPetId) {
         setIsSearching(true);
-        const results = await searchPets(formData.petName);
-        setSearchResults(results);
-        setIsSearching(false);
+        try {
+          const results = await searchPets(formData.petName);
+          setSearchResults(results);
+        } catch (err) {
+          console.error("Erro na busca de Pets:", err);
+          setSearchResults([]);
+        } finally {
+          setIsSearching(false);
+        }
       } else {
         setSearchResults([]);
       }
@@ -253,15 +264,15 @@ const NewAppointmentModal = ({
       return;
     }
 
-    if (
-      !isEditing &&
-      (!providerId ||
-        providerId === "null" ||
-        providerId === "undefined" ||
-        providerId === "")
-    ) {
+    const providerIdValid =
+      providerId &&
+      providerId !== "null" &&
+      providerId !== "undefined" &&
+      providerId !== "";
+
+    if (!isEditing && !providerIdValid) {
       setError(
-        "Erro crítico: ID do prestador não encontrado no perfil. Recarregue a página."
+        "Erro crítico: O ID do Prestador não foi carregado. Recarregue a página e, se o erro persistir, certifique-se de ter um perfil de prestador criado."
       );
       setIsSaving(false);
       return;
@@ -280,7 +291,8 @@ const NewAppointmentModal = ({
       if (isEditing) {
         await updateAppointment(appointmentToEdit._id, payload);
       } else {
-        await createAppointment(payload, providerId);
+        const createPayload = { ...payload, provider: providerId };
+        await createAppointment(createPayload, providerId);
       }
       onAppointmentSaved();
       onClose();
@@ -315,8 +327,13 @@ const NewAppointmentModal = ({
 
   if (!isOpen) return null;
 
-  const isProviderMissingAndNotLoading =
-    !appointmentToEdit && !providerId && !isLoadingProvider;
+  const isNewAppointment = !appointmentToEdit;
+  const isProviderDataReady = !!providerId && !isLoadingProvider;
+  const isAwaitingProviderId = isNewAppointment && isLoadingProvider;
+  const isProviderMissing =
+    isNewAppointment && !providerId && !isLoadingProvider;
+  const shouldDisableSaveButton =
+    isSaving || (isNewAppointment && !isProviderDataReady);
 
   return (
     <div
@@ -338,18 +355,28 @@ const NewAppointmentModal = ({
             <VscClose className="w-6 h-6" />
           </button>
         </div>
+
         <div className="p-6 space-y-8">
           {error && (
             <div className="p-3 bg-red-100 text-red-700 rounded font-medium">
               {error}
             </div>
           )}
-          {isProviderMissingAndNotLoading && (
+
+          {isProviderMissing && (
             <div className="p-3 bg-red-100 text-red-700 rounded font-medium">
-              Erro: O ID do Prestador não foi carregado. Recarregue a página ou
-              faça login novamente.
+              Erro: O ID do Prestador não foi carregado.
+              <a
+                href="#"
+                onClick={() => window.location.reload()}
+                className="font-bold underline"
+              >
+                Recarregue a página
+              </a>
+              ou certifique-se de ter um perfil de prestador criado.
             </div>
           )}
+
           <Section
             title="Informações do Cliente"
             icon={VscPerson}
@@ -367,11 +394,13 @@ const NewAppointmentModal = ({
                   onChange={handleChange}
                   autoComplete="off"
                 />
+
                 {(isSearching || searchResults.length > 0) && (
                   <div className="absolute z-20 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto">
                     {isSearching && (
                       <div className="p-2 text-gray-500">Buscando...</div>
                     )}
+
                     {!isSearching &&
                       searchResults.length === 0 &&
                       formData.petName.length > 2 && (
@@ -379,6 +408,7 @@ const NewAppointmentModal = ({
                           Pet não encontrado.
                         </div>
                       )}
+
                     {searchResults.map((pet) => (
                       <div
                         key={pet._id}
@@ -390,9 +420,11 @@ const NewAppointmentModal = ({
                     ))}
                   </div>
                 )}
+
                 {selectedPetId && (
                   <p className="text-xs text-yellow-300 mt-1">
-                    Pet selecionado (ID: {selectedPetId.substring(0, 4)}...)
+                    Pet selecionado (ID:
+                    {selectedPetId.substring(0, 4)}...)
                   </p>
                 )}
               </div>
@@ -406,6 +438,7 @@ const NewAppointmentModal = ({
                 onChange={handleChange}
                 disabled={selectedPetId ? true : false}
               />
+
               <Input
                 label="Telefone"
                 icon={FiPhoneCall}
@@ -415,6 +448,7 @@ const NewAppointmentModal = ({
                 value={formData.phone}
                 onChange={handleChange}
               />
+
               <Input
                 label="Email"
                 icon={VscMail}
@@ -426,6 +460,7 @@ const NewAppointmentModal = ({
               />
             </div>
           </Section>
+
           <Section
             title="Informações do Serviço"
             icon={VscTag}
@@ -440,6 +475,7 @@ const NewAppointmentModal = ({
               onChange={handleChange}
             />
           </Section>
+
           <Section
             title="Data e Horário"
             icon={MdOutlineWatchLater}
@@ -455,6 +491,7 @@ const NewAppointmentModal = ({
                 value={formData.date}
                 onChange={handleChange}
               />
+
               <Select
                 label="Horário"
                 options={["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"]}
@@ -474,6 +511,7 @@ const NewAppointmentModal = ({
               />
             </div>
           </Section>
+
           <Section
             title="Status do Agendamento"
             icon={VscInfo}
@@ -485,6 +523,7 @@ const NewAppointmentModal = ({
               onChange={handleStatusChange}
             />
           </Section>
+
           <Section
             title="Observações (opcional)"
             icon={VscInfo}
@@ -499,21 +538,27 @@ const NewAppointmentModal = ({
             />
           </Section>
         </div>
+
         <div className="p-6 border-t flex justify-end gap-3 sticky bottom-0 bg-white z-10">
           <button
             type="button"
             onClick={onClose}
             className="px-6 py-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-            disabled={isSaving}
+            disabled={isSaving || isAwaitingProviderId}
           >
             Cancelar
           </button>
+
           <button
             type="submit"
             className="px-6 py-2 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md disabled:bg-gray-400"
-            disabled={isSaving}
+            disabled={shouldDisableSaveButton}
           >
-            {isSaving ? "Salvando..." : "Salvar"}
+            {isSaving
+              ? "Salvando..."
+              : isAwaitingProviderId
+              ? "Aguardando ID..."
+              : "Salvar"}
           </button>
         </div>
       </form>

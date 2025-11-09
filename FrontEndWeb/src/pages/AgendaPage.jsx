@@ -8,10 +8,9 @@ import { useSearchParams } from "react-router-dom";
 import { getAppointments } from "../services/agendaService";
 import { fetchProviderProfile } from "../services/providerService";
 import { useAuth } from "../context/AuthContext";
-import api from "../../src/utils/Api.jsx";
 
 const AgendaPage = () => {
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const shouldOpenModal = searchParams.get("new") === "true";
   const selectedTime = searchParams.get("time");
@@ -26,31 +25,39 @@ const AgendaPage = () => {
   const [providerDocumentId, setProviderDocumentId] = useState(null);
 
   const fetchProviderId = useCallback(async () => {
-    const instantProviderId = currentUser?.profileId || currentUser?.providerId;
+    const instantProviderId = user?.profileId || user?.providerId;
     if (instantProviderId) {
       setProviderDocumentId(instantProviderId);
       setIsLoadingProvider(false);
-      return;
+      return instantProviderId;
     }
 
-    if (!currentUser) {
+    if (!user) {
       setIsLoadingProvider(false);
-      return;
+      return null;
     }
 
     setIsLoadingProvider(true);
     try {
       const profile = await fetchProviderProfile();
-      setProviderDocumentId(profile._id);
+      const id = profile?._id || null;
+      setProviderDocumentId(id);
+      return id;
     } catch (err) {
-      console.error("Falha ao carregar perfil do Prestador:", err);
+      console.error("Falha crítica ao carregar perfil do Prestador:", err);
       setProviderDocumentId(null);
+      return null;
     } finally {
       setIsLoadingProvider(false);
     }
-  }, [currentUser]);
+  }, [user]);
 
-  const fetchAppointments = useCallback(async () => {
+  const fetchAppointments = useCallback(async (providerId) => {
+    if (!providerId) {
+      setIsLoadingAppointments(false);
+      setAppointments([]);
+      return;
+    }
     setIsLoadingAppointments(true);
     const today = new Date();
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
@@ -61,18 +68,29 @@ const AgendaPage = () => {
       .split("T")[0];
 
     try {
-      const data = await getAppointments(startOfMonth, endOfMonth);
+      const data = await getAppointments(startOfMonth, endOfMonth, providerId);
       setAppointments(data);
     } catch (error) {
       console.error("Falha ao carregar agendamentos", error);
+      setAppointments([]);
     } finally {
       setIsLoadingAppointments(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchProviderId();
-    fetchAppointments();
+    let isMounted = true;
+    const initialize = async () => {
+      const id = await fetchProviderId();
+      if (isMounted) {
+        fetchAppointments(id);
+      }
+    };
+    initialize();
+
+    return () => {
+      isMounted = false;
+    };
   }, [fetchProviderId, fetchAppointments]);
 
   useEffect(() => {
@@ -105,7 +123,8 @@ const AgendaPage = () => {
       new Date(appt.dateTime).toISOString().split("T")[0] === selectedDate
   );
 
-  const isPageLoading = isLoadingAppointments;
+  const isPageLoading =
+    isLoadingAppointments && (!appointments || appointments.length === 0);
 
   return (
     <div className="p-8">
@@ -116,6 +135,7 @@ const AgendaPage = () => {
             Gerencie seus agendamentos
           </p>
         </div>
+
         <button
           onClick={() => handleNewAppointmentClick()}
           className="flex items-center p-3 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md"
@@ -138,6 +158,7 @@ const AgendaPage = () => {
               onDateSelect={setSelectedDate}
               selectedDate={selectedDate}
             />
+
             <DailySchedule
               appointments={dailyAppointments}
               selectedDate={selectedDate}
@@ -148,11 +169,12 @@ const AgendaPage = () => {
           <DailySummary appointments={dailyAppointments} />
         </div>
       )}
+
       <NewAppointmentModal
         isOpen={isModalOpen}
         onClose={closeModal}
         initialTime={selectedTime}
-        onAppointmentSaved={fetchAppointments}
+        onAppointmentSaved={() => fetchAppointments(providerDocumentId)}
         appointmentToEdit={appointmentToEdit}
         providerId={providerDocumentId}
         isLoadingProvider={isLoadingProvider}
