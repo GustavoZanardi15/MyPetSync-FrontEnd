@@ -6,6 +6,9 @@ const api = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
   },
 });
 
@@ -28,7 +31,9 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
-      console.warn("Sessão expirada ou acesso negado. Redirecionando para login.");
+      console.warn(
+        "Sessão expirada ou acesso negado. Redirecionando para login."
+      );
       localStorage.removeItem("myPetSyncToken");
     }
     return Promise.reject(error);

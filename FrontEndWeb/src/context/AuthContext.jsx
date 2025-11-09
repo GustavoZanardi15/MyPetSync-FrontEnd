@@ -16,10 +16,16 @@ export const AuthProvider = ({ children }) => {
       const userData = await fetchCurrentUser();
       const rawJsonString = JSON.stringify(userData);
       const cleanedUser = JSON.parse(rawJsonString);
-      const primaryId = String(
+
+      let primaryId = String(
         cleanedUser.id || cleanedUser.userId || cleanedUser._id || ""
       );
-      if (!primaryId) {
+
+      if (!primaryId || primaryId.length < 12) {
+        console.error(
+          "Dados de usuário recebidos, mas ID inválido:",
+          cleanedUser
+        );
         throw new Error("ID primário do usuário não encontrado na resposta.");
       }
 

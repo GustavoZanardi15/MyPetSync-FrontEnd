@@ -8,7 +8,6 @@ import { useSearchParams } from "react-router-dom";
 import { getAppointments } from "../services/agendaService";
 import { fetchProviderProfile } from "../services/providerService";
 import { useAuth } from "../context/AuthContext";
-import api from "../../src/utils/Api.jsx";
 
 const AgendaPage = () => {
   const { currentUser } = useAuth();
@@ -30,27 +29,35 @@ const AgendaPage = () => {
     if (instantProviderId) {
       setProviderDocumentId(instantProviderId);
       setIsLoadingProvider(false);
-      return;
+      return instantProviderId;
     }
 
     if (!currentUser) {
       setIsLoadingProvider(false);
-      return;
+      return null;
     }
 
     setIsLoadingProvider(true);
     try {
       const profile = await fetchProviderProfile();
-      setProviderDocumentId(profile._id);
+      const id = profile?._id || null;
+      setProviderDocumentId(id);
+      return id;
     } catch (err) {
-      console.error("Falha ao carregar perfil do Prestador:", err);
+      console.error("Falha crítica ao carregar perfil do Prestador:", err);
       setProviderDocumentId(null);
+      return null;
     } finally {
       setIsLoadingProvider(false);
     }
   }, [currentUser]);
 
-  const fetchAppointments = useCallback(async () => {
+  const fetchAppointments = useCallback(async (providerId) => {
+    if (!providerId) {
+      setIsLoadingAppointments(false);
+      setAppointments([]);
+      return;
+    }
     setIsLoadingAppointments(true);
     const today = new Date();
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
@@ -61,18 +68,29 @@ const AgendaPage = () => {
       .split("T")[0];
 
     try {
-      const data = await getAppointments(startOfMonth, endOfMonth);
+      const data = await getAppointments(startOfMonth, endOfMonth, providerId);
       setAppointments(data);
     } catch (error) {
       console.error("Falha ao carregar agendamentos", error);
+      setAppointments([]);
     } finally {
       setIsLoadingAppointments(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchProviderId();
-    fetchAppointments();
+    let isMounted = true;
+    const initialize = async () => {
+      const id = await fetchProviderId();
+      if (isMounted) {
+        fetchAppointments(id);
+      }
+    };
+    initialize();
+
+    return () => {
+      isMounted = false;
+    };
   }, [fetchProviderId, fetchAppointments]);
 
   useEffect(() => {
@@ -105,7 +123,8 @@ const AgendaPage = () => {
       new Date(appt.dateTime).toISOString().split("T")[0] === selectedDate
   );
 
-  const isPageLoading = isLoadingAppointments;
+  const isPageLoading =
+    isLoadingAppointments && (!appointments || appointments.length === 0);
 
   return (
     <div className="p-8">
@@ -125,7 +144,6 @@ const AgendaPage = () => {
           {isLoadingProvider ? "Carregando ID..." : "Novo Agendamento"}
         </button>
       </div>
-
       {isPageLoading ? (
         <div className="text-center py-10 text-xl text-gray-500">
           Carregando Agendamentos...
@@ -152,7 +170,7 @@ const AgendaPage = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         initialTime={selectedTime}
-        onAppointmentSaved={fetchAppointments}
+        onAppointmentSaved={() => fetchAppointments(providerDocumentId)}
         appointmentToEdit={appointmentToEdit}
         providerId={providerDocumentId}
         isLoadingProvider={isLoadingProvider}
