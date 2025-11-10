@@ -1,7 +1,16 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import DailySchedule from "../DailySchedule";
 
-describe("DailySchedule Component", () => {
+beforeAll(() => {
+  jest.useFakeTimers();
+  jest.setSystemTime(new Date("2025-08-26T09:00:00"));
+});
+
+afterAll(() => {
+  jest.useRealTimers();
+});
+
+describe('DailySchedule Component', () => {
   const mockAddAppointment = jest.fn();
 
   const mockAppointments = [
@@ -23,7 +32,7 @@ describe("DailySchedule Component", () => {
     },
   ];
 
-  it("deve renderizar o título com a data e o total de agendamentos", () => {
+  it('deve renderizar o título com a data e o total de agendamentos', () => {
     render(
       <DailySchedule
         appointments={mockAppointments}
@@ -36,7 +45,7 @@ describe("DailySchedule Component", () => {
     expect(screen.getByText("2 agendamentos")).toBeInTheDocument();
   });
 
-  it("deve exibir os horários corretamente de 8:00 até 18:00", () => {
+  it('deve exibir os horários corretamente de 8:00 até 18:00', () => {
     render(
       <DailySchedule
         appointments={mockAppointments}
@@ -55,7 +64,7 @@ describe("DailySchedule Component", () => {
     });
   });
 
-  it("deve renderizar corretamente os agendamentos mockados (Rex e Luna)", () => {
+  it('deve renderizar corretamente os agendamentos mockados (Rex e Luna)', () => {
     render(
       <DailySchedule
         appointments={mockAppointments}
@@ -99,7 +108,7 @@ describe("DailySchedule Component", () => {
     expect(mockAddAppointment).toHaveBeenCalledWith(expect.any(String));
   });
 
-  it("deve exibir o botão de editar para horários com agendamento", () => {
+  it('deve exibir o botão de editar para horários com agendamento', () => {
     render(
       <DailySchedule
         appointments={mockAppointments}
@@ -113,8 +122,8 @@ describe("DailySchedule Component", () => {
   });
 });
 
-describe("Jest", () => {
-  it("should work", () => {
+describe('Jest', () => {
+  it('should work', () => {
     expect(1).toBe(1);
   });
 });

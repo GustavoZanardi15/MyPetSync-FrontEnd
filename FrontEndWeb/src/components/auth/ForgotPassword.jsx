@@ -63,7 +63,6 @@ const ForgotPassword = () => {
                 value={email}
                 onChange={handleInputChange}
                 inputClassName="bg-white text-gray-800 p-3 w-full border-none focus:ring-0"
-                containerClassName="rounded-lg shadow-sm bg-white"
                 iconClassName="text-[#003637]"
               />
               {error && (

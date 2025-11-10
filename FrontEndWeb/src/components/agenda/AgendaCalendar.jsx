@@ -1,6 +1,13 @@
 import React, { useMemo, useCallback } from "react";
 import { VscChevronLeft, VscChevronRight } from "react-icons/vsc";
-import { format, startOfWeek, addDays, subDays, isSameDay } from "date-fns";
+import {
+  format,
+  startOfWeek,
+  addDays,
+  subDays,
+  isSameDay,
+  isValid,
+} from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const ptDayNames = [
@@ -13,40 +20,50 @@ const ptDayNames = [
   "Domingo",
 ];
 
+// Função auxiliar para criar uma Data LOCAL a partir da string 'yyyy-MM-dd' (correção de fuso horário)
 const createLocalDay = (dateString) => {
-  return new Date(dateString.replace(/-/g, "/"));
+  return new Date(dateString?.replace(/-/g, "/") || new Date());
 };
 
-const getWeekData = (startDate, appointments) => {
+const getWeekData = (startDate, appointments = []) => {
   const weekData = [];
-  const current = new Date(startDate);
-
+  // Garante que startDate é uma data válida, senão usa 'hoje'
+  const current = isValid(startDate) ? startDate : new Date();
+  // weekStartsOn: 1 define a semana começando na Segunda-feira
   const start = startOfWeek(current, { weekStartsOn: 1 });
 
   for (let i = 0; i < 7; i++) {
     const date = addDays(start, i);
     const dateString = format(date, "yyyy-MM-dd");
 
-    const dailyAppointments = appointments.filter(
-      (appt) => format(new Date(appt.dateTime), "yyyy-MM-dd") === dateString
-    );
+    const dailyAppointments = appointments.filter((appt) => {
+      if (!appt?.dateTime) return false;
+      const apptDate = new Date(appt.dateTime);
+      return isValid(apptDate) && format(apptDate, "yyyy-MM-dd") === dateString;
+    });
 
     weekData.push({
-      date: date,
+      date,
       dayNumber: date.getDate(),
       dayName: ptDayNames[i],
-      dateString: dateString,
+      dateString,
       appointments: dailyAppointments,
     });
   }
+
   return weekData;
 };
 
-const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
-  const selectedDateObj = useMemo(
-    () => createLocalDay(selectedDate),
-    [selectedDate]
-  );
+const AgendaCalendar = ({
+  appointments = [],
+  selectedDate,
+  onDateSelect = () => {},
+}) => {
+  const selectedDateObj = useMemo(() => {
+    // Usa a função local para criar a data, evitando deslocamento de fuso horário
+    return createLocalDay(selectedDate);
+  }, [selectedDate]);
+
   const selectedDateString = format(selectedDateObj, "yyyy-MM-dd");
 
   const weekData = useMemo(
@@ -54,15 +71,15 @@ const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
     [selectedDateObj, appointments]
   );
 
-  const weekReferenceDate = weekData[0].date;
+  const weekReferenceDate = weekData[0]?.date || new Date();
 
   const currentMonthYear = useMemo(() => {
-    return new Intl.DateTimeFormat("pt-BR", {
+    const formatted = new Intl.DateTimeFormat("pt-BR", {
       month: "long",
       year: "numeric",
-    })
-      .format(weekReferenceDate)
-      .replace(/(^|\s)\S/g, (l) => l.toUpperCase());
+    }).format(weekReferenceDate);
+    // Capitaliza a primeira letra para exibir corretamente o mês
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }, [weekReferenceDate]);
 
   const goToNextWeek = useCallback(() => {
@@ -80,9 +97,7 @@ const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
   }, [onDateSelect]);
 
   const handleDayClick = useCallback(
-    (dateString) => {
-      onDateSelect(dateString);
-    },
+    (dateString) => onDateSelect(dateString),
     [onDateSelect]
   );
 
@@ -92,6 +107,7 @@ const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
         <h2 className="text-xl font-semibold text-gray-800">
           {currentMonthYear}
         </h2>
+
         <div className="flex items-center gap-2">
           <button
             onClick={goToPreviousWeek}
@@ -116,10 +132,13 @@ const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
           </button>
         </div>
       </div>
+
       <div className="grid grid-cols-7 gap-1 mt-4">
         {weekData.map((day) => {
           const isToday = isSameDay(day.date, new Date());
+          // CORREÇÃO FINAL: Compara strings (seguro contra fuso horário)
           const isSelected = day.dateString === selectedDateString;
+
           let dayClass = "bg-teal-600 cursor-pointer hover:bg-teal-500";
           if (isToday) {
             dayClass =
@@ -144,10 +163,16 @@ const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
                 <div className="font-bold text-base">{day.dayName}</div>
                 <div className="text-2xl font-semibold">{day.dayNumber}</div>
               </div>
+
               <div className="flex flex-col p-1 overflow-y-auto flex-grow gap-1">
                 {day.appointments.map((appt) => {
-                  const time = format(new Date(appt.dateTime), "HH:mm");
-                  const petName = appt.pet?.nome || "Pet";
+                  let time = "00:00";
+                  try {
+                    const parsed = new Date(appt.dateTime);
+                    if (isValid(parsed)) time = format(parsed, "HH:mm");
+                  } catch {}
+
+                  const petName = appt.pet?.nome || appt.pet?.name || "Pet";
                   return (
                     <div
                       key={appt._id}

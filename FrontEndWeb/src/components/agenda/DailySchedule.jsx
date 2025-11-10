@@ -1,5 +1,5 @@
 import { VscAdd, VscEdit } from "react-icons/vsc";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const scheduleHours = Array.from({ length: 11 }, (_, i) => {
@@ -15,37 +15,40 @@ const statusMap = {
 };
 
 const DailySchedule = ({
-  appointments,
+  appointments = [],
   selectedDate,
-  onAddAppointment,
-  onAppointmentClick,
+  onAddAppointment = () => {},
+  onAppointmentClick = () => {},
 }) => {
-  const dateObj = parseISO(selectedDate);
+  let dateObj = parseISO(selectedDate || new Date().toISOString());
+  if (!isValid(dateObj)) dateObj = new Date();
+
   const formattedDate = format(dateObj, "d 'de' MMMM 'de' yyyy", {
     locale: ptBR,
   });
 
   const appointmentsByTime = appointments.reduce((acc, appt) => {
-    const time = format(parseISO(appt.dateTime), "HH:mm");
+    let time = "00:00";
+    if (appt?.dateTime) {
+      const parsed = parseISO(appt.dateTime);
+      if (isValid(parsed)) time = format(parsed, "HH:mm");
+    }
+
     const fullApptData = {
       ...appt,
       id: appt._id,
-      time: time,
-      petName: appt.pet?.nome,
+      time,
+      petName: appt.pet?.nome || appt.pet?.name || "Pet",
       clientInfo: appt.reason || appt.location || "Detalhe não informado",
-      status: appt.status,
+      status: appt.status || "scheduled",
     };
 
-    if (!acc[time]) {
-      acc[time] = [];
-    }
+    if (!acc[time]) acc[time] = [];
     acc[time].push(fullApptData);
     return acc;
   }, {});
 
-  const getAppointmentByTime = (time) => {
-    return appointmentsByTime[time] || [];
-  };
+  const getAppointmentByTime = (time) => appointmentsByTime[time] || [];
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg mt-6">
@@ -55,6 +58,7 @@ const DailySchedule = ({
           {appointments.length} agendamentos
         </span>
       </div>
+
       <div className="flex flex-col gap-2">
         {scheduleHours.map((time) => {
           const appointmentsAtTime = getAppointmentByTime(time);
@@ -67,36 +71,41 @@ const DailySchedule = ({
               <div className="w-20 font-bold text-gray-800 text-lg flex-shrink-0">
                 {time}
               </div>
+
               <div className="flex-grow ml-4 border-l border-teal-600 pl-4">
                 {appointmentsAtTime.length > 0 ? (
-                  appointmentsAtTime.map((appointment) => (
-                    <div
-                      key={appointment.id}
-                      className="flex justify-between items-center text-teal-700 mb-2 last:mb-0"
-                    >
-                      <div>
-                        <p className="font-bold">{appointment.petName}</p>
-                        <p className="text-sm text-gray-500">
-                          {appointment.clientInfo}
-                        </p>
+                  appointmentsAtTime.map((appointment) => {
+                    const status =
+                      statusMap[appointment.status] ||
+                      { text: "Indefinido", color: "bg-gray-100 text-gray-700" };
+
+                    return (
+                      <div
+                        key={appointment.id}
+                        className="flex justify-between items-center text-teal-700 mb-2 last:mb-0"
+                      >
+                        <div>
+                          <p className="font-bold">{appointment.petName}</p>
+                          <p className="text-sm text-gray-500">
+                            {appointment.clientInfo}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`px-3 py-1 text-xs font-semibold rounded-full ${status.color}`}
+                          >
+                            {status.text}
+                          </span>
+                          <button
+                            onClick={() => onAppointmentClick(appointment)}
+                            className="text-gray-500 hover:text-teal-600 p-1 rounded"
+                          >
+                            <VscEdit className="w-5 h-5" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                            statusMap[appointment.status]?.color
-                          }`}
-                        >
-                          {statusMap[appointment.status]?.text}
-                        </span>
-                        <button
-                          onClick={() => onAppointmentClick(appointment)}
-                          className="text-gray-500 hover:text-teal-600 p-1 rounded"
-                        >
-                          <VscEdit className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <button
                     onClick={() => onAddAppointment(time)}
