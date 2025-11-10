@@ -8,6 +8,7 @@ import {
 } from "../services/providerService";
 import { updateCurrentUser } from "../services/userService";
 import { useAuth } from "../context/AuthContext";
+import { fetchDashboardStats } from "../services/dashboardService";
 
 const EditableInput = ({
   value,
@@ -56,7 +57,7 @@ const translateProviderType = (type) => {
   }
 };
 
-const mapApiDataToForm = (data) => {
+const mapApiDataToForm = (data, stats) => {
   if (!data) return null;
 
   const streetAndNumber =
@@ -64,14 +65,18 @@ const mapApiDataToForm = (data) => {
   const cityAndState =
     data.city && data.state ? `${data.city}, ${data.state}` : data.city || "";
 
+  const rating = stats?.reviews?.average || data.averageRating || 0;
+  const reviewCount = stats?.reviews?.count || 0;
+  const clientCount = stats?.clients || 0;
+
   return {
     profile: {
       name: data.name || "",
       category: translateProviderType(data.type),
       imageUrl: data.profilePictureUrl || "",
-      clientCount: 0,
-      rating: data.averageRating || 0,
-      reviewCount: 0,
+      clientCount: clientCount,
+      rating: rating,
+      reviewCount: reviewCount,
     },
     basicInfo: [
       {
@@ -163,8 +168,13 @@ const EditProfilePage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const apiData = await fetchProviderProfile();
-        const mappedData = mapApiDataToForm(apiData);
+        const [apiData, statsRes] = await Promise.all([
+          fetchProviderProfile(),
+          fetchDashboardStats(),
+        ]);
+
+        const mappedData = mapApiDataToForm(apiData, statsRes);
+
         setInitialData(apiData);
         setFormData(mappedData);
       } catch (err) {
