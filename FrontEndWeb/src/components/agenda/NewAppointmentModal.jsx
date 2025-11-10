@@ -37,6 +37,7 @@ const Input = ({
 }) => (
   <div className="flex flex-col">
     <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
+
     <div className="relative">
       {Icon && (
         <Icon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -131,7 +132,7 @@ const StatusRadios = ({ value, onChange }) => (
   </div>
 );
 
-const getInitialFormData = (appt, initialTime, initialDate) => {
+const getInitialFormData = (appt, initialTime) => {
   if (appt && appt._id) {
     const date = new Date(appt.dateTime);
     const durationInMin = appt.duration;
@@ -167,7 +168,7 @@ const getInitialFormData = (appt, initialTime, initialDate) => {
     phone: "",
     email: "",
     serviceType: "",
-    date: initialDate || new Date().toISOString().split("T")[0],
+    date: new Date().toISOString().split("T")[0],
     time: initialTime || "09:00",
     duration: "60 min",
     status: "Agendado",
@@ -183,21 +184,19 @@ const NewAppointmentModal = ({
   appointmentToEdit,
   providerId,
   isLoadingProvider,
-  initialDate,
 }) => {
   const [selectedPetId, setSelectedPetId] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+
   const [formData, setFormData] = useState(
-    getInitialFormData(appointmentToEdit, initialTime, initialDate)
+    getInitialFormData(appointmentToEdit, initialTime)
   );
 
   useEffect(() => {
-    setFormData(
-      getInitialFormData(appointmentToEdit, initialTime, initialDate)
-    );
+    setFormData(getInitialFormData(appointmentToEdit, initialTime));
 
     if (appointmentToEdit) {
       setSelectedPetId(appointmentToEdit.pet._id);
@@ -205,7 +204,7 @@ const NewAppointmentModal = ({
       setSelectedPetId("");
     }
     setError(null);
-  }, [appointmentToEdit, initialTime, isOpen, initialDate]);
+  }, [appointmentToEdit, initialTime, isOpen]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -286,9 +285,6 @@ const NewAppointmentModal = ({
       reason: formData.serviceType,
       notes: formData.notes,
       status: STATUS_MAP[formData.status] || "scheduled",
-      clientName: formData.clientName,
-      clientPhone: formData.phone,
-      clientEmail: formData.email,
     };
 
     try {
@@ -404,6 +400,7 @@ const NewAppointmentModal = ({
                     {isSearching && (
                       <div className="p-2 text-gray-500">Buscando...</div>
                     )}
+
                     {!isSearching &&
                       searchResults.length === 0 &&
                       formData.petName.length > 2 && (
@@ -463,6 +460,7 @@ const NewAppointmentModal = ({
               />
             </div>
           </Section>
+
           <Section
             title="Informações do Serviço"
             icon={VscTag}
