@@ -13,6 +13,10 @@ const ptDayNames = [
   "Domingo",
 ];
 
+const createLocalDay = (dateString) => {
+  return new Date(dateString.replace(/-/g, "/"));
+};
+
 const getWeekData = (startDate, appointments) => {
   const weekData = [];
   const current = new Date(startDate);
@@ -39,7 +43,11 @@ const getWeekData = (startDate, appointments) => {
 };
 
 const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
-  const selectedDateObj = useMemo(() => new Date(selectedDate), [selectedDate]);
+  const selectedDateObj = useMemo(
+    () => createLocalDay(selectedDate),
+    [selectedDate]
+  );
+  const selectedDateString = format(selectedDateObj, "yyyy-MM-dd");
 
   const weekData = useMemo(
     () => getWeekData(selectedDateObj, appointments),
@@ -84,7 +92,6 @@ const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
         <h2 className="text-xl font-semibold text-gray-800">
           {currentMonthYear}
         </h2>
-
         <div className="flex items-center gap-2">
           <button
             onClick={goToPreviousWeek}
@@ -112,15 +119,19 @@ const AgendaCalendar = ({ appointments, selectedDate, onDateSelect }) => {
       <div className="grid grid-cols-7 gap-1 mt-4">
         {weekData.map((day) => {
           const isToday = isSameDay(day.date, new Date());
-          const isSelected = isSameDay(day.date, selectedDateObj);
-
+          const isSelected = day.dateString === selectedDateString;
           let dayClass = "bg-teal-600 cursor-pointer hover:bg-teal-500";
           if (isToday) {
             dayClass =
               "bg-teal-700 ring-4 ring-teal-500 shadow-xl cursor-pointer hover:bg-teal-700";
-          } else if (isSelected) {
+          }
+          if (isSelected) {
             dayClass =
               "bg-teal-500 ring-2 ring-teal-400 shadow-lg cursor-pointer hover:bg-teal-500";
+            if (isToday) {
+              dayClass =
+                "bg-teal-500 ring-4 ring-teal-400 shadow-xl cursor-pointer hover:bg-teal-500";
+            }
           }
 
           return (
