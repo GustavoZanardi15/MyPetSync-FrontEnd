@@ -38,9 +38,29 @@ export default function EnderecoScreen() {
   }, []);
 
   useEffect(() => {
+    fetchEnderecos();
     const unsubscribe = navigation.addListener("focus", fetchEnderecos);
     return unsubscribe;
   }, [navigation, fetchEnderecos]);
+
+  const handleEdit = (item) => {
+    const addressId = item._id ?? item.id;
+    if (!addressId) {
+      Alert.alert("Erro", "Não foi possível identificar o endereço para edição.");
+      return;
+    }
+    router.push({
+      pathname: "/screens/perfilTutorScreens/EnderecoScreens/EditarEnderecoScreen",
+      params: {
+        id: addressId,
+        label: item.label,
+        street: item.street,
+        city: item.city,
+        state: item.state,
+        zip: item.zip,
+      },
+    });
+  };
 
   const handleDelete = async (addressId) => {
     if (!addressId) {
@@ -82,7 +102,13 @@ export default function EnderecoScreen() {
           <FlatList
             data={addresses}
             keyExtractor={(item) => String(item._id ?? item.id)}
-            renderItem={({ item }) => <EnderecoItem item={item} onDelete={handleDelete} />}
+            renderItem={({ item }) => (
+              <EnderecoItem
+                item={item}
+                onDelete={() => handleDelete(item._id ?? item.id)}
+                onEdit={() => handleEdit(item)}
+              />
+            )}
             contentContainerStyle={{ paddingBottom: 16 }}
           />
         ) : (
@@ -93,7 +119,7 @@ export default function EnderecoScreen() {
           style={styles.addBtn}
           onPress={() => router.push("/screens/perfilTutorScreens/EnderecoScreens/NovoEnderecoScreen")}
         >
-          <Text style={styles.addBtnText}>+ Adicionar novo endereço</Text>
+          <Text style={styles.addBtnText}>Adicionar novo endereço</Text>
         </Pressable>
       </View>
       <BottomNav />
@@ -104,7 +130,7 @@ export default function EnderecoScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F4F6F6",
+    backgroundColor: "#F7F7F7",
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 60,
   },
   contentWrapper: {
@@ -129,6 +155,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 16,
     backgroundColor: "#2F8B88",
+    alignItems: "center",
+    width: "60%"
   },
   addBtnText: {
     color: "#FFFFFF",
@@ -137,7 +165,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: "center",
-    color: "#888",
+    color: "#8E8E8E",
     fontSize: 14,
     marginTop: 20,
   },
