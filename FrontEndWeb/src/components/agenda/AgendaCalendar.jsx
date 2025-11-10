@@ -1,6 +1,13 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback } from "react";
 import { VscChevronLeft, VscChevronRight } from "react-icons/vsc";
-import { format, startOfWeek, addDays, subDays, isSameDay, isValid } from "date-fns";
+import {
+  format,
+  startOfWeek,
+  addDays,
+  subDays,
+  isSameDay,
+  isValid,
+} from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const ptDayNames = [
@@ -13,9 +20,16 @@ const ptDayNames = [
   "Domingo",
 ];
 
+// Função auxiliar para criar uma Data LOCAL a partir da string 'yyyy-MM-dd' (correção de fuso horário)
+const createLocalDay = (dateString) => {
+  return new Date(dateString?.replace(/-/g, "/") || new Date());
+};
+
 const getWeekData = (startDate, appointments = []) => {
   const weekData = [];
+  // Garante que startDate é uma data válida, senão usa 'hoje'
   const current = isValid(startDate) ? startDate : new Date();
+  // weekStartsOn: 1 define a semana começando na Segunda-feira
   const start = startOfWeek(current, { weekStartsOn: 1 });
 
   for (let i = 0; i < 7; i++) {
@@ -46,9 +60,11 @@ const AgendaCalendar = ({
   onDateSelect = () => {},
 }) => {
   const selectedDateObj = useMemo(() => {
-    const date = selectedDate ? new Date(selectedDate) : new Date();
-    return isValid(date) ? date : new Date();
+    // Usa a função local para criar a data, evitando deslocamento de fuso horário
+    return createLocalDay(selectedDate);
   }, [selectedDate]);
+
+  const selectedDateString = format(selectedDateObj, "yyyy-MM-dd");
 
   const weekData = useMemo(
     () => getWeekData(selectedDateObj, appointments),
@@ -62,6 +78,7 @@ const AgendaCalendar = ({
       month: "long",
       year: "numeric",
     }).format(weekReferenceDate);
+    // Capitaliza a primeira letra para exibir corretamente o mês
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }, [weekReferenceDate]);
 
@@ -87,7 +104,9 @@ const AgendaCalendar = ({
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg mb-6">
       <div className="flex justify-between items-center pb-4 border-b">
-        <h2 className="text-xl font-semibold text-gray-800">{currentMonthYear}</h2>
+        <h2 className="text-xl font-semibold text-gray-800">
+          {currentMonthYear}
+        </h2>
 
         <div className="flex items-center gap-2">
           <button
@@ -117,15 +136,21 @@ const AgendaCalendar = ({
       <div className="grid grid-cols-7 gap-1 mt-4">
         {weekData.map((day) => {
           const isToday = isSameDay(day.date, new Date());
-          const isSelected = isSameDay(day.date, selectedDateObj);
+          // CORREÇÃO FINAL: Compara strings (seguro contra fuso horário)
+          const isSelected = day.dateString === selectedDateString;
 
           let dayClass = "bg-teal-600 cursor-pointer hover:bg-teal-500";
           if (isToday) {
             dayClass =
               "bg-teal-700 ring-4 ring-teal-500 shadow-xl cursor-pointer hover:bg-teal-700";
-          } else if (isSelected) {
+          }
+          if (isSelected) {
             dayClass =
               "bg-teal-500 ring-2 ring-teal-400 shadow-lg cursor-pointer hover:bg-teal-500";
+            if (isToday) {
+              dayClass =
+                "bg-teal-500 ring-4 ring-teal-400 shadow-xl cursor-pointer hover:bg-teal-500";
+            }
           }
 
           return (
