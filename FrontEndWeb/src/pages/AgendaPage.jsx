@@ -132,7 +132,7 @@ const AgendaPage = () => {
         <div className="flex flex-col">
           <h1 className="text-3xl font-bold text-[#003637]">Agenda</h1>
           <p className="text-base font-semibold text-[#003637]">
-            Gerencie seus agendamentos
+            Gerencie seus seus agendamentos
           </p>
         </div>
 
@@ -178,6 +178,7 @@ const AgendaPage = () => {
         appointmentToEdit={appointmentToEdit}
         providerId={providerDocumentId}
         isLoadingProvider={isLoadingProvider}
+        initialDate={selectedDate}
       />
     </div>
   );
