@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { View, Text, StyleSheet, Pressable, Animated, PanResponder } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons"; 
 
 const TYPE_META = {
     home: { chip: "Casa", icon: "home-outline", color: "#00C853", textColor: "#00C853" },
@@ -17,7 +17,7 @@ const formatZip = (zip) => {
     return zip;
 };
 
-const EnderecoItem = ({ item, onDelete }) => {
+const EnderecoItem = ({ item, onDelete, onEdit }) => { 
     const translateX = useRef(new Animated.Value(0)).current;
 
     const labelMap = {
@@ -66,18 +66,27 @@ const EnderecoItem = ({ item, onDelete }) => {
             </View>
 
             <Animated.View style={[styles.item, { transform: [{ translateX }] }]} {...panResponder.panHandlers}>
-                <View style={[styles.chip, { backgroundColor: `${meta.color}22`, borderColor: meta.color }]}>
-                    <MaterialCommunityIcons name={meta.icon} size={16} color={meta.textColor} />
+                
+                <Pressable
+                    style={styles.editButton}
+                    onPress={() => onEdit(item)}
+                >
+                    <Ionicons name="pencil" size={22} color="#2F8B88" />
+                </Pressable>
+                
+                <View>
+                    <View style={[styles.chip, { backgroundColor: `${meta.color}22`, borderColor: meta.color }]}>
+                        <MaterialCommunityIcons name={meta.icon} size={16} color={meta.textColor} />
+                        <Text style={[styles.chipText, { color: meta.textColor }]}>{meta.chip}</Text>
+                    </View>
 
-                    <Text style={[styles.chipText, { color: meta.textColor }]}>{meta.chip}</Text>
+                    <Text style={styles.addressText}>
+                        {item.street ? `${item.street}` : item.line}
+                        {item.city ? `, ${item.city}` : ""}
+                        {item.state ? ` - ${item.state}` : ""}
+                        {item.zip ? ` , CEP: ${formatZip(item.zip)}` : ""}
+                    </Text>
                 </View>
-
-                <Text style={styles.addressText}>
-                    {item.street ? `${item.street}` : item.line}
-                    {item.city ? `, ${item.city}` : ""}
-                    {item.state ? ` - ${item.state}` : ""}
-                    {item.zip ? ` , CEP: ${formatZip(item.zip)}` : ""}
-                </Text>
             </Animated.View>
         </View>
     );
@@ -92,6 +101,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         paddingHorizontal: 12,
         paddingVertical: 12,
+        paddingRight: 50, 
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
@@ -129,7 +139,16 @@ const styles = StyleSheet.create({
     },
     deleteBtn: {
         backgroundColor: "#FFEAEA",
-        borderRadius: 16,
-        padding: 12
-    }
+        borderRadius: 24,
+        padding: 12,
+        borderWidth: 1,
+        borderColor: "#FF3B30"
+    },
+    editButton: {
+        position: "absolute",
+        top: 10,
+        right: 12,
+        padding: 8,
+        zIndex: 10, 
+    },
 });
