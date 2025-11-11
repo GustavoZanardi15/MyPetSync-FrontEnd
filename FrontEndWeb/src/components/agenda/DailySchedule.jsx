@@ -75,9 +75,10 @@ const DailySchedule = ({
               <div className="flex-grow ml-4 border-l border-teal-600 pl-4">
                 {appointmentsAtTime.length > 0 ? (
                   appointmentsAtTime.map((appointment) => {
-                    const status =
-                      statusMap[appointment.status] ||
-                      { text: "Indefinido", color: "bg-gray-100 text-gray-700" };
+                    const status = statusMap[appointment.status] || {
+                      text: "Indefinido",
+                      color: "bg-gray-100 text-gray-700",
+                    };
 
                     return (
                       <div

@@ -20,16 +20,13 @@ const ptDayNames = [
   "Domingo",
 ];
 
-// Função auxiliar para criar uma Data LOCAL a partir da string 'yyyy-MM-dd' (correção de fuso horário)
 const createLocalDay = (dateString) => {
   return new Date(dateString?.replace(/-/g, "/") || new Date());
 };
 
 const getWeekData = (startDate, appointments = []) => {
   const weekData = [];
-  // Garante que startDate é uma data válida, senão usa 'hoje'
   const current = isValid(startDate) ? startDate : new Date();
-  // weekStartsOn: 1 define a semana começando na Segunda-feira
   const start = startOfWeek(current, { weekStartsOn: 1 });
 
   for (let i = 0; i < 7; i++) {
@@ -60,7 +57,6 @@ const AgendaCalendar = ({
   onDateSelect = () => {},
 }) => {
   const selectedDateObj = useMemo(() => {
-    // Usa a função local para criar a data, evitando deslocamento de fuso horário
     return createLocalDay(selectedDate);
   }, [selectedDate]);
 
@@ -78,7 +74,6 @@ const AgendaCalendar = ({
       month: "long",
       year: "numeric",
     }).format(weekReferenceDate);
-    // Capitaliza a primeira letra para exibir corretamente o mês
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }, [weekReferenceDate]);
 
@@ -136,7 +131,6 @@ const AgendaCalendar = ({
       <div className="grid grid-cols-7 gap-1 mt-4">
         {weekData.map((day) => {
           const isToday = isSameDay(day.date, new Date());
-          // CORREÇÃO FINAL: Compara strings (seguro contra fuso horário)
           const isSelected = day.dateString === selectedDateString;
 
           let dayClass = "bg-teal-600 cursor-pointer hover:bg-teal-500";
