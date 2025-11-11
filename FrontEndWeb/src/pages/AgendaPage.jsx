@@ -178,6 +178,7 @@ const AgendaPage = () => {
         appointmentToEdit={appointmentToEdit}
         providerId={providerDocumentId}
         isLoadingProvider={isLoadingProvider}
+        initialDate={selectedDate}
       />
     </div>
   );
