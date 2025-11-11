@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { VscClose, VscTag, VscInfo, VscPerson, VscMail } from "react-icons/vsc";
+import {
+  VscClose,
+  VscTag,
+  VscInfo,
+  VscPerson,
+  VscMail,
+  VscTrash,
+} from "react-icons/vsc";
 import { MdOutlinePets, MdOutlineWatchLater } from "react-icons/md";
 import { FiPhoneCall } from "react-icons/fi";
 import {
   createAppointment,
   updateAppointment,
+  deleteAppointment,
 } from "../../services/agendaService";
 import { searchPets } from "../../services/petService";
 
@@ -135,8 +143,8 @@ const getInitialFormData = (appt, initialTime, initialDate) => {
     return {
       petName: appt.pet.nome || "",
       clientName,
-      phone: "", // Removido valor dinâmico
-      email: "", // Removido valor dinâmico
+      phone: "",
+      email: "",
       date: date.toISOString().split("T")[0],
       time: date.toLocaleTimeString("pt-BR", {
         hour: "2-digit",
@@ -182,6 +190,7 @@ const NewAppointmentModal = ({
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState(
     getInitialFormData(appointmentToEdit, initialTime, initialDate)
   );
@@ -232,7 +241,6 @@ const NewAppointmentModal = ({
       ...prev,
       petName: pet.nome,
       clientName: pet.tutorId?.name || "",
-      // Removido o preenchimento de phone/email do pet, conforme a lógica anterior
       phone: "",
       email: "",
     }));
@@ -270,7 +278,6 @@ const NewAppointmentModal = ({
       reason: formData.serviceType,
       notes: formData.notes,
       status: STATUS_MAP[formData.status] || "scheduled",
-      // Removido clientName, clientPhone e clientEmail do payload final
     };
 
     try {
@@ -290,6 +297,31 @@ const NewAppointmentModal = ({
     }
   };
 
+  const handleDelete = async () => {
+    if (!appointmentToEdit?._id) return;
+
+    if (
+      !window.confirm(
+        "Tem certeza de que deseja excluir este agendamento? Esta ação é irreversível."
+      )
+    ) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setError(null);
+    try {
+      await deleteAppointment(appointmentToEdit._id);
+      onAppointmentSaved?.();
+      onClose?.();
+    } catch (err) {
+      console.error("Erro ao excluir agendamento:", err);
+      setError("Falha ao excluir o agendamento.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   const isEditing = !!appointmentToEdit;
@@ -299,7 +331,8 @@ const NewAppointmentModal = ({
   const isProviderMissing =
     isNewAppointment && !providerId && !isLoadingProvider;
   const shouldDisableSaveButton =
-    isSaving || (isNewAppointment && !isProviderDataReady);
+    isSaving || isDeleting || (isNewAppointment && !isProviderDataReady);
+  const shouldDisableDeleteButton = isSaving || isDeleting;
 
   return (
     <div
@@ -413,7 +446,6 @@ const NewAppointmentModal = ({
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                // Este campo é mantido no formulário, mas removido do payload de salvamento
               />
 
               <Input
@@ -424,7 +456,6 @@ const NewAppointmentModal = ({
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                // Este campo é mantido no formulário, mas removido do payload de salvamento
               />
             </div>
           </Section>
@@ -519,23 +550,44 @@ const NewAppointmentModal = ({
           </Section>
         </div>
 
-        <div className="p-6 border-t flex justify-end gap-3 sticky bottom-0 bg-white z-10">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-6 py-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-            disabled={isSaving || isAwaitingProviderId}
-          >
-            Cancelar
-          </button>
+        <div className="p-6 border-t flex justify-between items-center sticky bottom-0 bg-white z-10">
+          {isEditing && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="px-6 py-2 rounded-lg text-white font-semibold bg-red-600 hover:bg-red-700 transition-colors shadow-md disabled:bg-gray-400 flex items-center"
+              disabled={shouldDisableDeleteButton}
+            >
+              {isDeleting ? (
+                <>
+                  <VscTrash className="w-5 h-5 mr-2" /> Excluindo...
+                </>
+              ) : (
+                <>
+                  <VscTrash className="w-5 h-5 mr-2" /> Excluir
+                </>
+              )}
+            </button>
+          )}
 
-          <button
-            type="submit"
-            className="px-6 py-2 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md disabled:bg-gray-400"
-            disabled={shouldDisableSaveButton}
-          >
-            {isSaving ? "Salvando..." : "Salvar"}
-          </button>
+          <div className="flex gap-3 ml-auto">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+              disabled={isSaving || isDeleting || isAwaitingProviderId}
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              className="px-6 py-2 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md disabled:bg-gray-400"
+              disabled={shouldDisableSaveButton}
+            >
+              {isSaving ? "Salvando..." : "Salvar"}
+            </button>
+          </div>
         </div>
       </form>
     </div>
