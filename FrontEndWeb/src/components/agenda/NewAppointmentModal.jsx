@@ -25,6 +25,7 @@ const Section = ({ title, icon: Icon, color, children, className = "" }) => (
     {children}
   </div>
 );
+
 const Input = ({
   label,
   icon: Icon,
@@ -37,7 +38,6 @@ const Input = ({
 }) => (
   <div className="flex flex-col">
     <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
-
     <div className="relative">
       {Icon && (
         <Icon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -57,6 +57,20 @@ const Input = ({
     </div>
   </div>
 );
+
+const TextArea = ({ placeholder, name, value, onChange }) => (
+  <div className="flex flex-col mt-4">
+    <textarea
+      placeholder={placeholder}
+      rows="3"
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 bg-white"
+    ></textarea>
+  </div>
+);
+
 const Select = ({
   label,
   options,
@@ -77,7 +91,6 @@ const Select = ({
       <option value="" disabled>
         {defaultMessage}
       </option>
-
       {options.map((option) => (
         <option key={option} value={option}>
           {option}
@@ -86,66 +99,44 @@ const Select = ({
     </select>
   </div>
 );
-const TextArea = ({ placeholder, name, value, onChange }) => (
-  <div className="flex flex-col mt-4">
-    <textarea
-      placeholder={placeholder}
-      rows="3"
-      name="notes"
-      value={value}
-      onChange={onChange}
-      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 bg-wh"
-    ></textarea>
-  </div>
-);
+
 const StatusRadios = ({ value, onChange }) => (
   <div className="mb-4">
     <label className="text-sm font-medium text-gray-700 block mb-2">
       Status do Agendamento
     </label>
-
     <div className="flex gap-6">
-      <label className="flex items-center space-x-2 text-gray-800">
-        <input
-          type="radio"
-          name="status"
-          value="Agendado"
-          checked={value === "Agendado"}
-          onChange={() => onChange("Agendado")}
-          className="text-teal-600 focus:ring-teal-500"
-        />
-        <span>Agendado</span>
-      </label>
-
-      <label className="flex items-center space-x-2 text-gray-800">
-        <input
-          type="radio"
-          name="status"
-          value="Confirmado"
-          checked={value === "Confirmado"}
-          onChange={() => onChange("Confirmado")}
-          className="text-teal-600 focus:ring-teal-500"
-        />
-        <span>Confirmado</span>
-      </label>
+      {["Agendado", "Confirmado"].map((status) => (
+        <label
+          key={status}
+          className="flex items-center space-x-2 text-gray-800"
+        >
+          <input
+            type="radio"
+            name="status"
+            value={status}
+            checked={value === status}
+            onChange={() => onChange(status)}
+            className="text-teal-600 focus:ring-teal-500"
+          />
+          <span>{status}</span>
+        </label>
+      ))}
     </div>
   </div>
 );
 
-const getInitialFormData = (appt, initialTime) => {
+const getInitialFormData = (appt, initialTime, initialDate) => {
   if (appt && appt._id) {
     const date = new Date(appt.dateTime);
     const durationInMin = appt.duration;
-
     const clientName = appt.pet.tutorId?.name || "";
-    const clientPhone = appt.pet.tutorId?.phone || "";
-    const clientEmail = appt.pet.tutorId?.email || "";
 
     return {
       petName: appt.pet.nome || "",
-      clientName: clientName,
-      phone: clientPhone,
-      email: clientEmail,
+      clientName,
+      phone: "", // Removido valor dinâmico
+      email: "", // Removido valor dinâmico
       date: date.toISOString().split("T")[0],
       time: date.toLocaleTimeString("pt-BR", {
         hour: "2-digit",
@@ -168,7 +159,7 @@ const getInitialFormData = (appt, initialTime) => {
     phone: "",
     email: "",
     serviceType: "",
-    date: new Date().toISOString().split("T")[0],
+    date: initialDate || new Date().toISOString().split("T")[0],
     time: initialTime || "08:00",
     duration: "60 min",
     status: "Agendado",
@@ -184,19 +175,21 @@ const NewAppointmentModal = ({
   appointmentToEdit,
   providerId,
   isLoadingProvider,
+  initialDate,
 }) => {
   const [selectedPetId, setSelectedPetId] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-
   const [formData, setFormData] = useState(
-    getInitialFormData(appointmentToEdit, initialTime)
+    getInitialFormData(appointmentToEdit, initialTime, initialDate)
   );
 
   useEffect(() => {
-    setFormData(getInitialFormData(appointmentToEdit, initialTime));
+    setFormData(
+      getInitialFormData(appointmentToEdit, initialTime, initialDate)
+    );
 
     if (appointmentToEdit) {
       setSelectedPetId(appointmentToEdit.pet._id);
@@ -204,14 +197,12 @@ const NewAppointmentModal = ({
       setSelectedPetId("");
     }
     setError(null);
-  }, [appointmentToEdit, initialTime, isOpen]);
+  }, [appointmentToEdit, initialTime, isOpen, initialDate]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (name === "petName") {
-      setSelectedPetId("");
-    }
+    if (name === "petName") setSelectedPetId("");
   }, []);
 
   useEffect(() => {
@@ -241,8 +232,9 @@ const NewAppointmentModal = ({
       ...prev,
       petName: pet.nome,
       clientName: pet.tutorId?.name || "",
-      phone: pet.tutorId?.phone || "",
-      email: pet.tutorId?.email || "",
+      // Removido o preenchimento de phone/email do pet, conforme a lógica anterior
+      phone: "",
+      email: "",
     }));
     setSearchResults([]);
   }, []);
@@ -257,7 +249,6 @@ const NewAppointmentModal = ({
     setError(null);
 
     const isEditing = !!appointmentToEdit?._id;
-
     if (!selectedPetId) {
       setError("Por favor, selecione um Pet válido da lista de sugestões.");
       setIsSaving(false);
@@ -265,15 +256,9 @@ const NewAppointmentModal = ({
     }
 
     const providerIdValid =
-      providerId &&
-      providerId !== "null" &&
-      providerId !== "undefined" &&
-      providerId !== "";
-
+      providerId && providerId !== "null" && providerId !== "";
     if (!isEditing && !providerIdValid) {
-      setError(
-        "Erro crítico: O ID do Prestador não foi carregado. Recarregue a página e, se o erro persistir, certifique-se de ter um perfil de prestador criado."
-      );
+      setError("Erro: O ID do prestador não foi carregado.");
       setIsSaving(false);
       return;
     }
@@ -285,6 +270,7 @@ const NewAppointmentModal = ({
       reason: formData.serviceType,
       notes: formData.notes,
       status: STATUS_MAP[formData.status] || "scheduled",
+      // Removido clientName, clientPhone e clientEmail do payload final
     };
 
     try {
@@ -294,32 +280,11 @@ const NewAppointmentModal = ({
         const createPayload = { ...payload, provider: providerId };
         await createAppointment(createPayload, providerId);
       }
-      onAppointmentSaved();
-      onClose();
+      onAppointmentSaved?.();
+      onClose?.();
     } catch (err) {
       console.error("Erro ao salvar agendamento:", err);
-      const responseData = err.response?.data;
-      let displayError =
-        "Falha ao salvar o agendamento. Verifique a validade dos IDs ou a conexão.";
-      if (responseData) {
-        if (Array.isArray(responseData.message)) {
-          displayError = `Erro de Validação: ${responseData.message.join(
-            ", "
-          )}`;
-        } else if (responseData.message) {
-          displayError = responseData.message;
-        } else if (responseData.statusCode === 400) {
-          displayError =
-            "Dados inválidos: Verifique se todos os campos estão corretos (ex: datas, IDs).";
-        } else if (
-          responseData.statusCode === 401 ||
-          responseData.statusCode === 403
-        ) {
-          displayError =
-            "Sessão expirada ou acesso negado. Faça login novamente.";
-        }
-      }
-      setError(displayError);
+      setError("Falha ao salvar o agendamento.");
     } finally {
       setIsSaving(false);
     }
@@ -327,7 +292,8 @@ const NewAppointmentModal = ({
 
   if (!isOpen) return null;
 
-  const isNewAppointment = !appointmentToEdit;
+  const isEditing = !!appointmentToEdit;
+  const isNewAppointment = !isEditing;
   const isProviderDataReady = !!providerId && !isLoadingProvider;
   const isAwaitingProviderId = isNewAppointment && isLoadingProvider;
   const isProviderMissing =
@@ -346,11 +312,14 @@ const NewAppointmentModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b flex justify-between items-center sticky top-0 bg-[#A8E6CF] z-10">
+          <h2 className="text-xl font-semibold text-gray-800">
+            {isEditing ? "Editar Agendamento" : "Novo Agendamento"}
+          </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-600 hover:text-gray-900 absolute right-6 top-1/2 transform -translate-y-1/2"
             aria-label="Fechar"
+            className="text-gray-600 hover:text-gray-900"
           >
             <VscClose className="w-6 h-6" />
           </button>
@@ -400,7 +369,6 @@ const NewAppointmentModal = ({
                     {isSearching && (
                       <div className="p-2 text-gray-500">Buscando...</div>
                     )}
-
                     {!isSearching &&
                       searchResults.length === 0 &&
                       formData.petName.length > 2 && (
@@ -408,7 +376,6 @@ const NewAppointmentModal = ({
                           Pet não encontrado.
                         </div>
                       )}
-
                     {searchResults.map((pet) => (
                       <div
                         key={pet._id}
@@ -423,8 +390,7 @@ const NewAppointmentModal = ({
 
                 {selectedPetId && (
                   <p className="text-xs text-yellow-300 mt-1">
-                    Pet selecionado (ID:
-                    {selectedPetId.substring(0, 4)}...)
+                    Pet selecionado (ID: {selectedPetId.substring(0, 4)}...)
                   </p>
                 )}
               </div>
@@ -447,6 +413,7 @@ const NewAppointmentModal = ({
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
+                // Este campo é mantido no formulário, mas removido do payload de salvamento
               />
 
               <Input
@@ -457,6 +424,7 @@ const NewAppointmentModal = ({
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                // Este campo é mantido no formulário, mas removido do payload de salvamento
               />
             </div>
           </Section>
@@ -499,6 +467,8 @@ const NewAppointmentModal = ({
                   "09:00",
                   "10:00",
                   "11:00",
+                  "12:00",
+                  "13:00",
                   "14:00",
                   "15:00",
                   "16:00",
@@ -564,11 +534,7 @@ const NewAppointmentModal = ({
             className="px-6 py-2 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md disabled:bg-gray-400"
             disabled={shouldDisableSaveButton}
           >
-            {isSaving
-              ? "Salvando..."
-              : isAwaitingProviderId
-              ? "Aguardando ID..."
-              : "Salvar"}
+            {isSaving ? "Salvando..." : "Salvar"}
           </button>
         </div>
       </form>

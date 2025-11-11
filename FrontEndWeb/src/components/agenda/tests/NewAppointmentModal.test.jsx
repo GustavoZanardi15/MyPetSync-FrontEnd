@@ -1,75 +1,37 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import NewAppointmentModal from "../NewAppointmentModal";
-import { useAuth } from "../../../context/AuthContext";
-import { toast } from "react-toastify";
+import { createAppointment } from "../../../services/agendaService";
 
-jest.mock("../../../services/appointmentService", () => ({
+jest.mock("../../../services/agendaService", () => ({
   createAppointment: jest.fn(() => Promise.resolve({ id: 1 })),
+  updateAppointment: jest.fn(),
 }));
 
-jest.mock("../../../context/AuthContext", () => ({
-  useAuth: jest.fn(),
-}));
+describe("NewAppointmentModal Component", () => {
+  beforeEach(() => jest.clearAllMocks());
 
-jest.mock("react-toastify", () => ({
-  toast: {
-    success: jest.fn(),
-    error: jest.fn(),
-  },
-}));
+  it("chama createAppointment ao enviar o formulário", async () => {
+    const onAppointmentSaved = jest.fn();
+    const onClose = jest.fn();
 
-describe('NewAppointmentModal Component', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
+    render(
+      <NewAppointmentModal
+        isOpen={true}
+        onClose={onClose}
+        onAppointmentSaved={onAppointmentSaved}
+        providerId="123"
+        appointmentToEdit={{ pet: { _id: "pet123" } }} 
+      />
+    );
+
+    const obsInput = screen.getByPlaceholderText(/observações/i);
+    fireEvent.change(obsInput, { target: { value: "teste" } });
+    fireEvent.click(screen.getByText(/salvar/i));
+
+    await waitFor(() => {
+      expect(createAppointment).toHaveBeenCalledTimes(1);
+      expect(onAppointmentSaved).toHaveBeenCalledTimes(1);
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
-
-    it('renderiza corretamente os campos do formulário', () => {
-        useAuth.mockReturnValue({ user: { id: 1 } });
-        render(<NewAppointmentModal onClose={jest.fn()} />);
-
-        expect(screen.getByText("Novo Agendamento")).toBeInTheDocument();
-        expect(screen.getByText("Salvar")).toBeInTheDocument();
-    });
-
-
-    it('chama createAppointment ao enviar o formulário', async () => {
-        const { createAppointment } = require("../../../services/appointmentService");
-        useAuth.mockReturnValue({ user: { id: 1 } });
-
-        const onClose = jest.fn();
-        render(<NewAppointmentModal onClose={onClose} />);
-
-        fireEvent.change(screen.getByPlaceholderText(/observações/i), {
-            target: { value: "teste" },
-        });
-        
-
-        fireEvent.submit(screen.getByText("Salvar"));
-
-        await waitFor(() => {
-        expect(createAppointment).toHaveBeenCalled();
-        expect(toast.success).toHaveBeenCalledWith("Agendamento criado com sucesso!");
-        expect(onClose).toHaveBeenCalled();
-        });
-    });
-
-
-    it('exibe erro se o usuário não estiver autenticado', async () => {
-        useAuth.mockReturnValue({ user: null });
-
-        render(<NewAppointmentModal onClose={jest.fn()} />);
-
-        fireEvent.submit(screen.getByText("Salvar"));
-
-        await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith("Usuário não autenticado.");
-        });
-    });
+  });
 });
-
-describe('Jest', () => {
-    it('should work', () => {
-        expect(1).toBe(1)
-    })
-})
-

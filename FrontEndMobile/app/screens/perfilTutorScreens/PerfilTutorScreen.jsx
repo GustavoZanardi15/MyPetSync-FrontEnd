@@ -54,7 +54,7 @@ export default function PerfilTutorScreen() {
           <InfoTutorCard nome={user.nome} email={user.email} telefone={user.telefone} />
         )}
         <OpcoesPerfilCard
-          onEndereco={() => router.push("/screens/enderecoScreens/EnderecoScreen")}
+          onEndereco={() => router.push("/screens/perfilTutorScreens/EnderecoScreens/EnderecoScreen")}
           onServicos={() => router.push("/screens/servicoScreens/ServicoPetScreen")}
           onLembretes={() => router.push("/screens/lembreteScreens/LembreteScreen")}
           onLogout={async () => { 
