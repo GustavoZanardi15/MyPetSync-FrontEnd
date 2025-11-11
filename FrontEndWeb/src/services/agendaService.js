@@ -17,7 +17,7 @@ const mapStatusToPortuguese = (status) => {
 
 export const fetchNextAppointments = async () => {
   try {
-    const response = await api.get("/providers/me/appointments", {
+    const response = await api.get("/appointments", {
       params: {
         limit: 5,
         sort: "dateTime",
@@ -51,7 +51,6 @@ export const fetchNextAppointments = async () => {
             ? dateObject.toLocaleTimeString("pt-BR", {
                 hour: "2-digit",
                 minute: "2-digit",
-                hour12: false,
               })
             : "Hora Inválida",
         phone: tutorPhone,
@@ -120,6 +119,22 @@ export const updateAppointment = async (id, appointmentData) => {
       error.response?.data?.message ||
       error.message ||
       "Erro desconhecido ao atualizar.";
+    throw new Error(errorMsg);
+  }
+};
+
+export const deleteAppointment = async (id) => {
+  if (!id) {
+    throw new Error("ID do agendamento obrigatório para exclusão.");
+  }
+  try {
+    await api.delete(`/appointments/${id}`);
+    return true;
+  } catch (error) {
+    const errorMsg =
+      error.response?.data?.message ||
+      error.message ||
+      "Erro desconhecido ao excluir.";
     throw new Error(errorMsg);
   }
 };
