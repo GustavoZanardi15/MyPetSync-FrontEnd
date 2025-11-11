@@ -6,30 +6,18 @@ export default function FiltroVet({ onSelecionar }) {
   const [filtroAberto, setFiltroAberto] = useState(false);
   const [filtroSelecionado, setFiltroSelecionado] = useState(null);
 
-  const especialidades = [
-    "Clínico Geral",
-    "Cardiologia",
-    "Dermatologia",
-    "Endocrinologia",
-    "Cirurgia Geral",
-    "Oncologia",
-    "Geriatria",
-  ];
+  const especialidades = ["Empresa", "Autônomo"];
 
   const especialidadeMap = {
-    "Clínico Geral": ["Clínico Geral"],
-    "Cardiologia": ["Cardiologia"],
-    "Dermatologia": ["Dermatologia"],
-    "Endocrinologia": ["Endocrinologia"],
-    "Cirurgia Geral": ["Cirurgião Geral", "Cirurgia Geral"],
-    "Oncologia": ["Oncologia", "Médica Veterinária Oncológica"],
-    "Geriatria": ["Geriatria"],
+    Empresa: ["Clínica Veterinária", "Pet Shop", "Hotel para Pets", "Banho & Tosa"],
+    Autônomo: ["Pet Sistter", "Veterinário Autônomo", "Adestrador"],
   };
 
   const handleSelecionar = (esp) => {
     const selecionado = filtroSelecionado === esp ? null : esp;
     setFiltroSelecionado(selecionado);
     setFiltroAberto(false);
+
     if (onSelecionar) {
       onSelecionar(selecionado, especialidadeMap[selecionado]);
     }
@@ -37,18 +25,30 @@ export default function FiltroVet({ onSelecionar }) {
 
   return (
     <View>
-      <Pressable style={styles.filterButton} onPress={() => setFiltroAberto(!filtroAberto)} >
+      <Pressable
+        style={styles.filterButton}
+        onPress={() => setFiltroAberto(!filtroAberto)}
+      >
         <MaterialCommunityIcons name="filter-outline" size={26} color="#2F8B88" />
       </Pressable>
+
       {filtroAberto && (
         <View style={styles.filterDropdown}>
           {especialidades.map((esp) => (
             <Pressable
               key={esp}
-              style={[ styles.filterTag, filtroSelecionado === esp && styles.filterTagSelected]}
+              style={[
+                styles.filterTag,
+                filtroSelecionado === esp && styles.filterTagSelected,
+              ]}
               onPress={() => handleSelecionar(esp)}
             >
-              <Text style={[ styles.filterText, filtroSelecionado === esp && styles.filterTextSelected ]} >
+              <Text
+                style={[
+                  styles.filterText,
+                  filtroSelecionado === esp && styles.filterTextSelected,
+                ]}
+              >
                 {esp}
               </Text>
             </Pressable>
@@ -107,5 +107,5 @@ const styles = StyleSheet.create({
   },
   filterTextSelected: {
     color: "#fff",
-  }
+  },
 });
