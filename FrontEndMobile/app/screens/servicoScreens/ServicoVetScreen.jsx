@@ -25,14 +25,12 @@ export default function ServicoVetScreen() {
 
       const data = response.data.items || response.data || [];
 
-      // Formata os dados para o VetCard
       const vetsFormatados = data.map((p) => ({
         id: p._id,
         nome: p.name,
-        especialidade: p.servicesOffered?.join(", ") || "Serviços gerais",
+        especialidade: p.service || (p.servicesOffered?.join(", ") || ""),
         estrelas: p.averageRating || 0,
-        avaliacoes: Math.floor(Math.random() * 500), // pode vir do backend depois
-        foto: require("../../../assets/images/home/Vet1.png"), // placeholder
+        avaliacoes: p.ratings?.length || 0,
       }));
 
       setVeterinarios(vetsFormatados);
