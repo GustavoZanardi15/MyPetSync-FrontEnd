@@ -1,6 +1,13 @@
 import React, { useMemo, useCallback } from "react";
 import { VscChevronLeft, VscChevronRight } from "react-icons/vsc";
-import { format, startOfWeek, addDays, subDays, isSameDay, isValid } from "date-fns";
+import {
+  format,
+  startOfWeek,
+  addDays,
+  subDays,
+  isSameDay,
+  isValid,
+} from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const ptDayNames = [
@@ -52,7 +59,7 @@ const AgendaCalendar = ({
   const selectedDateObj = useMemo(() => {
     return createLocalDay(selectedDate);
   }, [selectedDate]);
-  
+
   const selectedDateString = format(selectedDateObj, "yyyy-MM-dd");
 
   const weekData = useMemo(

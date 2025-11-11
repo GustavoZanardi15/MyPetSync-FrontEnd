@@ -135,7 +135,6 @@ const StatusRadios = ({ value, onChange }) => (
 );
 
 const getInitialFormData = (appt, initialTime, initialDate) => {
-const getInitialFormData = (appt, initialTime, initialDate) => {
   if (appt && appt._id) {
     const date = new Date(appt.dateTime);
     const durationInMin = appt.duration;
@@ -144,8 +143,6 @@ const getInitialFormData = (appt, initialTime, initialDate) => {
     return {
       petName: appt.pet.nome || "",
       clientName,
-      phone: "",
-      email: "",
       phone: "",
       email: "",
       date: date.toISOString().split("T")[0],
@@ -172,8 +169,6 @@ const getInitialFormData = (appt, initialTime, initialDate) => {
     serviceType: "",
     date: initialDate || new Date().toISOString().split("T")[0],
     time: initialTime || "08:00",
-    date: initialDate || new Date().toISOString().split("T")[0],
-    time: initialTime || "08:00",
     duration: "60 min",
     status: "Agendado",
     notes: "",
@@ -188,7 +183,6 @@ const NewAppointmentModal = ({
   appointmentToEdit,
   providerId,
   isLoadingProvider,
-  initialDate,
   initialDate,
 }) => {
   const [selectedPetId, setSelectedPetId] = useState("");
@@ -211,60 +205,13 @@ const NewAppointmentModal = ({
     } else {
       setSelectedPetId("");
     }
-    setFormData(
-      getInitialFormData(appointmentToEdit, initialTime, initialDate)
-    );
-
-    if (appointmentToEdit) {
-      setSelectedPetId(appointmentToEdit.pet._id);
-    } else {
-      setSelectedPetId("");
-    }
     setError(null);
-  }, [appointmentToEdit, initialTime, isOpen, initialDate]);
   }, [appointmentToEdit, initialTime, isOpen, initialDate]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (name === "petName") setSelectedPetId("");
-  }, []);
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (formData.petName.length > 2 && !selectedPetId) {
-        setIsSearching(true);
-        try {
-          const results = await searchPets(formData.petName);
-          setSearchResults(results);
-        } catch (err) {
-          console.error("Erro na busca de Pets:", err);
-          setSearchResults([]);
-        } finally {
-          setIsSearching(false);
-        }
-      } else {
-        setSearchResults([]);
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [formData.petName, selectedPetId]);
-
-  const handlePetSelect = useCallback((pet) => {
-    setSelectedPetId(pet._id);
-    setFormData((prev) => ({
-      ...prev,
-      petName: pet.nome,
-      clientName: pet.tutorId?.name || "",
-      phone: "",
-      email: "",
-    }));
-    setSearchResults([]);
-  }, []);
-
-  const handleStatusChange = useCallback((statusValue) => {
-    setFormData((prev) => ({ ...prev, status: statusValue }));
   }, []);
 
   useEffect(() => {
@@ -330,7 +277,7 @@ const NewAppointmentModal = ({
       duration: DURATION_MAP[formData.duration],
       reason: formData.serviceType,
       notes: formData.notes,
-      status: STATUS_MAP[formData.status] || "scheduled"
+      status: STATUS_MAP[formData.status] || "scheduled",
     };
 
     try {
@@ -595,7 +542,6 @@ const NewAppointmentModal = ({
             className="bg-[#058789]"
           >
             <TextArea
-              placeholder="Informações adicionais sobre o agendamento..."
               placeholder="Informações adicionais sobre o agendamento..."
               name="notes"
               value={formData.notes}
