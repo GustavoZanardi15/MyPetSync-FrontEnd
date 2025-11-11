@@ -1,26 +1,9 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  StatusBar,
-  Pressable,
-  TextInput,
-  Image,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Platform, StatusBar, Pressable, TextInput, Image, Alert, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../../src/service/api";
-
-const PRIMARY_COLOR = "#2F8B88";
-const BACKGROUND_COLOR = "#F4F6F6";
-const TEXT_COLOR_DARK = "#2A2A2A";
-const BORDER_COLOR = "#E5E7EB";
 
 const FormInput = ({
   label,
@@ -103,6 +86,11 @@ export default function NovoEnderecoScreen() {
         return;
       }
 
+      const res = await api.get("/tutors/mine", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const tutor = res.data;
+
       const enderecoData = {
         label: label || "Endereço",
         street,
@@ -111,9 +99,13 @@ export default function NovoEnderecoScreen() {
         zip: cep.replace(/[^0-9]/g, ""),
       };
 
-      await api.post("/tutors/mine/addresses", enderecoData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const updatedAddresses = [...(tutor?.addresses || []), enderecoData];
+
+      await api.put(
+        "/tutors/mine",
+        { addresses: updatedAddresses },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       Alert.alert("Sucesso", "Endereço adicionado com sucesso!");
       router.replace("/screens/perfilTutorScreens/EnderecoScreens/EnderecoScreen");
@@ -138,7 +130,7 @@ export default function NovoEnderecoScreen() {
       <View style={styles.contentContainer}>
         <View style={styles.header}>
           <Pressable onPress={() => router.replace("/screens/perfilTutorScreens/PerfilTutorScreen")} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color={PRIMARY_COLOR} />
+            <Ionicons name="arrow-back" size={24} color={"#2F8B88"} />
           </Pressable>
           <Text style={styles.headerTitle}>Adicionar Endereço</Text>
           <View style={{ width: 24, height: 24 }} />
@@ -151,10 +143,10 @@ export default function NovoEnderecoScreen() {
         >
           <View style={styles.form}>
             <FormInput
-              label="Rótulo (Ex: Casa, Trabalho)"
+              label="Rótulo "
               value={label}
               onChangeText={setLabel}
-              placeholder="Casa, Trabalho..."
+              placeholder="Ex: Casa, Trabalho..."
               editable={!isLoading}
             />
 
@@ -167,7 +159,7 @@ export default function NovoEnderecoScreen() {
                   formatted = formatted.slice(0, 5) + "-" + formatted.slice(5, 8);
                 setCep(formatted);
               }}
-              placeholder="00000-000"
+              placeholder="Ex: 00000-000"
               keyboardType="numeric"
               required
               onBlur={buscarCEP}
@@ -175,10 +167,10 @@ export default function NovoEnderecoScreen() {
             />
 
             <FormInput
-              label="Rua/Avenida"
+              label="Rua/Avenida, Número"
               value={street}
               onChangeText={setStreet}
-              placeholder="Rua exemplo"
+              placeholder="Ex: Avenida Guedner, 190"
               required
               editable={!isLoading}
             />
@@ -194,7 +186,7 @@ export default function NovoEnderecoScreen() {
               label="Estado"
               value={state}
               onChangeText={(t) => setState(t.toUpperCase())}
-              placeholder="SP"
+              placeholder="Ex: SP"
               required
               editable={!isLoading}
             />
@@ -247,11 +239,11 @@ export default function NovoEnderecoScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: BACKGROUND_COLOR,
+    backgroundColor: "#F7F7F7",
   },
   contentContainer: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: "#F7F7F7",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     marginTop: 30,
@@ -264,33 +256,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 16,
     paddingTop: 40,
-    backgroundColor: "#FFF",
-    borderBottomWidth: 1,
-    borderBottomColor: BORDER_COLOR,
+    backgroundColor: "#F7F7F7",
   },
-  backBtn: { width: 24, height: 24, justifyContent: "center", alignItems: "center" },
-  headerTitle: { fontSize: 20, fontWeight: "600", color: PRIMARY_COLOR },
-  scrollContent: { paddingHorizontal: 20, paddingVertical: 20 },
-  form: { gap: 16 },
-  inputGroup: { marginBottom: 16 },
+  backBtn: {
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#2F8B88"
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingVertical: 20
+  },
+  form: {
+    gap: 16
+  },
+  inputGroup: {
+    marginBottom: 16
+  },
   inputLabel: {
     fontSize: 14,
-    fontWeight: "600",
-    color: PRIMARY_COLOR,
+    fontWeight: "bold",
+    color: "#2F8B88",
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#FFF",
     borderWidth: 1,
-    borderColor: BORDER_COLOR,
+    borderColor: "#E5E7EB",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    color: TEXT_COLOR_DARK,
+    color: "#2A2A2A",
   },
   saveButton: {
-    backgroundColor: PRIMARY_COLOR,
+    backgroundColor: "#2F8B88",
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: "center",
@@ -298,7 +304,11 @@ const styles = StyleSheet.create({
     width: "80%",
     alignSelf: "center",
   },
-  saveButtonText: { color: "#FFFFFF", fontWeight: "700", fontSize: 16 },
+  saveButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: 16
+  },
   bottomNav: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -314,5 +324,5 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     elevation: 10,
-  },
+  }
 });
