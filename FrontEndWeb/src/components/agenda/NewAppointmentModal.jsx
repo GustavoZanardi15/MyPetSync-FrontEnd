@@ -169,7 +169,7 @@ const getInitialFormData = (appt, initialTime) => {
     email: "",
     serviceType: "",
     date: new Date().toISOString().split("T")[0],
-    time: initialTime || "09:00",
+    time: initialTime || "08:00",
     duration: "60 min",
     status: "Agendado",
     notes: "",
@@ -494,7 +494,17 @@ const NewAppointmentModal = ({
 
               <Select
                 label="Horário"
-                options={["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"]}
+                options={[
+                  "08:00",
+                  "09:00",
+                  "10:00",
+                  "11:00",
+                  "14:00",
+                  "15:00",
+                  "16:00",
+                  "17:00",
+                  "18:00",
+                ]}
                 defaultMessage="Selecione o horário..."
                 name="time"
                 value={formData.time}
