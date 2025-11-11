@@ -1,11 +1,39 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, StatusBar, Pressable, Alert, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Platform, StatusBar, Pressable, TextInput, Image, Alert, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../../src/service/api";
-import NovoEnderecoHeader from "../../../../components/tutor/novoEnderecoTutor/NovoEnderecoHeader";
-import FormInput from "../../../../components/tutor/novoEnderecoTutor/FormInput";
-import BottomNav from "../../../../components/tutor/enderecoTutor/BottomNav";
+
+const FormInput = ({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  keyboardType = "default",
+  autoCapitalize = "sentences",
+  required = false,
+  onBlur,
+  editable = true,
+}) => (
+  <View style={styles.inputGroup}>
+    <Text style={styles.inputLabel}>
+      {label}
+      {required && <Text style={{ color: "red" }}> *</Text>}
+    </Text>
+    <TextInput
+      style={[styles.input, !editable && { backgroundColor: "#EEEEEE" }]}
+      value={value}
+      onChangeText={onChangeText}
+      placeholder={placeholder}
+      placeholderTextColor="#A9A9A9"
+      keyboardType={keyboardType}
+      autoCapitalize={autoCapitalize}
+      onBlur={onBlur}
+      editable={editable}
+    />
+  </View>
+);
 
 export default function NovoEnderecoScreen() {
   const router = useRouter();
@@ -15,6 +43,7 @@ export default function NovoEnderecoScreen() {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const buscarCEP = async () => {
     const cepLimpo = cep.replace(/[^0-9]/g, "");
     if (cepLimpo.length !== 8) return;
@@ -57,6 +86,11 @@ export default function NovoEnderecoScreen() {
         return;
       }
 
+      const res = await api.get("/tutors/mine", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const tutor = res.data;
+
       const enderecoData = {
         label: label || "Endereço",
         street,
@@ -65,9 +99,13 @@ export default function NovoEnderecoScreen() {
         zip: cep.replace(/[^0-9]/g, ""),
       };
 
-      await api.post("/tutors/mine/addresses", enderecoData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const updatedAddresses = [...(tutor?.addresses || []), enderecoData];
+
+      await api.put(
+        "/tutors/mine",
+        { addresses: updatedAddresses },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       Alert.alert("Sucesso", "Endereço adicionado com sucesso!");
       router.replace("/screens/perfilTutorScreens/EnderecoScreens/EnderecoScreen");
@@ -83,9 +121,20 @@ export default function NovoEnderecoScreen() {
   };
 
   return (
-    <View style={[styles.screen, { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }]}>
+    <View
+      style={[
+        styles.screen,
+        { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 },
+      ]}
+    >
       <View style={styles.contentContainer}>
-        <NovoEnderecoHeader />
+        <View style={styles.header}>
+          <Pressable onPress={() => router.replace("/screens/perfilTutorScreens/PerfilTutorScreen")} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={24} color={"#2F8B88"} />
+          </Pressable>
+          <Text style={styles.headerTitle}>Adicionar Endereço</Text>
+          <View style={{ width: 24, height: 24 }} />
+        </View>
 
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -94,10 +143,10 @@ export default function NovoEnderecoScreen() {
         >
           <View style={styles.form}>
             <FormInput
-              label="Local"
+              label="Rótulo "
               value={label}
               onChangeText={setLabel}
-              placeholder="Casa, Trabalho..."
+              placeholder="Ex: Casa, Trabalho..."
               editable={!isLoading}
             />
 
@@ -110,7 +159,7 @@ export default function NovoEnderecoScreen() {
                   formatted = formatted.slice(0, 5) + "-" + formatted.slice(5, 8);
                 setCep(formatted);
               }}
-              placeholder="00000-000"
+              placeholder="Ex: 00000-000"
               keyboardType="numeric"
               required
               onBlur={buscarCEP}
@@ -118,10 +167,10 @@ export default function NovoEnderecoScreen() {
             />
 
             <FormInput
-              label="Rua/Avenida"
+              label="Rua/Avenida, Número"
               value={street}
               onChangeText={setStreet}
-              placeholder="Rua exemplo"
+              placeholder="Ex: Avenida Guedner, 190"
               required
               editable={!isLoading}
             />
@@ -137,12 +186,16 @@ export default function NovoEnderecoScreen() {
               label="Estado"
               value={state}
               onChangeText={(t) => setState(t.toUpperCase())}
-              placeholder="SP"
+              placeholder="Ex: SP"
               required
               editable={!isLoading}
             />
 
-            <Pressable style={({ pressed }) => [styles.saveButton, pressed && { opacity: 0.8 }]}
+            <Pressable
+              style={({ pressed }) => [
+                styles.saveButton,
+                pressed && { opacity: 0.8 },
+              ]}
               onPress={handleSalvarEndereco}
               disabled={isLoading}
             >
@@ -153,11 +206,32 @@ export default function NovoEnderecoScreen() {
               )}
             </Pressable>
           </View>
+
           <View style={{ height: 120 }} />
         </ScrollView>
       </View>
 
-      <BottomNav />
+      <View style={styles.bottomNav}>
+        <Pressable onPress={() => router.push("/screens/lembreteScreens/LembreteScreen")}>
+          <Image source={require("../../../../assets/images/home/NavBarCalendar.png")} />
+        </Pressable>
+
+        <Pressable onPress={() => router.push("/screens/servicoScreens/ServicoPetScreen")}>
+          <Image source={require("../../../../assets/images/home/NavBarServico.png")} />
+        </Pressable>
+
+        <Pressable onPress={() => router.push("/screens/homeScreens/HomeScreen")}>
+          <Image source={require("../../../../assets/images/home/NavBarHome.png")} />
+        </Pressable>
+
+        <Pressable onPress={() => router.push("/screens/perfilPetScreens/PerfilPetScreen")}>
+          <Image source={require("../../../../assets/images/home/NavBarPet.png")} />
+        </Pressable>
+
+        <Pressable onPress={() => router.push("/screens/perfilTutorScreens/PerfilTutorScreen")}>
+          <Image source={require("../../../../assets/images/home/NavBarPerfilSelect.png")} />
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -175,12 +249,51 @@ const styles = StyleSheet.create({
     marginTop: 30,
     elevation: 3,
   },
+  header: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+    paddingTop: 40,
+    backgroundColor: "#F7F7F7",
+  },
+  backBtn: {
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#2F8B88"
+  },
   scrollContent: {
     paddingHorizontal: 20,
     paddingVertical: 20
   },
   form: {
     gap: 16
+  },
+  inputGroup: {
+    marginBottom: 16
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#2F8B88",
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: "#FFF",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: "#2A2A2A",
   },
   saveButton: {
     backgroundColor: "#2F8B88",
@@ -195,5 +308,21 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 16
+  },
+  bottomNav: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 25,
+    paddingVertical: 10,
+    backgroundColor: "#FFFFFF",
+    borderTopWidth: 0.3,
+    borderColor: "#ccc",
+    height: 70,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    elevation: 10,
   }
 });
