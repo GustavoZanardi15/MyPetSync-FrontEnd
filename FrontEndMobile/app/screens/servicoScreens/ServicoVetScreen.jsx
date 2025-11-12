@@ -7,19 +7,31 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  Text,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLocalSearchParams } from "expo-router";
 import api from "../../../src/service/api";
-
 import VetHeader from "../../../components/servico/servicoVet/VetHeader";
 import VetCard from "../../../components/servico/servicoVet/VetCard";
 import BottomNav from "../../../components/servico/servicoVet/BottomNav";
 import FiltroVet from "../../../components/servico/servicoVet/FiltrarVet";
 
+const servicosRelacionados = {
+  "Banho & Tosa": ["Banho & Tosa", "Pet Shop"],
+  Passeios: ["Pet Sistter"],
+  Cuidadora: ["Cuidadora", "Pet Sistter"],
+  Hospedagem: ["Hotel para Pets"],
+  Veterinário: ["Veterinário Autônomo", "Clínica Veterinária", "Pet Shop"],
+  Adestrador: ["Adestrador"],
+};
+
 export default function ServicoVetScreen() {
-  const [veterinarios, setVeterinarios] = useState([]);
-  const [veterinariosFiltrados, setVeterinariosFiltrados] = useState(null);
+  const [prestadores, setPrestadores] = useState([]);
+  const [filtrados, setFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filtroExtra, setFiltroExtra] = useState(null);
+  const { servico } = useLocalSearchParams();
 
   const carregarProviders = useCallback(async () => {
     setLoading(true);
@@ -33,10 +45,18 @@ export default function ServicoVetScreen() {
 
       const data = response.data.items || response.data || [];
 
-      const vetsFormatados = data.map((p) => ({
+      const formatados = data.map((p) => ({
         id: p._id,
         nome: p.name,
-        especialidade: p.service || p.servicesOffered?.join(", ") || "",
+        tipo: p.providerType || "",
+        especialidade:
+          Array.isArray(p.servicesOffered) && p.servicesOffered.length > 0
+            ? p.servicesOffered.join(", ")
+            : p.service || "",
+        especialidades:
+          Array.isArray(p.servicesOffered) && p.servicesOffered.length > 0
+            ? p.servicesOffered
+            : [p.service || ""],
         estrelas: p.averageRating || 0,
         avaliacoes: p.ratings?.length || 0,
         bio: p.bio || "Nenhuma bio disponível.",
@@ -45,35 +65,64 @@ export default function ServicoVetScreen() {
         whatsapp: p.whatsapp || "",
       }));
 
-      setVeterinarios(vetsFormatados);
-      setVeterinariosFiltrados(vetsFormatados);
-    } catch (error) {
-      console.error("Erro ao carregar veterinários:", error);
-      if (error.response?.status === 401) {
-        Alert.alert("Sessão expirada", "Faça login novamente.");
+      setPrestadores(formatados);
+
+      if (servico) {
+        const relacionados = servicosRelacionados[servico] || [servico];
+        const filtradosPorServico = formatados.filter((p) =>
+          p.especialidades.some((esp) =>
+            relacionados.some((r) =>
+              esp.toLowerCase().includes(r.toLowerCase())
+            )
+          )
+        );
+        setFiltrados(filtradosPorServico);
       } else {
-        Alert.alert("Erro", "Não foi possível carregar os prestadores.");
+        setFiltrados(formatados);
       }
+    } catch (error) {
+      console.error("Erro ao carregar prestadores:", error);
+      Alert.alert(
+        "Erro",
+        error.response?.status === 401
+          ? "Sessão expirada. Faça login novamente."
+          : "Não foi possível carregar os prestadores."
+      );
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [servico]);
 
   useEffect(() => {
     carregarProviders();
   }, [carregarProviders]);
 
   const handleFiltro = (filtroSelecionado, correspondencias) => {
-    if (!filtroSelecionado) {
-      setVeterinariosFiltrados(veterinarios);
-    } else {
-      const filtrados = veterinarios.filter((v) =>
-        correspondencias.some((esp) =>
-          v.especialidade.toLowerCase().includes(esp.toLowerCase())
-        )
-      );
-      setVeterinariosFiltrados(filtrados);
-    }
+    setFiltroExtra(filtroSelecionado);
+
+    const relacionados = servicosRelacionados[servico] || [servico];
+
+    const filtrados = prestadores.filter((p) => {
+      const combinaServico = servico
+        ? p.especialidades.some((esp) =>
+            relacionados.some((r) =>
+              esp.toLowerCase().includes(r.toLowerCase())
+            )
+          )
+        : true;
+
+      const combinaTipo = filtroSelecionado
+        ? correspondencias.some((esp) =>
+            p.especialidades.some((e) =>
+              e.toLowerCase().includes(esp.toLowerCase())
+            )
+          )
+        : true;
+
+      return combinaServico && combinaTipo;
+    });
+
+    setFiltrados(filtrados);
   };
 
   return (
@@ -91,9 +140,11 @@ export default function ServicoVetScreen() {
           color="#2196f3"
           style={{ marginTop: 40 }}
         />
+      ) : filtrados.length === 0 ? (
+        <Text style={styles.emptyText}>Nenhum prestador encontrado.</Text>
       ) : (
         <ScrollView contentContainerStyle={styles.scroll}>
-          {(veterinariosFiltrados || []).map((vet) => (
+          {filtrados.map((vet) => (
             <VetCard key={vet.id} vet={vet} />
           ))}
         </ScrollView>
@@ -112,5 +163,11 @@ const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: 16,
     paddingBottom: 80,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#777",
+    marginTop: 30,
+    fontSize: 15,
   },
 });
