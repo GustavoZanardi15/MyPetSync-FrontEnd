@@ -11,13 +11,6 @@ export default function LembretesHeader() {
       </Pressable>
 
       <Text style={styles.title}>Lembretes</Text>
-
-      <Pressable
-        style={styles.addButton}
-        onPress={() => router.push("/screens/lembreteScreens/AddLembreteScreen")}
-      >
-        <MaterialCommunityIcons name="plus" size={24} color="#2F8B88" />
-      </Pressable>
     </View>
   );
 }
@@ -41,20 +34,6 @@ const styles = StyleSheet.create({
     color: "#2F8B88",
     textAlign: "center",
     flex: 1,
-  },
-  addButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#FFF",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "#E0E0E0",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 3,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
-  },
+    right: 20
+  }
 });
