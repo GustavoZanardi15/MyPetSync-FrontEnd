@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, ScrollView, StyleSheet, StatusBar, Platform, ActivityIndicator, Alert } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  StatusBar,
+  Platform,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../src/service/api";
 
@@ -28,9 +36,13 @@ export default function ServicoVetScreen() {
       const vetsFormatados = data.map((p) => ({
         id: p._id,
         nome: p.name,
-        especialidade: p.service || (p.servicesOffered?.join(", ") || ""),
+        especialidade: p.service || p.servicesOffered?.join(", ") || "",
         estrelas: p.averageRating || 0,
         avaliacoes: p.ratings?.length || 0,
+        bio: p.bio || "Nenhuma bio disponível.",
+        phone: p.phone || "",
+        city: p.city || "",
+        whatsapp: p.whatsapp || "",
       }));
 
       setVeterinarios(vetsFormatados);
@@ -66,13 +78,19 @@ export default function ServicoVetScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" translucent />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#F9FAFB"
+        translucent
+      />
       <VetHeader />
-
       <FiltroVet onSelecionar={handleFiltro} />
-
       {loading ? (
-        <ActivityIndicator size="large" color="#2196f3" style={{ marginTop: 40 }} />
+        <ActivityIndicator
+          size="large"
+          color="#2196f3"
+          style={{ marginTop: 40 }}
+        />
       ) : (
         <ScrollView contentContainerStyle={styles.scroll}>
           {(veterinariosFiltrados || []).map((vet) => (
@@ -80,7 +98,6 @@ export default function ServicoVetScreen() {
           ))}
         </ScrollView>
       )}
-
       <BottomNav />
     </View>
   );

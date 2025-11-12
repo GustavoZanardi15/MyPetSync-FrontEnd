@@ -29,12 +29,17 @@ export default function VetCard({ vet }) {
     <Pressable
       style={styles.card}
       onPress={() =>
-        router.push(`/screens/servicoScreens/ServicoVetDetalheScreen?vetId=${vet.id}`)
+        router.push({
+          pathname: "/screens/servicoScreens/ServicoVetDetalheScreen",
+          params: {
+            vetId: vet.id,
+            vet: JSON.stringify(vet),
+          },
+        })
       }
     >
-      {/* Avatar com inicial */}
       <View style={styles.avatar}>
-        <Text style={styles.avatarText}>{vet.nome[0]}</Text>
+        <Text style={styles.avatarText}>{vet.nome ? vet.nome[0] : ""}</Text>
       </View>
 
       <View style={styles.info}>
@@ -48,7 +53,12 @@ export default function VetCard({ vet }) {
 
         <View style={styles.btnAgendar}>
           <Text style={styles.btnText}>Agende</Text>
-          <Ionicons name="logo-whatsapp" size={21} color="#fff" style={{ marginLeft: 6 }} />
+          <Ionicons
+            name="logo-whatsapp"
+            size={21}
+            color="#fff"
+            style={{ marginLeft: 6 }}
+          />
         </View>
       </View>
     </Pressable>
@@ -72,7 +82,7 @@ const styles = StyleSheet.create({
     width: 74,
     height: 74,
     borderRadius: 37,
-    backgroundColor: "orange",
+    backgroundColor: "#FFA500",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
