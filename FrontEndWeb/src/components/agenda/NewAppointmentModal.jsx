@@ -143,8 +143,8 @@ const getInitialFormData = (appt, initialTime, initialDate) => {
     return {
       petName: appt.pet.nome || "",
       clientName,
-      phone: "",
-      email: "",
+      phone: appt.phone,
+      email: appt.email,
       date: date.toISOString().split("T")[0],
       time: date.toLocaleTimeString("pt-BR", {
         hour: "2-digit",
@@ -241,8 +241,6 @@ const NewAppointmentModal = ({
       ...prev,
       petName: pet.nome,
       clientName: pet.tutorId?.name || "",
-      phone: "",
-      email: "",
     }));
     setSearchResults([]);
   }, []);
@@ -278,6 +276,8 @@ const NewAppointmentModal = ({
       reason: formData.serviceType,
       notes: formData.notes,
       status: STATUS_MAP[formData.status] || "scheduled",
+      email: formData.email,
+      phone: formData.phone,
     };
 
     try {
