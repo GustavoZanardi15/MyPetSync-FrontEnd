@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, ScrollView, StyleSheet, StatusBar, Platform, ActivityIndicator, Alert, Text } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  StatusBar,
+  Platform,
+  ActivityIndicator,
+  Alert,
+  Text,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
 import api from "../../../src/service/api";
@@ -21,7 +30,7 @@ export default function ServicoVetScreen() {
   const [prestadores, setPrestadores] = useState([]);
   const [filtrados, setFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filtroExtra, setFiltroExtra] = useState(null); 
+  const [filtroExtra, setFiltroExtra] = useState(null);
   const { servico } = useLocalSearchParams();
 
   const carregarProviders = useCallback(async () => {
@@ -39,7 +48,7 @@ export default function ServicoVetScreen() {
       const formatados = data.map((p) => ({
         id: p._id,
         nome: p.name,
-        tipo: p.providerType || "", 
+        tipo: p.providerType || "",
         especialidade:
           Array.isArray(p.servicesOffered) && p.servicesOffered.length > 0
             ? p.servicesOffered.join(", ")
@@ -50,6 +59,10 @@ export default function ServicoVetScreen() {
             : [p.service || ""],
         estrelas: p.averageRating || 0,
         avaliacoes: p.ratings?.length || 0,
+        bio: p.bio || "Nenhuma bio disponível.",
+        phone: p.phone || "",
+        city: p.city || "",
+        whatsapp: p.whatsapp || "",
       }));
 
       setPrestadores(formatados);
@@ -114,13 +127,19 @@ export default function ServicoVetScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" translucent />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#F9FAFB"
+        translucent
+      />
       <VetHeader />
-
       <FiltroVet onSelecionar={handleFiltro} />
-
       {loading ? (
-        <ActivityIndicator size="large" color="#2196f3" style={{ marginTop: 40 }} />
+        <ActivityIndicator
+          size="large"
+          color="#2196f3"
+          style={{ marginTop: 40 }}
+        />
       ) : filtrados.length === 0 ? (
         <Text style={styles.emptyText}>Nenhum prestador encontrado.</Text>
       ) : (
@@ -130,7 +149,6 @@ export default function ServicoVetScreen() {
           ))}
         </ScrollView>
       )}
-
       <BottomNav />
     </View>
   );
