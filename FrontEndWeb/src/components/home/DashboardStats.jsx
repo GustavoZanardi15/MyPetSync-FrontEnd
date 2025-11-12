@@ -9,7 +9,12 @@ const StatCard = ({ title, value, subText, icon: Icon, iconColor }) => {
         <p className={`text-xs mt-1 font-semibold ${iconColor}`}>{subText}</p>
       </div>
 
-      <div className={`p-3 rounded-full ${iconColor} bg-opacity-10`}>
+      <div
+        className={`p-3 rounded-full bg-opacity-10 ${iconColor.replace(
+          "text-",
+          "bg-"
+        )}`}
+      >
         {Icon && <Icon className={`w-8 h-8 ${iconColor}`} />}
       </div>
     </div>

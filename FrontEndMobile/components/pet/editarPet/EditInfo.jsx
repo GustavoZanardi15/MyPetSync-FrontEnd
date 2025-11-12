@@ -1,23 +1,23 @@
 import React from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function EditInfo({ label, initialValue, onValueChange }) {
-    
+
     const keyboardType = label.includes("Idade") || label.includes("Peso") ? "numeric" : "default";
 
     return (
         <View style={styles.editableContainer}>
             <Text style={styles.editableLabel}>{label}</Text>
             <TextInput
-                style={[styles.editableValue]} 
-                value={initialValue} 
+                style={[styles.editableValue]}
+                value={initialValue}
                 editable={true}
                 onChangeText={onValueChange}
                 placeholderTextColor="#A9A9A9"
                 keyboardType={keyboardType}
             />
-            <MaterialCommunityIcons name="pencil" size={18} color="#A9A9A9"  style={styles.editIcon}/>
+            <MaterialCommunityIcons name="pencil" size={18} color="#A9A9A9" style={styles.editIcon} />
         </View>
     );
 }
@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
         fontWeight: "medium",
         color: "#2F8B88",
         textAlign: "left",
-        paddingRight: 4, 
+        paddingRight: 4,
     },
     editIcon: {
-        marginLeft: 8 
+        marginLeft: 8
     },
 });

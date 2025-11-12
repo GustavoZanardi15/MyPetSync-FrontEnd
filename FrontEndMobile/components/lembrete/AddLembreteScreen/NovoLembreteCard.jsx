@@ -10,11 +10,11 @@ export default function NovoLembreteCard({ selectedTipo, selectedPet }) {
       alert("Selecione um tipo de lembrete e um pet antes de continuar.");
       return;
     }
-
     router.push({
-      pathname: "/screens/lembreteScreens/AddLembreteDetalheScreen",
+      pathname: "/lembrete/addDetalhe",
       params: { tipo: selectedTipo?.name, pet: JSON.stringify(selectedPet) },
     });
+
   };
 
   return (

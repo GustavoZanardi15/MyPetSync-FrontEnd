@@ -44,9 +44,7 @@ const ResetPassword = () => {
       return;
     }
     if (!email || !code) {
-      setError(
-        "Informações de redefinição incompletas. Tente novamente a recuperação."
-      );
+      setError("Informações de redefinição incompletas");
       return;
     }
 

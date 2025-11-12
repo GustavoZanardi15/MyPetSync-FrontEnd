@@ -15,7 +15,8 @@ const NextAppointments = () => {
         setAppointments(data);
         setError(null);
       } catch (err) {
-        setError(err.message);
+        console.error("Erro ao carregar próximos agendamentos:", err);
+        setError(err.message || "Falha ao carregar agendamentos.");
         setAppointments([]);
       } finally {
         setIsLoading(false);

@@ -4,14 +4,16 @@ import { VscCheck, VscCalendar, VscHistory } from "react-icons/vsc";
 const DailySummary = ({ appointments = [] }) => {
   const summaryData = useMemo(() => {
     const total = appointments.length;
+
     const confirmed = appointments.filter(
       (appt) => appt.status === "confirmed"
     ).length;
-    const pending = appointments.filter(
-      (appt) => appt.status === "pending"
+
+    const scheduledAndPending = appointments.filter(
+      (appt) => appt.status === "scheduled" || appt.status === "pending"
     ).length;
 
-    return { total, confirmed, pending };
+    return { total, confirmed, pending: scheduledAndPending };
   }, [appointments]);
 
   return (

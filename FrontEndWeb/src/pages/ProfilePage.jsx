@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ProfileCard from "../components/profile/ProfileCard";
 import ProfileInfoBlock from "../components/profile/ProfileInfoBlock";
 import { fetchProviderProfile } from "../services/providerService";
+import { fetchDashboardStats } from "../services/dashboardService";
 
 const EditIcon = (props) => (
   <svg
@@ -41,40 +42,54 @@ const translateProviderType = (type) => {
 };
 
 const mapProviderData = (data) => {
-  if (!data) return {};
+  if (!data || !data.profile) return {};
 
-  const registrationType = translateProviderType(data.type);
-  const serviceCategory = data.service || "Adicione o serviço principal";
+  const providerData = data.profile;
+  const statsData = data.stats.reviews || {};
+  const registrationType = translateProviderType(providerData.type);
+  const serviceCategory =
+    providerData.service || "Adicione o serviço principal";
   const displayServiceCategory = serviceCategory.toUpperCase();
   const streetAndNumber =
-    data.street && data.number ? `${data.street}, ${data.number}` : "";
+    providerData.street && providerData.number
+      ? `${providerData.street}, ${providerData.number}`
+      : "";
   const cityAndState =
-    data.city && data.state ? `${data.city}, ${data.state}` : data.city || "";
+    providerData.city && providerData.state
+      ? `${providerData.city}, ${providerData.state}`
+      : providerData.city || "";
 
-  let openingHoursDisplay = data.openingHours;
-  if (Array.isArray(data.openingHours)) {
-    openingHoursDisplay = data.openingHours.join(" | ");
+  let openingHoursDisplay = providerData.openingHours;
+  if (Array.isArray(providerData.openingHours)) {
+    openingHoursDisplay = providerData.openingHours.join(" | ");
   } else if (!openingHoursDisplay) {
     openingHoursDisplay = "Horário indisponível. Clientes não podem agendar.";
   }
 
+  const clientCount =
+    data.stats.clients || providerData.metrics?.clientCount || 0;
+  const rating = statsData.average || providerData.metrics?.rating || 0;
+  const reviewCount = statsData.count || providerData.metrics?.reviewCount || 0;
+
   return {
     profile: {
-      name: data.name || "Nome da Empresa Pendente",
+      name: providerData.name || "Nome da Empresa Pendente",
       category: registrationType,
       imageUrl:
-        data.profilePictureUrl ||
+        providerData.profilePictureUrl ||
         "https://placehold.co/128x128/FFBD70/ffffff?text=PET",
-      clientCount: data.metrics?.clientCount || 0,
-      rating: data.metrics?.rating || 0,
-      reviewCount: data.metrics?.reviewCount || 0,
+      clientCount: clientCount,
+      rating: rating,
+      reviewCount: reviewCount,
     },
     basicInfo: [
       {
         label: "Nome da Empresa",
         value: (
           <StyledDataDisplay
-            value={data.name || "Adicione o nome fantasia ou razão social"}
+            value={
+              providerData.name || "Adicione o nome fantasia ou razão social"
+            }
           />
         ),
       },
@@ -87,8 +102,8 @@ const mapProviderData = (data) => {
         value: (
           <StyledDataDisplay
             value={
-              data.cnpj ||
-              data.cpf ||
+              providerData.cnpj ||
+              providerData.cpf ||
               "Não informado. Necessário para emissão de nota."
             }
           />
@@ -100,7 +115,10 @@ const mapProviderData = (data) => {
         label: "Email",
         value: (
           <StyledDataDisplay
-            value={data.email || "Adicionar e-mail para contato e notificações"}
+            value={
+              providerData.email ||
+              "Adicionar e-mail para contato e notificações"
+            }
           />
         ),
       },
@@ -108,7 +126,7 @@ const mapProviderData = (data) => {
         label: "Telefone",
         value: (
           <StyledDataDisplay
-            value={data.phone || "Adicione para contato rápido"}
+            value={providerData.phone || "Adicione para contato rápido"}
           />
         ),
       },
@@ -132,7 +150,9 @@ const mapProviderData = (data) => {
         label: "WhatsApp",
         value: (
           <StyledDataDisplay
-            value={data.whatsapp || "Adicione WhatsApp para contato imediato"}
+            value={
+              providerData.whatsapp || "Adicione WhatsApp para contato imediato"
+            }
           />
         ),
       },
@@ -142,7 +162,7 @@ const mapProviderData = (data) => {
         label: "Descrição da Empresa",
         value: (
           <div className="p-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-700">
-            {data.bio ||
+            {providerData.bio ||
               "Descreva sua empresa em poucas linhas para atrair e informar clientes."}
           </div>
         ),
@@ -160,7 +180,7 @@ const mapProviderData = (data) => {
         label: "Serviços Oferecidos",
         value: (
           <div className="p-3 rounded-lg bg-teal-50 border border-black text-teal-800 font-medium">
-            {data.servicesOffered?.join(", ") ||
+            {providerData.servicesOffered?.join(", ") ||
               "Adicionar serviços (Consulta, Banho, Tosa, etc.)"}
           </div>
         ),
@@ -179,10 +199,15 @@ const ProfilePage = () => {
   const loadProfile = async () => {
     setIsLoading(true);
     try {
-      const data = await fetchProviderProfile();
-      setProviderData(data);
+      const profileRes = await fetchProviderProfile();
+      const statsRes = await fetchDashboardStats();
+      setProviderData({
+        profile: profileRes,
+        stats: statsRes,
+      });
     } catch (error) {
       console.error("Erro ao carregar perfil do prestador:", error);
+      setProviderData(null);
     } finally {
       setIsLoading(false);
     }

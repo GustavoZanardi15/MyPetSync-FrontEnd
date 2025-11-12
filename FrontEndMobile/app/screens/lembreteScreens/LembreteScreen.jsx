@@ -1,5 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
-import { View, Text, StyleSheet, StatusBar, Platform, ScrollView } from "react-native";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  Platform,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../../../src/service/api";
+
 import LembretesHeader from "../../../components/lembrete/LembreteScreen/LembreteHeader";
 import SelectMonth from "../../../components/lembrete/LembreteScreen/SelectMonth";
 import SelectDay from "../../../components/lembrete/LembreteScreen/SelectDay";
@@ -11,129 +23,125 @@ export default function LembretesScreen() {
   const [dataSelecionada, setDataSelecionada] = useState(
     new Date().getDate().toString().padStart(2, "0")
   );
+  const [dias, setDias] = useState([]);
+  const [lembretesPorDia, setLembretesPorDia] = useState({});
+  const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
 
   const gerarDiasDoMes = (dataBase) => {
     const ano = dataBase.getFullYear();
     const mes = dataBase.getMonth();
-    const ultimoDia = new Date(ano,  mes + 1, 0).getDate();
+    const ultimoDia = new Date(ano, mes + 1, 0).getDate();
     const diasSemana = ["D", "S", "T", "Q", "Q", "S", "S"];
-
     return Array.from({ length: ultimoDia }, (_, i) => {
       const data = new Date(ano, mes, i + 1);
-      return {
-        diaSemana: diasSemana[data.getDay()],
-        dia: (i + 1).toString().padStart(2, "0"),
-      };
+      return { diaSemana: diasSemana[data.getDay()], dia: (i + 1).toString().padStart(2, "0") };
     });
   };
 
-  const [dias, setDias] = useState(gerarDiasDoMes(dataAtual));
+  useEffect(() => {
+    setDias(gerarDiasDoMes(dataAtual));
+  }, [dataAtual]);
+
+  const carregarLembretes = useCallback(async () => {
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const userType = await AsyncStorage.getItem("userType");
+      const petId = await AsyncStorage.getItem("selectedPetId");
+      const providerId = await AsyncStorage.getItem("providerId");
+
+      if (!token) throw new Error("Token ausente. Faça login novamente.");
+
+      let url = "";
+      if (userType === "tutor" && petId) {
+        url = `/pets/${petId}/appointments`;
+      } else if (userType === "provider" && providerId) {
+        url = `/providers/${providerId}/appointments`;
+      } else {
+        url = "/appointments"; 
+      }
+
+      const response = await api.get(url, { headers: { Authorization: `Bearer ${token}` } });
+      const data = response.data.items || response.data || [];
+
+      const agrupado = {};
+      data.forEach((item) => {
+        const dataObj = new Date(item.dateTime);
+        const dia = dataObj.getDate().toString().padStart(2, "0");
+        const hora = dataObj.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+        if (!agrupado[dia]) agrupado[dia] = [];
+        agrupado[dia].push({
+          id: item._id,
+          hora,
+          titulo: item.reason || "Consulta",
+          descricao:
+            item.pet?.nome
+              ? `${item.pet.nome} - ${item.provider?.name || "Prestador"}`
+              : "Agendamento",
+          cor:
+            item.status === "scheduled"
+              ? "#2F8B88"
+              : item.status === "confirmed"
+                ? "#87CEEB"
+                : item.status === "completed"
+                  ? "#90EE90"
+                  : "#FF7F50",
+        });
+      });
+
+      setLembretesPorDia(agrupado);
+    } catch (error) {
+      console.error("Erro ao carregar lembretes:", error);
+      Alert.alert(
+        "Erro",
+        error.response?.status === 401
+          ? "Sessão expirada. Faça login novamente."
+          : "Não foi possível carregar os lembretes."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    carregarLembretes();
+  }, [carregarLembretes, dataAtual]);
 
   const mudarMes = (direcao) => {
     const novaData = new Date(dataAtual);
     novaData.setMonth(dataAtual.getMonth() + direcao);
     setDataAtual(novaData);
-    setDias(gerarDiasDoMes(novaData));
     setDataSelecionada("01");
-  };
-
-  useEffect(() => {
-    const index = dias.findIndex((d) => d.dia === dataSelecionada);
-    if (scrollRef.current && index >= 0) {
-      const itemWidth = 62;
-      scrollRef.current.scrollTo({
-        x: index * itemWidth - 100,
-        animated: false,
-      });
-    }
-  }, [dias, dataSelecionada]);
-
-  const lembretesPorDia = {
-    ["27"]: [
-      {
-        id: 1,
-        hora: "09h",
-        titulo: "Diego Cruz",
-        descricao: "PetWalker - Passeio",
-        cor: "#2F8B88",
-        horaDetalhe: "09:20",
-      },
-      {
-        id: 2,
-        hora: "14h",
-        titulo: "Vacina Anual",
-        descricao: "Clínica Pet Feliz",
-        cor: "#B39DDB",
-        horaDetalhe: "14:20 - 14:50",
-      },
-      {
-        id: 3,
-        hora: "11h",
-        titulo: "Banho e Tosa",
-        descricao: "PetShop Estrela",
-        cor: "#FFD700",
-        horaDetalhe: "11:00 - 11:30",
-      },
-      {
-        id: 4,
-        hora: "16h",
-        titulo: "Consulta Veterinária",
-        descricao: "Clínica Animal Care",
-        cor: "#FF7F50",
-        horaDetalhe: "16:15 - 16:45",
-      },
-      {
-        id: 5,
-        hora: "18h",
-        titulo: "Passeio Noturno",
-        descricao: "Parque Central",
-        cor: "#87CEEB",
-        horaDetalhe: "18:00 - 18:30",
-      },
-      {
-        id: 6,
-        hora: "20h",
-        titulo: "Medicação",
-        descricao: "Dar comprimido do Rex",
-        cor: "#90EE90",
-        horaDetalhe: "20:10",
-      },
-    ],
   };
 
   const lembretes = lembretesPorDia[dataSelecionada] || [];
 
-   return (
+  return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" translucent />
-
       <LembretesHeader />
       <SelectMonth dataAtual={dataAtual} mudarMes={mudarMes} />
 
       <Text style={styles.subtitle}>
         Hoje {dataSelecionada} de{" "}
-        {dataAtual.toLocaleString("pt-BR", { month: "long" })} de{" "}
-        {dataAtual.getFullYear()}
+        {dataAtual.toLocaleString("pt-BR", { month: "long" })} de {dataAtual.getFullYear()}
       </Text>
 
       <View style={styles.fixedDaysContainer}>
-        <SelectDay
-          dias={dias}
-          dataSelecionada={dataSelecionada}
-          setDataSelecionada={setDataSelecionada}
-          scrollRef={scrollRef}
-        />
+        <SelectDay dias={dias} dataSelecionada={dataSelecionada} setDataSelecionada={setDataSelecionada} scrollRef={scrollRef} />
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
->
-        <View style={{ marginTop: 15 }}>
-          <LembretesList lembretes={lembretes} />
-        </View>
-      </ScrollView>
+      {loading ? (
+        <ActivityIndicator size="large" color="#2F8B88" style={{ marginTop: 50 }} />
+      ) : (
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+          <View style={{ marginTop: 15 }}>
+            <LembretesList lembretes={lembretes} />
+          </View>
+        </ScrollView>
+      )}
 
       <BottomNav />
     </View>
@@ -144,21 +152,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F9F9F9",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 15 : 55,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 15 : 55
   },
   subtitle: {
     textAlign: "center",
     color: "#8E8E8E",
     fontSize: 11,
-    marginTop: 4,
+    marginTop: 4
   },
   fixedDaysContainer: {
     backgroundColor: "#F9F9F9",
     paddingVertical: 10,
     zIndex: 10,
-    elevation: 3,
+    elevation: 3
   },
   scrollContainer: {
-    paddingBottom: 120,
-  }
+    paddingBottom: 120
+  },
 });

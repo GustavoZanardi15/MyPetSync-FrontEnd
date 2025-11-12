@@ -29,7 +29,7 @@ const ProfileInfoBlock = ({ title, data, editable = false }) => {
           <div
             key={index}
             className={`flex flex-col space-y-1 
-       ${item.fullWidth ? "md:col-span-2" : "md:col-span-1"}`}
+        ${item.fullWidth ? "md:col-span-2" : "md:col-span-1"}`}
           >
             <label className="text-sm font-medium text-white">
               {item.label}

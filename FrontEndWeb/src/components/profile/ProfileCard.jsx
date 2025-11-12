@@ -34,7 +34,9 @@ const ProfileCard = ({
           <span className="text-xL text-white">Clientes</span>
         </div>
         <div className="flex flex-col items-center">
-          <span className="text-xl font-bold text-teal-300">{rating}</span>
+          <span className="text-xl font-bold text-teal-300">
+            {Number(rating).toFixed(1)}
+          </span>
           <span className="text-xL text-white">Avaliação</span>
         </div>
         <div className="flex flex-col items-center">
