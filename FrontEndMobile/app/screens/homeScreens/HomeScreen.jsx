@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react"; 
-import { View, ScrollView, StyleSheet } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { View, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HomeHeader from "../../../components/home/HomeHeader";
 import SpaCard from "../../../components/home/SpaCard";
@@ -11,12 +11,11 @@ import api from "../../../src/service/api";
 import { API_BASE_URL } from "../../../src/config/api";
 import { useFocusEffect } from "expo-router";
 
-
 async function getAuthToken() {
   try {
     const token = await AsyncStorage.getItem("userToken");
     return token;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -34,14 +33,9 @@ const PET_COLORS = [
 const petColorMap = new Map();
 
 const getStablePetColor = (petId) => {
-  if (petColorMap.has(petId)) {
-    return petColorMap.get(petId);
-  }
-
+  if (petColorMap.has(petId)) return petColorMap.get(petId);
   const hash = petId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const colorIndex = hash % PET_COLORS.length;
-  const color = PET_COLORS[colorIndex];
-
+  const color = PET_COLORS[hash % PET_COLORS.length];
   petColorMap.set(petId, color);
   return color;
 };
@@ -51,11 +45,8 @@ const DEFAULT_AVATAR_CAT = require("../../../assets/images/addPet/Cat.png");
 
 const formatPetDataForHome = (petFromApi) => {
   const getPetImageSource = (photoPath, specie) => {
-    if (photoPath) {
-      return { uri: `${API_BASE_URL}${photoPath}` };
-    }
-
-    const isDog = petFromApi.especie?.toLowerCase() === "cachorro" || petFromApi.especie?.toLowerCase() === "cão";
+    if (photoPath) return { uri: `${API_BASE_URL}${photoPath}` };
+    const isDog = specie?.toLowerCase() === "cachorro" || specie?.toLowerCase() === "cão";
     return isDog ? DEFAULT_AVATAR_DOG : DEFAULT_AVATAR_CAT;
   };
 
@@ -67,63 +58,15 @@ const formatPetDataForHome = (petFromApi) => {
   };
 };
 
-
 export default function HomeScreen() {
   const [pets, setPets] = useState([]);
   const [selectedPetIndex, setSelectedPetIndex] = useState(0);
   const [userName, setUserName] = useState("Usuário");
   const [authToken, setAuthToken] = useState(null);
-
-  const reminders = [
-    [
-      {
-        title: "Colírio Ocular",
-        subtitle: "Aplicar 3 gotas, manhã e noite",
-        time: "08:45 - 20:45",
-        repeat: "Diariamente",
-      },
-      {
-        title: "Passeio",
-        subtitle: "Lembrar de levar água",
-        time: "18:00 - 19:00",
-        repeat: "Quarta-feira",
-      },
-    ],
-    [
-      {
-        title: "Petshop",
-        subtitle: "Banho e tosa",
-        time: "09:00",
-        repeat: "Sexta-feira",
-      },
-    ],
-    [
-      {
-        title: "Vacina",
-        subtitle: "Levar ao veterinário",
-        time: "10:00",
-        repeat: "Anual",
-      },
-    ],
-  ];
-
-  const vets = [
-    {
-      name: "Carolina Vivaz",
-      image: require("../../../assets/images/home/Vet1.png"),
-      rating: 4,
-    },
-    {
-      name: "José Augusto",
-      image: require("../../../assets/images/home/Vet2.png"),
-      rating: 4,
-    },
-    {
-      name: "Alisson Dias",
-      image: require("../../../assets/images/home/Vet3.png"),
-      rating: 3,
-    },
-  ];
+  const [reminders, setReminders] = useState([]);
+  const [loadingReminders, setLoadingReminders] = useState(false);
+  const [vets, setVets] = useState([]);
+  const [loadingVets, setLoadingVets] = useState(false);
 
   useEffect(() => {
     async function loadToken() {
@@ -135,21 +78,15 @@ export default function HomeScreen() {
 
   const fetchPets = useCallback(async () => {
     if (!authToken) return;
-
     try {
       const response = await api.get("/pets", {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-
-      const fetchedPets = response.data.map(formatPetDataForHome);
+      const fetchedPets = Array.isArray(response.data)
+        ? response.data.map(formatPetDataForHome)
+        : [];
       setPets(fetchedPets);
-
-      if (fetchedPets.length > 0) {
-        setSelectedPetIndex(0);
-      } else {
-        setSelectedPetIndex(-1);
-      }
-
+      setSelectedPetIndex(fetchedPets.length > 0 ? 0 : -1);
     } catch (error) {
       console.error("Erro ao buscar pets:", error.response?.data || error.message);
       setPets([]);
@@ -160,58 +97,135 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchPets();
-    }, [fetchPets]) 
+    }, [fetchPets])
   );
 
   useEffect(() => {
-    if (!authToken) {
-      console.warn("Sem token, usando nome padrão.");
-      setUserName("Usuário");
-      return;
-    }
-
+    if (!authToken) return;
     async function fetchUserName() {
       try {
         const response = await api.get("/users/me", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
+          headers: { Authorization: `Bearer ${authToken}` },
         });
-
-        const data = response.data;
-
-        if (data?.nome) {
-          setUserName(data.nome);
-        } else {
-          console.warn("Campo 'nome' não retornado:", data);
-          setUserName("Usuário");
-        }
+        setUserName(response.data?.nome || "Usuário");
       } catch (error) {
-        console.error("Erro ao buscar nome do usuário:", error.response?.data || error.message);
+        console.error("Erro ao buscar nome do usuário:", error);
         setUserName("Usuário");
       }
     }
-
     fetchUserName();
   }, [authToken]);
 
+  const fetchReminders = useCallback(async () => {
+    if (!authToken || pets.length === 0 || selectedPetIndex === -1) return;
 
-  const currentReminders = pets.length > 0 && selectedPetIndex !== -1
-    ? reminders[selectedPetIndex] || []
-    : [];
+    const selectedPet = pets[selectedPetIndex];
+    if (!selectedPet?.id) return;
 
+    setLoadingReminders(true);
+    try {
+      const response = await api.get(`/pets/${selectedPet.id}/appointments`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      const data =
+        Array.isArray(response.data?.items) ? response.data.items :
+          Array.isArray(response.data) ? response.data :
+            [];
+
+      const formattedReminders = data.map((item) => {
+        const date = new Date(item.dateTime);
+        const hora = date.toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        return {
+          title: item.reason || "Consulta",
+          subtitle: item.provider?.name || "Veterinário",
+          time: hora,
+          repeat: item.status || "Agendado",
+        };
+      });
+
+      setReminders(formattedReminders);
+    } catch (error) {
+      console.error("Erro ao carregar lembretes:", error.response?.data || error.message);
+      setReminders([]);
+    } finally {
+      setLoadingReminders(false);
+    }
+  }, [authToken, pets, selectedPetIndex]);
+
+  useEffect(() => {
+    fetchReminders();
+  }, [fetchReminders]);
+
+  const fetchVets = useCallback(async () => {
+    if (!authToken) return;
+    setLoadingVets(true);
+    try {
+      const response = await api.get("/providers", {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      const data = Array.isArray(response.data?.items)
+        ? response.data.items
+        : Array.isArray(response.data)
+          ? response.data
+          : [];
+
+      const formatted = data.map((vet) => ({
+        id: vet._id,
+        name: vet.name || "Veterinário",
+        specialty: Array.isArray(vet.servicesOffered) && vet.servicesOffered.length > 0
+          ? vet.servicesOffered.join(", ")
+          : vet.service || vet.providerType || "Clínico Geral",
+        imageUrl: vet.avatar ? `${API_BASE_URL}${vet.avatar}` : null,
+        rating: vet.averageRating || 0,
+      }));
+
+      setVets(formatted);
+    } catch (error) {
+      console.error("Erro ao carregar veterinários:", error.response?.data || error.message);
+      setVets([]);
+    } finally {
+      setLoadingVets(false);
+    }
+  }, [authToken]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchVets();
+    }, [fetchVets])
+  );
 
   return (
     <View style={styles.container}>
-
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent} >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         <HomeHeader userName={userName} />
         <SpaCard />
-        <PetSelector pets={pets} selectedPet={selectedPetIndex} setSelectedPet={setSelectedPetIndex} />
-        <LembretesSection reminders={currentReminders} />
-        <VeterinariosSection vets={vets} />
-      </ScrollView>
+        <PetSelector
+          pets={pets}
+          selectedPet={selectedPetIndex}
+          setSelectedPet={setSelectedPetIndex}
+        />
 
+        {loadingReminders ? (
+          <ActivityIndicator size="large" color="#2F8B88" style={{ marginTop: 30 }} />
+        ) : (
+          <LembretesSection reminders={reminders || []} />
+        )}
+
+        {loadingVets ? (
+          <ActivityIndicator size="large" color="#2F8B88" style={{ marginTop: 20 }} />
+        ) : (
+          <VeterinariosSection vets={vets || []} />
+        )}
+      </ScrollView>
       <BottomNav />
     </View>
   );
@@ -220,9 +234,9 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#F9F9F9"
   },
   scrollContent: {
-    paddingBottom: 80,
+    paddingBottom: 80
   },
 });
