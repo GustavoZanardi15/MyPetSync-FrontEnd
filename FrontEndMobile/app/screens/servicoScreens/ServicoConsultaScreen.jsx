@@ -1,205 +1,256 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
+  ScrollView,
   StyleSheet,
-  TextInput,
   Pressable,
-  Alert,
-  Platform,
   StatusBar,
+  Platform,
+  ActivityIndicator,
+  Alert,
+  TextInput,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { Picker } from "@react-native-picker/picker";
+import { Ionicons } from "@expo/vector-icons";
+import moment from "moment";
+import "moment/locale/pt-br";
 import api from "../../../src/service/api";
 
-export default function AgendarConsultaScreen() {
+const COLORS = {
+  primary: "#2F8B88",
+  secondary: "#D1E6E5",
+  background: "#F9F9F9",
+  text: "#333333",
+  white: "#FFFFFF",
+};
+
+const HOURS = Array.from({ length: 11 }, (_, i) =>
+  `${(i + 8).toString().padStart(2, "0")}:00`
+);
+
+const DAYS = Array.from({ length: 7 }, (_, i) => {
+  const d = new Date();
+  d.setDate(d.getDate() + i);
+  return d;
+});
+const DAY_LABELS = DAYS.map((d) =>
+  moment(d).locale("pt-br").format("ddd, DD/MM")
+);
+
+export default function ServicoConsultaScreen() {
   const router = useRouter();
-  const { vetId, vet: vetJson } = useLocalSearchParams();
+  const { vet: vetJson } = useLocalSearchParams();
   const vet = vetJson ? JSON.parse(vetJson) : null;
 
-  const [date, setDate] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
+  const [pets, setPets] = useState([]);
+  const [selectedPet, setSelectedPet] = useState("");
+  const [selectedDay, setSelectedDay] = useState(DAYS[0].toISOString());
+  const [selectedHour, setSelectedHour] = useState(HOURS[0]);
   const [reason, setReason] = useState("");
-  const [location, setLocation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userInfo, setUserInfo] = useState({ email: "", phone: "" });
+  const [loading, setLoading] = useState(true);
 
-  const onChangeDate = (event, selectedDate) => {
-    setShowPicker(false);
-    if (selectedDate) setDate(selectedDate);
-  };
+  useEffect(() => {
+    (async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("Usuário não autenticado");
+
+        const petsResp = await api.get("/pets", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const fetchedPets = Array.isArray(petsResp.data)
+          ? petsResp.data
+          : petsResp.data.items || [];
+        setPets(fetchedPets);
+        if (fetchedPets.length > 0) setSelectedPet(fetchedPets[0]._id);
+
+        const userResp = await api.get("/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUserInfo({
+          email: userResp.data.email || "",
+          phone: userResp.data.telefone || userResp.data.phone || "",
+        });
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Erro ao carregar dados:", err.response?.data || err.message);
+        Alert.alert("Erro", "Não foi possível carregar pets ou dados do usuário.");
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const handleSubmit = async () => {
-    if (!vetId) {
-      Alert.alert("Erro", "ID do veterinário não encontrado.");
-      return;
-    }
-
-    if (!reason.trim()) {
-      Alert.alert("Atenção", "Por favor, informe o motivo da consulta.");
+    if (!selectedPet || !reason.trim() || !selectedDay || !selectedHour) {
+      Alert.alert("Atenção", "Preencha todos os campos obrigatórios.");
       return;
     }
 
     setIsSubmitting(true);
-
     try {
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        Alert.alert("Sessão expirada", "Faça login novamente.");
-        router.replace("/screens/loginScreens/LoginScreen");
-        return;
-      }
+      if (!token) throw new Error("Usuário não autenticado");
 
-      await api.post(
-        "/appointments",
-        {
-          provider: vetId,
-          dateTime: date,
-          duration: 30,
-          reason,
-          location,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const [hour, minute] = selectedHour.split(":");
+      const appointmentDate = new Date(selectedDay);
+      appointmentDate.setHours(Number(hour), Number(minute), 0, 0);
 
-      Alert.alert("Sucesso", "Consulta marcada com sucesso!", [
-        {
-          text: "OK",
-          onPress: () =>
-            router.push("/screens/dashboardScreens/DashboardTutorScreen"),
-        },
+      const payload = {
+        provider: vet ? vet.nome : "Prestador",
+        type: vet ? vet.type : "",
+        service: vet ? vet.service : "",
+        pet: selectedPet,
+        dateTime: appointmentDate.toISOString(),
+        duration: 60,
+        reason,
+        email: userInfo.email,
+        phone: userInfo.phone,
+        status: "scheduled",
+      };
+
+      const response = await api.post("/appointments", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      Alert.alert("Sucesso", "Consulta agendada com sucesso!", [
+        { text: "OK", onPress: () => router.back() },
       ]);
-    } catch (error) {
-      console.error("Erro ao agendar consulta:", error);
-      Alert.alert("Erro", "Não foi possível agendar a consulta.");
+    } catch (err) {
+      console.error("Erro ao agendar:", err.response?.data || err.message);
+      const apiMessage = err.response?.data?.message;
+      const errorMessage = apiMessage
+        ? Array.isArray(apiMessage)
+          ? `Erros de Validação: ${apiMessage.join(", ")}`
+          : apiMessage
+        : err.message || "Erro de rede desconhecido.";
+      Alert.alert("Erro ao agendar", errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Agendar Consulta</Text>
+    <View style={styles.outerContainer}>
+      <Pressable style={styles.backButton} onPress={() => router.back()}>
+        <Ionicons name="arrow-back" size={26} color={COLORS.primary} />
+      </Pressable>
 
-      {vet && (
-        <View style={styles.vetInfo}>
-          <Text style={styles.vetName}>{vet.nome}</Text>
-          <Text style={styles.vetEspecialidade}>{vet.especialidade}</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>Agendar Consulta</Text>
+
+        {vet && (
+          <View style={styles.vetInfo}>
+            <Ionicons
+              name="medkit-outline"
+              size={24}
+              color={COLORS.primary}
+              style={{ marginRight: 10 }}
+            />
+            <View>
+              <Text style={styles.vetName}>
+                {vet.nome} {vet.service ? `- ${vet.service}` : ""}
+              </Text>
+              <Text style={styles.vetEspecialidade}>
+                {vet.type === "empresa"
+                  ? "Empresa"
+                  : vet.type === "autonomo"
+                    ? "Profissional Autônomo"
+                    : "Profissional Autônomo"}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        <Text style={styles.label}>Selecione o pet:</Text>
+        <View style={styles.pickerContainer}>
+          <Picker selectedValue={selectedPet} onValueChange={setSelectedPet}>
+            {pets.map((p) => (
+              <Picker.Item key={p._id} label={p.nome} value={p._id} />
+            ))}
+          </Picker>
         </View>
-      )}
 
-      <Pressable
-        style={styles.datePickerButton}
-        onPress={() => setShowPicker(true)}
-      >
-        <Text style={styles.datePickerText}>
-          {date.toLocaleString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </Text>
-      </Pressable>
+        <Text style={styles.label}>Selecione o dia:</Text>
+        <View style={styles.pickerContainer}>
+          <Picker selectedValue={selectedDay} onValueChange={setSelectedDay}>
+            {DAYS.map((d, i) => (
+              <Picker.Item key={d.toISOString()} label={DAY_LABELS[i]} value={d.toISOString()} />
+            ))}
+          </Picker>
+        </View>
 
-      {showPicker && (
-        <DateTimePicker
-          value={date}
-          mode="datetime"
-          display="default"
-          onChange={onChangeDate}
-          minimumDate={new Date()}
+        <Text style={styles.label}>Selecione o horário:</Text>
+        <View style={styles.pickerContainer}>
+          <Picker selectedValue={selectedHour} onValueChange={setSelectedHour}>
+            {HOURS.map((h) => (
+              <Picker.Item key={h} label={h} value={h} />
+            ))}
+          </Picker>
+        </View>
+
+        <Text style={styles.label}>Motivo da consulta:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ex: Banho, Vacina, Check-up"
+          value={reason}
+          onChangeText={setReason}
         />
-      )}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Motivo da consulta"
-        value={reason}
-        onChangeText={setReason}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Local (opcional)"
-        value={location}
-        onChangeText={setLocation}
-      />
-
-      <Pressable
-        style={[styles.button, isSubmitting && { opacity: 0.6 }]}
-        onPress={handleSubmit}
-        disabled={isSubmitting}
-      >
-        <Text style={styles.buttonText}>
-          {isSubmitting ? "Agendando..." : "Confirmar Consulta"}
-        </Text>
-      </Pressable>
+        <Pressable
+          style={[styles.button, isSubmitting && { opacity: 0.7 }]}
+          onPress={handleSubmit}
+          disabled={isSubmitting || !selectedPet || !reason.trim()}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color={COLORS.white} />
+          ) : (
+            <Text style={styles.buttonText}>Confirmar Consulta</Text>
+          )}
+        </Pressable>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  outerContainer: { flex: 1, backgroundColor: COLORS.background },
   container: {
-    flex: 1,
-    backgroundColor: "#F9F9F9",
+    flexGrow: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 20 : 60,
     paddingHorizontal: 20,
+    paddingBottom: 40,
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#2F8B88",
-    textAlign: "center",
-    marginBottom: 25,
+  backButton: {
+    position: "absolute",
+    top: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 30,
+    left: 20,
+    zIndex: 10,
+    backgroundColor: COLORS.white,
+    borderRadius: 50,
+    padding: 6,
+    elevation: 3,
   },
-  vetInfo: {
-    backgroundColor: "#D1E6E5",
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 20,
-  },
-  vetName: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#2F8B88",
-  },
-  vetEspecialidade: {
-    fontSize: 14,
-    color: "#555",
-  },
-  datePickerButton: {
-    backgroundColor: "#FFF",
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#DDD",
-    marginBottom: 15,
-  },
-  datePickerText: {
-    fontSize: 16,
-    color: "#333",
-  },
-  input: {
-    backgroundColor: "#FFF",
-    padding: 15,
-    borderRadius: 10,
-    fontSize: 16,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#DDD",
-  },
-  button: {
-    backgroundColor: "#2F8B88",
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  buttonText: {
-    color: "#FFF",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
+  title: { fontSize: 24, fontWeight: "700", color: COLORS.primary, textAlign: "center", marginBottom: 30 },
+  vetInfo: { flexDirection: "row", backgroundColor: COLORS.secondary, borderRadius: 15, padding: 15, marginBottom: 25, alignItems: "center", borderWidth: 1, borderColor: COLORS.primary },
+  vetName: { fontSize: 18, fontWeight: "600", color: COLORS.primary },
+  vetEspecialidade: { fontSize: 14, color: COLORS.text },
+  label: { fontSize: 14, fontWeight: "600", color: COLORS.text, marginBottom: 6, marginTop: 15 },
+  pickerContainer: { backgroundColor: COLORS.white, borderRadius: 12, borderWidth: 1, borderColor: "#C0C0C0", marginBottom: 15, height: 55, justifyContent: "center" },
+  input: { backgroundColor: COLORS.white, padding: 15, borderRadius: 12, fontSize: 16, marginBottom: 15, borderWidth: 1, borderColor: "#C0C0C0", color: COLORS.text, height: 55 },
+  button: { backgroundColor: COLORS.primary, borderRadius: 12, paddingVertical: 16, alignItems: "center", marginTop: 30 },
+  buttonText: { color: COLORS.white, fontWeight: "bold", fontSize: 18 },
 });
