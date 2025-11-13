@@ -1,8 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { useRouter } from "expo-router";
 
 export default function LembretesList({ lembretes }) {
+  const router = useRouter();
+
   const lembretesAgrupados = lembretes.reduce((acc, l) => {
     if (!acc[l.hora]) acc[l.hora] = [];
     acc[l.hora].push(l);
@@ -24,19 +26,22 @@ export default function LembretesList({ lembretes }) {
                     <Text style={styles.titulo}>{l.titulo}</Text>
                     <Text style={styles.descricao}>{l.descricao}</Text>
                     <View style={styles.footer}>
-                      <View style={styles.horaWrapper}>
-                        <MaterialCommunityIcons
-                          name="clock-outline"
-                          size={16}
-                          color="#2F8B88"
-                        />
-                        <Text style={styles.horaTexto}>{l.horaDetalhe}</Text>
-                      </View>
-                      <MaterialCommunityIcons
-                        name="bell-outline"
-                        size={18}
-                        color="#2F8B88"
-                      />
+                      <Text style={styles.horaTexto}>{l.hora}</Text>
+
+                      {l.status === "completed" && (
+                        <Pressable
+                          style={styles.avaliarButton}
+                          onPress={() =>
+                            router.push({
+                              pathname:
+                                "/screens/lembreteScreens/AvaliarScreen",
+                              params: { agendamentoId: l.id },
+                            })
+                          }
+                        >
+                          <Text style={styles.avaliarText}>Avaliar</Text>
+                        </Pressable>
+                      )}
                     </View>
                   </View>
                 </View>
@@ -52,12 +57,8 @@ export default function LembretesList({ lembretes }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-  },
-  horaGroup: {
-    marginBottom: 20,
-  },
+  container: { paddingHorizontal: 20 },
+  horaGroup: { marginBottom: 20 },
   horaPrincipal: {
     color: "#8E8E8E",
     fontSize: 13,
@@ -76,42 +77,27 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginBottom: 10,
   },
-  barra: {
-    width: 3,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  info: {
-    flex: 1,
-  },
-  titulo: {
-    fontWeight: "500",
-    fontSize: 15,
-    color: "#2F8B88",
-  },
-  descricao: {
-    color: "#8E8E8E",
-    fontSize: 13,
-    marginBottom: 8,
-  },
+  barra: { width: 3, borderRadius: 10, marginRight: 10 },
+  info: { flex: 1 },
+  titulo: { fontWeight: "500", fontSize: 15, color: "#2F8B88" },
+  descricao: { color: "#8E8E8E", fontSize: 13, marginBottom: 8 },
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  horaWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  horaTexto: {
-    color: "#2F8B88",
-    fontSize: 13,
-  },
+  horaTexto: { color: "#2F8B88", fontSize: 13 },
   semLembretes: {
     textAlign: "center",
     color: "#8E8E8E",
     marginTop: 160,
     fontSize: 14,
   },
+  avaliarButton: {
+    backgroundColor: "#2F8B88",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  avaliarText: { color: "#fff", fontWeight: "bold" },
 });
