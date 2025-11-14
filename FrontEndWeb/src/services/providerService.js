@@ -35,6 +35,23 @@ export const fetchProviderProfile = async () => {
   }
 };
 
+export const getProviderType = async (providerId) => {
+  try {
+    const response = await api.get(`/providers/${providerId}`);
+    return response.data.service || "";
+  } catch (error) {
+    if (error.response?.status === 404) {
+      console.warn(`Prestador com ID ${providerId} não encontrado.`);
+      return "";
+    }
+    console.error(
+      "Falha ao buscar tipo de prestador (API Error):",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
 export const updateProviderProfile = async (updateData) => {
   try {
     const response = await api.patch("/providers/me", updateData);
