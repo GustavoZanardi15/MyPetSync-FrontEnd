@@ -41,7 +41,7 @@ describe('agendaService', () => {
 
                 const result = await fetchNextAppointments();
 
-                expect(api.get).toHaveBeenCalledWith("/providers/me/appointments", expect.any(Object));
+                expect(api.get).toHaveBeenCalledWith("/appointments", expect.any(Object));
                 expect(result).toHaveLength(1);
                 expect(result[0]).toMatchObject({
                     id: "123",

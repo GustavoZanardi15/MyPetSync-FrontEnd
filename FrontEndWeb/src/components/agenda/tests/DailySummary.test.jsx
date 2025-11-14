@@ -43,7 +43,7 @@ describe('DailySummary Component', () => {
         render(<DailySummary />);
         
         const icons = document.querySelectorAll("svg");
-        expect(icons.length).toBe(3);
+        expect(icons.length).toBe(4);
     });
 
 

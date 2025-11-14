@@ -549,7 +549,7 @@ const NewAppointmentModal = ({
             className="bg-[#058789]"
           >
             <TextArea
-              placeholder="Informações adicionais sobre o agendamento..."
+              placeholder="Observações"
               name="notes"
               value={formData.notes}
               onChange={handleChange}
