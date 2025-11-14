@@ -2,9 +2,50 @@ import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 
+// Traduz o status do agendamento, priorizando a flag isRated
+const translateAppointmentStatus = (status, isRated) => {
+  if (!status) return "";
+  const lower = status.toLowerCase();
+
+  // A prioridade é a flag 'isRated' para exibir 'Avaliado'
+  // Isso resolve o problema de agendamentos concluídos que já foram avaliados.
+  if (isRated) return "Avaliado";
+
+  switch (lower) {
+    case "scheduled":
+      return "Agendado";
+    case "confirmed":
+      return "Confirmado";
+    case "completed":
+      return "Concluído";
+    case "canceled": // Adicionado status 'canceled'
+      return "Cancelado";
+    case "rated":
+      return "Avaliado";
+    default:
+      return status;
+  }
+};
+
+
 export default function LembretesList({ lembretes = [], onAtualizar }) {
   const router = useRouter();
 
+  const handleAvaliar = (lembrete) => {
+    // ⭐️ ADICIONANDO A VERIFICAÇÃO PRINCIPAL:
+    if (lembrete.isRated || translateAppointmentStatus(lembrete.status, lembrete.isRated) === "Avaliado") {
+      // Se já foi avaliado (pela flag ou pelo status traduzido), interrompe a navegação
+      return;
+    }
+
+    // Navega para a tela de avaliação
+    router.push({
+      pathname: "/screens/lembreteScreens/AvaliarScreen",
+      params: { appointmentId: lembrete.id, serviceId: lembrete.serviceId, providerId: lembrete.providerId },
+    });
+  };
+
+  // Agrupamento de lembretes por hora (mantido)
   const lembretesAgrupados = lembretes.reduce((acc, l) => {
     const hora = l.hora || "00:00";
     if (!acc[hora]) acc[hora] = [];
@@ -23,51 +64,40 @@ export default function LembretesList({ lembretes = [], onAtualizar }) {
           <View key={horaPrincipal} style={styles.horaGroup}>
             <Text style={styles.horaPrincipal}>{horaPrincipal}</Text>
 
-            {lembretesAgrupados[horaPrincipal].map((l) => (
-              <View key={l.id} style={styles.card}>
-                <View style={[styles.barra, { backgroundColor: l.cor || "#2F8B88" }]} />
-                <View style={styles.info}>
-                  <Text style={styles.titulo}>{l.titulo}</Text>
-                  <Text style={styles.descricao}>{l.descricao}</Text>
+            {lembretesAgrupados[horaPrincipal].map((l) => {
+              const translatedStatus = translateAppointmentStatus(l.status, l.isRated);
+              const isCompleted = translatedStatus === "Concluído";
+              const alreadyRated = translatedStatus === "Avaliado";
 
-                  <View style={styles.footer}>
-                    <Text style={styles.horaTexto}>{l.hora}</Text>
+              return (
+                <View key={l.id} style={styles.card}>
+                  <View style={[styles.barra, { backgroundColor: l.cor || "#2F8B88" }]} />
+                  <View style={styles.info}>
+                    <Text style={styles.titulo}>{l.titulo}</Text>
+                    <Text style={styles.descricao}>
+                      {l.descricao}
+                    </Text>
 
-                    {l.status === "completed" && (
-                      <Pressable
-                        style={styles.avaliarButton}
-                        onPress={() =>
-                          router.push({
-                            pathname: "/screens/lembreteScreens/AvaliarScreen",
-                            params: { agendamentoId: l.id },
-                          })
-                        }
-                      >
-                        <Text style={styles.avaliarText}>Avaliar</Text>
-                      </Pressable>
-                    )}
+                    <View style={styles.footer}>
+                      <Text style={styles.horaTexto}>{l.hora}</Text>
 
-                    {l.status === "scheduled" && onAtualizar && (
-                      <Pressable
-                        style={[styles.actionButton, { backgroundColor: "#FFAA33" }]}
-                        onPress={() => onAtualizar(l.id, { status: "confirmed" })}
-                      >
-                        <Text style={styles.avaliarText}>Confirmar</Text>
-                      </Pressable>
-                    )}
+                      {isCompleted && !alreadyRated && (
+                        <Pressable
+                          style={styles.btnAvaliar}
+                          onPress={() => handleAvaliar(l)}
+                        >
+                          <Text style={styles.btnAvaliarText}>Avaliar</Text>
+                        </Pressable>
+                      )}
 
-                    {l.status === "confirmed" && onAtualizar && (
-                      <Pressable
-                        style={[styles.actionButton, { backgroundColor: "#2F8B88" }]}
-                        onPress={() => onAtualizar(l.id, { status: "completed" })}
-                      >
-                        <Text style={styles.avaliarText}>Concluir</Text>
-                      </Pressable>
-                    )}
+                      {alreadyRated && (
+                        <Text style={styles.textAvaliado}>Avaliado</Text>
+                      )}
+                    </View>
                   </View>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         ))
       ) : (
@@ -104,28 +134,27 @@ const styles = StyleSheet.create({
   descricao: { color: "#8E8E8E", fontSize: 13, marginBottom: 8 },
   footer: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
   },
-  horaTexto: { color: "#2F8B88", fontSize: 13 },
-  semLembretes: {
-    textAlign: "center",
-    color: "#8E8E8E",
-    marginTop: 160,
-    fontSize: 14,
-  },
-  avaliarButton: {
+  horaTexto: { color: "#2F8B88", fontSize: 13, fontWeight: "500" },
+  semLembretes: { textAlign: "center", color: "#8E8E8E", marginTop: 30 },
+
+  // Estilos do Botão/Texto de Avaliação
+  btnAvaliar: {
     backgroundColor: "#2F8B88",
-    paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
-    marginLeft: 8,
-  },
-  actionButton: {
     paddingHorizontal: 12,
-    paddingVertical: 6,
     borderRadius: 8,
-    marginLeft: 8,
   },
-  avaliarText: { color: "#fff", fontWeight: "bold" },
+  btnAvaliarText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "bold",
+  },
+  textAvaliado: {
+    color: "#2F8B88",
+    fontSize: 13,
+    fontWeight: "600",
+  },
 });
