@@ -50,16 +50,6 @@ export default function VetCard({ vet }) {
           {renderStars(vet.estrelas)}
           <Text style={styles.avaliacoes}> ({vet.avaliacoes})</Text>
         </View>
-
-        <View style={styles.btnAgendar}>
-          <Text style={styles.btnText}>Agende</Text>
-          <Ionicons
-            name="logo-whatsapp"
-            size={21}
-            color="#fff"
-            style={{ marginLeft: 6 }}
-          />
-        </View>
       </View>
     </Pressable>
   );
@@ -112,21 +102,5 @@ const styles = StyleSheet.create({
   avaliacoes: {
     fontSize: 13,
     color: "#8E8E8E",
-  },
-  btnAgendar: {
-    width: 93,
-    height: 31,
-    marginTop: 8,
-    flexDirection: "row",
-    backgroundColor: "#2F8B88",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    alignSelf: "flex-start",
-    alignItems: "center",
-  },
-  btnText: {
-    color: "#fff",
-    fontSize: 13,
-  },
+  }
 });
