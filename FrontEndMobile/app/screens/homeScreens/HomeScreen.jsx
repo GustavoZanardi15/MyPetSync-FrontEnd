@@ -13,23 +13,13 @@ import { useFocusEffect } from "expo-router";
 
 async function getAuthToken() {
   try {
-    const token = await AsyncStorage.getItem("userToken");
-    return token;
+    return await AsyncStorage.getItem("userToken");
   } catch {
     return null;
   }
 }
 
-const PET_COLORS = [
-  "#A9E4D4",
-  "#B0C4DE",
-  "#FFC0CB",
-  "#F0E68C",
-  "#ADD8E6",
-  "#FAFAD2",
-  "#DDA0DD",
-];
-
+const PET_COLORS = ["#A9E4D4", "#B0C4DE", "#FFC0CB", "#F0E68C", "#ADD8E6", "#FAFAD2", "#DDA0DD"];
 const petColorMap = new Map();
 
 const getStablePetColor = (petId) => {
@@ -108,8 +98,7 @@ export default function HomeScreen() {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         setUserName(response.data?.nome || "Usuário");
-      } catch (error) {
-        console.error("Erro ao buscar nome do usuário:", error);
+      } catch {
         setUserName("Usuário");
       }
     }
@@ -118,7 +107,6 @@ export default function HomeScreen() {
 
   const fetchReminders = useCallback(async () => {
     if (!authToken || pets.length === 0 || selectedPetIndex === -1) return;
-
     const selectedPet = pets[selectedPetIndex];
     if (!selectedPet?.id) return;
 
@@ -128,12 +116,13 @@ export default function HomeScreen() {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
-      const data =
-        Array.isArray(response.data?.items) ? response.data.items :
-          Array.isArray(response.data) ? response.data :
-            [];
+      const data = Array.isArray(response.data?.items)
+        ? response.data.items
+        : Array.isArray(response.data)
+        ? response.data
+        : [];
 
-      const formattedReminders = data.map((item) => {
+      const formattedReminders = data.map(item => {
         const date = new Date(item.dateTime);
         const hora = date.toLocaleTimeString("pt-BR", {
           hour: "2-digit",
@@ -141,10 +130,11 @@ export default function HomeScreen() {
         });
 
         return {
+          id: item._id,         
           title: item.reason || "Consulta",
           subtitle: item.provider?.name || "Veterinário",
           time: hora,
-          repeat: item.status || "Agendado",
+          repeat: item.status || "scheduled",
         };
       });
 
@@ -172,22 +162,22 @@ export default function HomeScreen() {
       const data = Array.isArray(response.data?.items)
         ? response.data.items
         : Array.isArray(response.data)
-          ? response.data
-          : [];
+        ? response.data
+        : [];
 
       const formatted = data.map((vet) => ({
         id: vet._id,
         name: vet.name || "Veterinário",
-        specialty: Array.isArray(vet.servicesOffered) && vet.servicesOffered.length > 0
-          ? vet.servicesOffered.join(", ")
-          : vet.service || vet.providerType || "Clínico Geral",
+        specialty:
+          Array.isArray(vet.servicesOffered) && vet.servicesOffered.length > 0
+            ? vet.servicesOffered.join(", ")
+            : vet.service || vet.providerType || "Clínico Geral",
         imageUrl: vet.avatar ? `${API_BASE_URL}${vet.avatar}` : null,
         rating: vet.averageRating || 0,
       }));
 
       setVets(formatted);
-    } catch (error) {
-      console.error("Erro ao carregar veterinários:", error.response?.data || error.message);
+    } catch {
       setVets([]);
     } finally {
       setLoadingVets(false);
@@ -202,10 +192,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <HomeHeader userName={userName} />
         <SpaCard />
         <PetSelector
@@ -232,11 +219,11 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9F9F9"
+  container: { 
+    flex: 1, 
+    backgroundColor: "#F7F7F7" 
   },
-  scrollContent: {
-    paddingBottom: 80
+  scrollContent: { 
+    paddingBottom: 80 
   },
 });

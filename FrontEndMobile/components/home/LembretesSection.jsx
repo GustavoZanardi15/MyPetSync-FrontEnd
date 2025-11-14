@@ -3,13 +3,6 @@ import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
-const STATUS_COLORS = {
-  scheduled: "#2F8B88",
-  confirmed: "#87CEEB",
-  completed: "#90EE90",
-  canceled: "#FF7F50",
-};
-
 const translateRepeatStatus = (status) => {
   if (!status) return "";
   const lowerCaseStatus = status.toLowerCase();
@@ -45,7 +38,9 @@ export default function LembretesSection({ reminders }) {
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Lembretes</Text>
         <Pressable
-          onPress={() => router.push("/screens/lembreteScreens/LembreteScreen")}
+          onPress={() =>
+            router.push("/screens/lembreteScreens/LembreteScreen")
+          }
         >
           <Text style={styles.verTudo}>Ver tudo</Text>
         </Pressable>
@@ -61,17 +56,17 @@ export default function LembretesSection({ reminders }) {
             const translatedRepeat = translateRepeatStatus(reminder.repeat);
             const isCompleted = translatedRepeat.toLowerCase() === "concluído";
 
-            const barColor =
-              STATUS_COLORS[reminder.repeat?.toLowerCase()] || "#A8E6CF";
-
             return (
               <View style={styles.card} key={index}>
-                {/* 🔹 Barra lateral dinâmica */}
-                <View
-                  style={[styles.cardVerticalBar, { backgroundColor: barColor }]}
-                />
+                <View style={styles.cardVerticalBar} />
 
-                <View style={styles.cardContent}>
+                <View
+                  style={{
+                    paddingLeft: 10,
+                    flex: 1,
+                    justifyContent: "space-between",
+                  }}
+                >
                   <View>
                     <Text style={styles.cardTitle}>{reminder.title}</Text>
                     <Text style={styles.cardSubtitle}>{reminder.subtitle}</Text>
@@ -81,9 +76,7 @@ export default function LembretesSection({ reminders }) {
                     <Ionicons name="time-outline" size={16} color="#2F8B88" />
                     <View style={{ marginLeft: 5 }}>
                       <Text style={styles.cardTime}>{reminder.time}</Text>
-                      <Text style={styles.cardRepeatText}>
-                        {translatedRepeat}
-                      </Text>
+                      <Text style={styles.cardRepeatText}>{translatedRepeat}</Text>
                     </View>
 
                     {isCompleted && (
@@ -115,6 +108,7 @@ export default function LembretesSection({ reminders }) {
 }
 
 const styles = StyleSheet.create({
+
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
@@ -127,9 +121,12 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
   },
   emptyText: {
+    marginTop: 10,
     fontSize: 14,
     color: "#999",
+    fontWeight: "400",
   },
+
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -140,6 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     color: "#2F8B88",
+    lineHeight: 27,
   },
   verTudo: {
     color: "#87CEEB",
@@ -164,20 +162,15 @@ const styles = StyleSheet.create({
     elevation: 2,
     flexDirection: "row",
     alignItems: "center",
-    position: "relative",
   },
   cardVerticalBar: {
     width: 4,
     height: 59,
+    backgroundColor: "#A8E6CF",
     borderRadius: 16,
     position: "absolute",
     left: 20,
     top: 12,
-  },
-  cardContent: {
-    paddingLeft: 10,
-    flex: 1,
-    justifyContent: "space-between",
   },
   cardTitle: {
     fontWeight: "500",
@@ -206,6 +199,7 @@ const styles = StyleSheet.create({
   cardRepeatText: {
     fontSize: 13,
     color: "#2F8B88",
+    fontWeight: "400",
     marginTop: 2,
   },
   btnAvaliar: {
