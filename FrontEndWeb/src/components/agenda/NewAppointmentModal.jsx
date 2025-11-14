@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import {
   VscClose,
   VscTag,
@@ -9,25 +9,7 @@ import {
 } from "react-icons/vsc";
 import { MdOutlinePets, MdOutlineWatchLater } from "react-icons/md";
 import { FiPhoneCall } from "react-icons/fi";
-import {
-  createAppointment,
-  updateAppointment,
-  deleteAppointment,
-} from "../../services/agendaService";
-import { searchPets } from "../../services/petService";
-
-const STATUS_MAP = {
-  Agendado: "scheduled",
-  Confirmado: "confirmed",
-  Concluído: "completed",
-};
-const DURATION_MAP = { "30 min": 30, "60 min": 60, "90 min": 90 };
-const STATUS_MAP_REVERSE = {
-  scheduled: "Agendado",
-  confirmed: "Confirmado",
-  completed: "Concluído",
-  canceled: "Cancelado",
-};
+import { useAppointmentForm } from "./useAppointmentForm.jsx";
 
 const Section = ({ title, icon: Icon, color, children, className = "" }) => (
   <div className={`p-4 rounded-lg ${className}`}>
@@ -50,12 +32,10 @@ const Input = ({
 }) => (
   <div className="flex flex-col">
     <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
-
     <div className="relative">
       {Icon && (
         <Icon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       )}
-
       <input
         type={type}
         name={name}
@@ -91,20 +71,22 @@ const Select = ({
   name,
   value,
   onChange,
+  disabled,
 }) => (
   <div className="flex flex-col">
     <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
-
     <select
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 appearance-none bg-white"
+      disabled={disabled}
+      className={`w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 appearance-none bg-white ${
+        disabled ? "bg-gray-200 cursor-not-allowed" : ""
+      }`}
     >
       <option value="" disabled>
         {defaultMessage}
       </option>
-
       {options.map((option) => (
         <option key={option} value={option}>
           {option}
@@ -119,7 +101,6 @@ const StatusRadios = ({ value, onChange }) => (
     <label className="text-sm font-medium text-gray-700 block mb-2">
       Status do Agendamento
     </label>
-
     <div className="flex gap-6">
       {["Agendado", "Confirmado", "Concluído"].map((status) => (
         <label
@@ -141,210 +122,35 @@ const StatusRadios = ({ value, onChange }) => (
   </div>
 );
 
-const getInitialFormData = (appt, initialTime, initialDate) => {
-  if (appt && appt._id) {
-    const date = new Date(appt.dateTime);
-    const durationInMin = appt.duration;
-    const clientName = appt.pet.tutorId?.name || "";
+const NewAppointmentModal = (props) => {
+  const {
+    isEditing,
+    formData,
+    handleChange,
+    handlePetSelect,
+    handleStatusChange,
+    handleSubmit,
+    handleDelete,
+    selectedPetId,
+    searchResults,
+    isSearching,
+    error,
+    isSaving,
+    isDeleting,
+    providerType,
+    availableServices,
+    isAwaitingProviderType,
+    isProviderMissing,
+    shouldDisableSaveButton,
+    shouldDisableDeleteButton,
+  } = useAppointmentForm(props);
 
-    return {
-      petName: appt.pet.nome || "",
-      clientName,
-      phone: appt.phone,
-      email: appt.email,
-      date: date.toISOString().split("T")[0],
-      time: date.toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }),
-      serviceType: appt.reason || "",
-      notes: appt.notes || "",
-      duration:
-        Object.keys(DURATION_MAP).find(
-          (key) => DURATION_MAP[key] === durationInMin
-        ) || "60 min",
-      status: STATUS_MAP_REVERSE[appt.status] || "Agendado",
-    };
-  }
-
-  return {
-    petName: "",
-    clientName: "",
-    phone: "",
-    email: "",
-    serviceType: "",
-    date: initialDate || new Date().toISOString().split("T")[0],
-    time: initialTime || "08:00",
-    duration: "60 min",
-    status: "Agendado",
-    notes: "",
-  };
-};
-
-const NewAppointmentModal = ({
-  isOpen,
-  onClose,
-  initialTime,
-  onAppointmentSaved,
-  appointmentToEdit,
-  providerId,
-  isLoadingProvider,
-  initialDate,
-}) => {
-  const [selectedPetId, setSelectedPetId] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [error, setError] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [formData, setFormData] = useState(
-    getInitialFormData(appointmentToEdit, initialTime, initialDate)
-  );
-
-  useEffect(() => {
-    setFormData(
-      getInitialFormData(appointmentToEdit, initialTime, initialDate)
-    );
-
-    if (appointmentToEdit) {
-      setSelectedPetId(appointmentToEdit.pet._id);
-    } else {
-      setSelectedPetId("");
-    }
-    setError(null);
-  }, [appointmentToEdit, initialTime, isOpen, initialDate]);
-
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (name === "petName") setSelectedPetId("");
-  }, []);
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (formData.petName.length > 2 && !selectedPetId) {
-        setIsSearching(true);
-        try {
-          const results = await searchPets(formData.petName);
-          setSearchResults(results);
-        } catch (err) {
-          console.error("Erro na busca de Pets:", err);
-          setSearchResults([]);
-        } finally {
-          setIsSearching(false);
-        }
-      } else {
-        setSearchResults([]);
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [formData.petName, selectedPetId]);
-
-  const handlePetSelect = useCallback((pet) => {
-    setSelectedPetId(pet._id);
-    setFormData((prev) => ({
-      ...prev,
-      petName: pet.nome,
-      clientName: pet.tutorId?.name || "",
-    }));
-    setSearchResults([]);
-  }, []);
-
-  const handleStatusChange = useCallback((statusValue) => {
-    setFormData((prev) => ({ ...prev, status: statusValue }));
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSaving(true);
-    setError(null);
-
-    const isEditing = !!appointmentToEdit?._id;
-    if (!selectedPetId) {
-      setError("Por favor, selecione um Pet válido da lista de sugestões.");
-      setIsSaving(false);
-      return;
-    }
-
-    const providerIdValid =
-      providerId && providerId !== "null" && providerId !== "";
-    if (!isEditing && !providerIdValid) {
-      setError("Erro: O ID do prestador não foi carregado.");
-      setIsSaving(false);
-      return;
-    }
-
-    const payload = {
-      pet: selectedPetId,
-      dateTime: new Date(`${formData.date}T${formData.time}:00`).toISOString(),
-      duration: DURATION_MAP[formData.duration],
-      reason: formData.serviceType,
-      notes: formData.notes,
-      status: STATUS_MAP[formData.status] || "scheduled",
-      email: formData.email,
-      phone: formData.phone,
-    };
-
-    try {
-      if (isEditing) {
-        await updateAppointment(appointmentToEdit._id, payload);
-      } else {
-        const createPayload = { ...payload, provider: providerId };
-        await createAppointment(createPayload, providerId);
-      }
-      onAppointmentSaved?.();
-      onClose?.();
-    } catch (err) {
-      console.error("Erro ao salvar agendamento:", err);
-      setError("Falha ao salvar o agendamento.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!appointmentToEdit?._id) return;
-
-    if (
-      !window.confirm(
-        "Tem certeza de que deseja excluir este agendamento? Esta ação é irreversível."
-      )
-    ) {
-      return;
-    }
-
-    setIsDeleting(true);
-    setError(null);
-    try {
-      await deleteAppointment(appointmentToEdit._id);
-      onAppointmentSaved?.();
-      onClose?.();
-    } catch (err) {
-      console.error("Erro ao excluir agendamento:", err);
-      setError("Falha ao excluir o agendamento.");
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  const isEditing = !!appointmentToEdit;
-  const isNewAppointment = !isEditing;
-  const isProviderDataReady = !!providerId && !isLoadingProvider;
-  const isAwaitingProviderId = isNewAppointment && isLoadingProvider;
-  const isProviderMissing =
-    isNewAppointment && !providerId && !isLoadingProvider;
-  const shouldDisableSaveButton =
-    isSaving || isDeleting || (isNewAppointment && !isProviderDataReady);
-  const shouldDisableDeleteButton = isSaving || isDeleting;
+  if (!props.isOpen) return null;
 
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
-      onClick={onClose}
+      onClick={props.onClose}
     >
       <form
         onSubmit={handleSubmit}
@@ -355,10 +161,9 @@ const NewAppointmentModal = ({
           <h2 className="text-xl font-semibold text-gray-800">
             {isEditing ? "Editar Agendamento" : "Novo Agendamento"}
           </h2>
-
           <button
             type="button"
-            onClick={onClose}
+            onClick={props.onClose}
             aria-label="Fechar"
             className="text-gray-600 hover:text-gray-900"
           >
@@ -372,7 +177,6 @@ const NewAppointmentModal = ({
               {error}
             </div>
           )}
-
           {isProviderMissing && (
             <div className="p-3 bg-red-100 text-red-700 rounded font-medium">
               Erro: O ID do Prestador não foi carregado.
@@ -386,7 +190,6 @@ const NewAppointmentModal = ({
               ou certifique-se de ter um perfil de prestador criado.
             </div>
           )}
-
           <Section
             title="Informações do Cliente"
             icon={VscPerson}
@@ -404,13 +207,11 @@ const NewAppointmentModal = ({
                   onChange={handleChange}
                   autoComplete="off"
                 />
-
                 {(isSearching || searchResults.length > 0) && (
                   <div className="absolute z-20 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto">
                     {isSearching && (
                       <div className="p-2 text-gray-500">Buscando...</div>
                     )}
-
                     {!isSearching &&
                       searchResults.length === 0 &&
                       formData.petName.length > 2 && (
@@ -418,7 +219,6 @@ const NewAppointmentModal = ({
                           Pet não encontrado.
                         </div>
                       )}
-
                     {searchResults.map((pet) => (
                       <div
                         key={pet._id}
@@ -431,11 +231,9 @@ const NewAppointmentModal = ({
                     ))}
                   </div>
                 )}
-
                 {selectedPetId && (
                   <p className="text-xs text-yellow-300 mt-1">
-                    Pet selecionado (ID: {selectedPetId.substring(0, 4)}
-                    ...)
+                    Pet selecionado (ID: {selectedPetId.substring(0, 4)}...)
                   </p>
                 )}
               </div>
@@ -468,22 +266,38 @@ const NewAppointmentModal = ({
               />
             </div>
           </Section>
-
           <Section
             title="Informações do Serviço"
             icon={VscTag}
             color="text-[#F0F0F0]"
             className="bg-[#058789]"
           >
+            <div className="pb-2">
+              <p className="text-sm font-medium text-yellow-300 mb-2">
+                Prestador:{" "}
+                {isAwaitingProviderType
+                  ? "Carregando..."
+                  : providerType || "Não identificado"}
+              </p>
+            </div>
             <Select
               label="Tipo de Serviço"
-              options={["Consulta", "Tosa", "Banho", "Vacinação"]}
+              options={availableServices}
+              defaultMessage={
+                isAwaitingProviderType
+                  ? "Carregando serviços..."
+                  : availableServices.length === 0
+                  ? "Tipo de Prestador não identificado ou sem serviços"
+                  : "Selecione o serviço..."
+              }
               name="serviceType"
               value={formData.serviceType}
               onChange={handleChange}
+              disabled={
+                isAwaitingProviderType || availableServices.length === 0
+              }
             />
           </Section>
-
           <Section
             title="Data e Horário"
             icon={MdOutlineWatchLater}
@@ -529,7 +343,6 @@ const NewAppointmentModal = ({
               />
             </div>
           </Section>
-
           <Section
             title="Status do Agendamento"
             icon={VscInfo}
@@ -541,7 +354,6 @@ const NewAppointmentModal = ({
               onChange={handleStatusChange}
             />
           </Section>
-
           <Section
             title="Observações (opcional)"
             icon={VscInfo}
@@ -549,14 +361,13 @@ const NewAppointmentModal = ({
             className="bg-[#058789]"
           >
             <TextArea
-              placeholder="Informações adicionais sobre o agendamento..."
+              placeholder="Observações"
               name="notes"
               value={formData.notes}
               onChange={handleChange}
             />
           </Section>
         </div>
-
         <div className="p-6 border-t flex justify-between items-center sticky bottom-0 bg-white z-10">
           {isEditing && (
             <button
@@ -580,13 +391,12 @@ const NewAppointmentModal = ({
           <div className="flex gap-3 ml-auto">
             <button
               type="button"
-              onClick={onClose}
+              onClick={props.onClose}
               className="px-6 py-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-              disabled={isSaving || isDeleting || isAwaitingProviderId}
+              disabled={isSaving || isDeleting}
             >
               Cancelar
             </button>
-
             <button
               type="submit"
               className="px-6 py-2 rounded-lg text-white font-semibold bg-teal-600 hover:bg-teal-700 transition-colors shadow-md disabled:bg-gray-400"
