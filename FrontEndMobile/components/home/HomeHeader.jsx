@@ -13,22 +13,6 @@ export default function HomeHeader({ userName }) {
             <Text style={styles.ola}>
                 Olá, <Text style={styles.nome}>{displayNome}</Text>
             </Text>
-
-            <View style={styles.icons}>
-                <Pressable
-                    style={styles.iconCircle}
-                    onPress={() => router.push("/screens/homeScreens/BuscaScreen")}
-                >
-                    <Ionicons name="search-outline" size={23} color="#2F8B88" />
-                </Pressable>
-
-                <Pressable
-                    style={styles.iconCircle}
-                    onPress={() => router.push("/screens/homeScreens/NotificationScreen")}
-                >
-                    <Ionicons name="notifications-outline" size={23} color="#2F8B88" />
-                </Pressable>
-            </View>
         </View>
     );
 }
@@ -48,20 +32,6 @@ const styles = StyleSheet.create({
     },
     nome: {
         color: "#2F8B88",
-        fontWeight: "700"
-    },
-    icons: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10
-    },
-    iconCircle: {
-        width: 38,
-        height: 38,
-        borderRadius: 19,
-        borderWidth: 1.5,
-        borderColor: "rgba(50, 50, 50, 0.3)",
-        justifyContent: "center",
-        alignItems: "center"
+        fontWeight: "bold"
     }
 });

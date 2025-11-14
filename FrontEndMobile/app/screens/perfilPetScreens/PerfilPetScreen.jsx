@@ -126,7 +126,7 @@ export default function PerfilPetScreen() {
         return (
             <View style={styles.fullScreen}>
                 <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyTitle}>Nenhum Pet Encontrado 🐶</Text>
+                    <Text style={styles.emptyTitle}>Nenhum Pet Encontrado</Text>
                     <Text style={styles.emptyText}>Parece que você ainda não cadastrou nenhum pet.</Text>
                     <Text style={styles.emptyText}>Adicione o seu primeiro companheiro(a)!</Text>
                     <Pressable style={styles.addButton} onPress={() => router.push("/screens/addPetScreens/AddPetScreen")}>
