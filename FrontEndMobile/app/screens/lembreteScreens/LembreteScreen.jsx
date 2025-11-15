@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  RefreshControl,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -28,6 +29,7 @@ export default function LembretesScreen() {
   const [dias, setDias] = useState([]);
   const [lembretesPorDia, setLembretesPorDia] = useState({});
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(null);
   const scrollRef = useRef(null);
 
@@ -67,7 +69,7 @@ export default function LembretesScreen() {
     setDias(gerarDiasDoMes(dataAtual));
   }, [dataAtual]);
 
-  // --- Pega userId atual (para comparar author das reviews) ---
+  // --- Pega userId atual ---
   const loadCurrentUser = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -75,7 +77,7 @@ export default function LembretesScreen() {
       const res = await api.get("/users/me", { headers: { Authorization: `Bearer ${token}` } });
       setCurrentUserId(res.data?._id || res.data?.id || null);
     } catch (err) {
-      console.warn("Não foi possível obter usuário atual:", err?.response?.data || err.message);
+      console.warn("Erro ao obter usuário:", err?.response?.data || err.message);
       setCurrentUserId(null);
     }
   }, []);
@@ -84,10 +86,39 @@ export default function LembretesScreen() {
     loadCurrentUser();
   }, [loadCurrentUser]);
 
-  // --- Carregar lembretes (com checagem de review) ---
+  // ✅ Função auxiliar para definir cores
+  const getCorPorStatus = (status, isRated) => {
+    if (isRated) {
+      return "#A8E6CF"; // Verde claro - já avaliado
+    }
+    
+    switch (status) {
+      case "scheduled":
+      case "Agendado":
+        return "#2F8B88"; // Verde escuro - agendado
+        
+      case "confirmed":
+      case "Confirmado":
+        return "#87CEEB"; // Azul claro - confirmado
+        
+      case "completed":
+      case "Concluído":
+        return "#90EE90"; // Verde - concluído
+        
+      case "canceled":
+      case "Cancelado":
+        return "#FF7F50"; // Laranja - cancelado
+        
+      default:
+        return "#2F8B88"; // Padrão verde escuro
+    }
+  };
+
+  // --- Carregar lembretes ---
   const carregarLembretes = useCallback(
     async (dataReferencia) => {
       if (!userContext || !userContext.userType) {
+        console.log("Sem contexto do usuário");
         setLembretesPorDia({});
         setLoading(false);
         return;
@@ -108,7 +139,10 @@ export default function LembretesScreen() {
         else if (userContext.userType === "tutor" && userContext.tutorId) {
           url = `/appointments`;
           params = { tutorId: userContext.tutorId };
-        } else url = `/appointments`;
+        } else 
+          url = `/appointments`;
+
+        console.log("📡 Buscando lembretes de:", url, params);
 
         const response = await api.get(url, {
           params,
@@ -124,25 +158,23 @@ export default function LembretesScreen() {
           ? raw.data
           : [];
 
-        const anoAtual = dataReferencia.getFullYear();
-        const mesAtual = dataReferencia.getMonth();
+        console.log("✅ Lembretes recebidos:", data.length);
 
         const agrupado = {};
 
-        // percorre e enriquece com isRated
         await Promise.all(
           data.map(async (item) => {
             if (!item) return;
 
             const dataObj = item.dateTime ? new Date(item.dateTime) : item.date ? new Date(item.date) : null;
-            if (!dataObj || isNaN(dataObj)) return;
+            if (!dataObj || isNaN(dataObj)) {
+              console.warn("Data inválida:", item.dateTime || item.date);
+              return;
+            }
 
-            const anoItem = dataObj.getFullYear();
-            const mesItem = dataObj.getMonth();
+            // ✅ REMOVIDO: Não filtra por mês/ano
+            // Agora agrupa TUDO sem limitações
             const diaItem = dataObj.getDate().toString().padStart(2, "0");
-
-            // filtro do mês
-            if (anoItem !== anoAtual || mesItem !== mesAtual) return;
 
             const hora = dataObj.toLocaleTimeString("pt-BR", {
               hour: "2-digit",
@@ -160,41 +192,34 @@ export default function LembretesScreen() {
                 ? "canceled"
                 : item.status || "scheduled";
 
-            // checar se já existe review
             let isRated = false;
             try {
               const reviewParams = {};
-              
-              // Adiciona o ID do usuário como filtro principal
-              if (currentUserId) reviewParams.author = currentUserId;
+              if (item.service?._id) reviewParams.service = item.service._id;
+              else if (item.provider?._id) reviewParams.provider = item.provider._id;
 
-              // ⭐️ REVISÃO CRÍTICA: Para garantir que cada serviço possa ser avaliado
-              // individualmente, só verificamos a avaliação pelo Service ID.
-              if (item.service?._id) {
-                reviewParams.service = item.service._id;
-              }
-
-              // ⭐️ Busca reviews filtrando por autor E a entidade (APENAS service ID, se existir)
-              if (currentUserId && reviewParams.service) { // Agora só executa se reviewParams.service estiver setado
+              if (Object.keys(reviewParams).length > 0) {
                 const reviewRes = await api.get("/reviews", {
                   headers: { Authorization: `Bearer ${token}` },
                   params: reviewParams,
                 });
 
                 const itemsList = reviewRes.data?.items || reviewRes.data || [];
-                // itemsList pode ser array de items ou objeto com items
                 const arr = Array.isArray(itemsList) ? itemsList : reviewRes.data?.items || [];
-                
-                // Se o backend filtrou por autor e entidade, basta checar se o array não está vazio.
-                if (arr.length > 0) {
+                if (arr.length > 0 && currentUserId) {
+                  isRated = arr.some((r) => r.author?._id === currentUserId || r.author === currentUserId);
+                } else if (arr.length > 0 && !currentUserId) {
                   isRated = true;
                 }
               }
             } catch (err) {
-              // falha ao consultar reviews -> assume false
-              // console.warn("Erro ao consultar review:", err.message); // Opcional: logar para debug
               isRated = false;
             }
+
+            // ✅ CORREÇÃO: Usar função de cores
+            const cor = getCorPorStatus(statusOriginal, isRated);
+
+            console.log("🎨 Status:", statusOriginal, "Avaliado:", isRated, "Cor:", cor);
 
             if (!agrupado[diaItem]) agrupado[diaItem] = [];
             agrupado[diaItem].push({
@@ -207,16 +232,7 @@ export default function LembretesScreen() {
                   : item.pet?.nome
                   ? item.pet.nome
                   : item.provider?.name || "Agendamento",
-              cor:
-                isRated
-                  ? "#A8E6CF"
-                  : statusOriginal === "scheduled"
-                  ? "#2F8B88"
-                  : statusOriginal === "confirmed"
-                  ? "#87CEEB"
-                  : statusOriginal === "completed"
-                  ? "#90EE90"
-                  : "#FF7F50",
+              cor: cor,
               status: statusOriginal,
               isRated,
               providerId: item.provider?._id || null,
@@ -225,9 +241,10 @@ export default function LembretesScreen() {
           })
         );
 
+        console.log("📋 Lembretes agrupados:", agrupado);
         setLembretesPorDia(agrupado);
       } catch (error) {
-        console.error("Erro ao carregar lembretes:", error.response?.data || error.message);
+        console.error("❌ Erro ao carregar lembretes:", error.response?.data || error.message);
         Alert.alert(
           "Erro",
           error.response?.status === 401
@@ -251,11 +268,19 @@ export default function LembretesScreen() {
 
         setLoading(true);
 
-        await api.patch(`/appointments/${lembreteId}`, dadosAtualizados, {
+        const response = await api.patch(`/appointments/${lembreteId}`, dadosAtualizados, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        console.log("✅ Agendamento atualizado:", response.data);
+
+        // ✅ Aguarda MAIS tempo
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // ✅ Recarrega COMPLETAMENTE
         await carregarLembretes(dataAtual);
+
+        Alert.alert("Sucesso", "Lembrete atualizado!");
       } catch (error) {
         console.error("Erro ao atualizar lembrete:", error.response?.data || error.message);
         Alert.alert("Erro", "Não foi possível atualizar o lembrete.");
@@ -266,20 +291,27 @@ export default function LembretesScreen() {
     [dataAtual, carregarLembretes]
   );
 
-  // carregar quando context mudar
+  // Carregar quando context mudar
   useEffect(() => {
     if (userContext) carregarLembretes(dataAtual);
   }, [userContext, dataAtual, carregarLembretes]);
 
-  // recarregar ao voltar ao foco
+  // Recarregar ao voltar ao foco
   useFocusEffect(
     useCallback(() => {
       if (userContext) {
-        loadCurrentUser(); // atualiza userId caso tenha mudado
+        console.log("🔄 Tela ganhou foco, recarregando lembretes...");
+        loadCurrentUser();
         carregarLembretes(dataAtual);
       }
     }, [userContext, dataAtual, carregarLembretes, loadCurrentUser])
   );
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await carregarLembretes(dataAtual);
+    setRefreshing(false);
+  };
 
   const mudarMes = (direcao) => {
     const novaData = new Date(dataAtual);
@@ -294,6 +326,10 @@ export default function LembretesScreen() {
   };
 
   const lembretes = lembretesPorDia[dataSelecionada] || [];
+
+  console.log("🔍 Dia selecionado:", dataSelecionada);
+  console.log("🔍 Lembretes disponíveis:", Object.keys(lembretesPorDia));
+  console.log("🔍 Lembretes do dia:", lembretes);
 
   return (
     <View style={styles.container}>
@@ -319,10 +355,19 @@ export default function LembretesScreen() {
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
-          <View style={{ marginTop: 15 }}>
-            <LembretesList lembretes={lembretes} onAtualizar={atualizarLembrete} />
-          </View>
+          {lembretes.length > 0 ? (
+            <View style={{ marginTop: 15 }}>
+              <LembretesList lembretes={lembretes} onAtualizar={atualizarLembrete} />
+            </View>
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Nenhum lembrete para este dia</Text>
+            </View>
+          )}
         </ScrollView>
       )}
       <BottomNav />
@@ -350,5 +395,15 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingBottom: 120,
+  },
+  emptyContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#2F8B88",
+    fontWeight: "500",
   },
 });
