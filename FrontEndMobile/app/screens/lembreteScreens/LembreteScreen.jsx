@@ -142,8 +142,6 @@ export default function LembretesScreen() {
         } else 
           url = `/appointments`;
 
-        console.log("📡 Buscando lembretes de:", url, params);
-
         const response = await api.get(url, {
           params,
           headers: { Authorization: `Bearer ${token}` },
@@ -158,8 +156,6 @@ export default function LembretesScreen() {
           ? raw.data
           : [];
 
-        console.log("✅ Lembretes recebidos:", data.length);
-
         const agrupado = {};
 
         await Promise.all(
@@ -172,8 +168,6 @@ export default function LembretesScreen() {
               return;
             }
 
-            // ✅ REMOVIDO: Não filtra por mês/ano
-            // Agora agrupa TUDO sem limitações
             const diaItem = dataObj.getDate().toString().padStart(2, "0");
 
             const hora = dataObj.toLocaleTimeString("pt-BR", {
@@ -216,10 +210,7 @@ export default function LembretesScreen() {
               isRated = false;
             }
 
-            // ✅ CORREÇÃO: Usar função de cores
             const cor = getCorPorStatus(statusOriginal, isRated);
-
-            console.log("🎨 Status:", statusOriginal, "Avaliado:", isRated, "Cor:", cor);
 
             if (!agrupado[diaItem]) agrupado[diaItem] = [];
             agrupado[diaItem].push({
@@ -241,7 +232,6 @@ export default function LembretesScreen() {
           })
         );
 
-        console.log("📋 Lembretes agrupados:", agrupado);
         setLembretesPorDia(agrupado);
       } catch (error) {
         console.error("❌ Erro ao carregar lembretes:", error.response?.data || error.message);
@@ -272,8 +262,6 @@ export default function LembretesScreen() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("✅ Agendamento atualizado:", response.data);
-
         // ✅ Aguarda MAIS tempo
         await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -300,7 +288,6 @@ export default function LembretesScreen() {
   useFocusEffect(
     useCallback(() => {
       if (userContext) {
-        console.log("🔄 Tela ganhou foco, recarregando lembretes...");
         loadCurrentUser();
         carregarLembretes(dataAtual);
       }
@@ -326,10 +313,6 @@ export default function LembretesScreen() {
   };
 
   const lembretes = lembretesPorDia[dataSelecionada] || [];
-
-  console.log("🔍 Dia selecionado:", dataSelecionada);
-  console.log("🔍 Lembretes disponíveis:", Object.keys(lembretesPorDia));
-  console.log("🔍 Lembretes do dia:", lembretes);
 
   return (
     <View style={styles.container}>

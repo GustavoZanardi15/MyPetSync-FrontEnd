@@ -6,10 +6,6 @@ import { router } from "expo-router";
 export default function LembretesHeader() {
   return (
     <View style={styles.header}>
-      <Pressable onPress={() => router.back()} style={styles.backButton}>
-        <Ionicons name="arrow-back" size={24} color="#2F8B88" />
-      </Pressable>
-
       <Text style={styles.title}>Lembretes</Text>
     </View>
   );
@@ -21,12 +17,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
   },
   title: {
     fontSize: 20,
