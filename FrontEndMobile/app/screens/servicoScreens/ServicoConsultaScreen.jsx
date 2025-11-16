@@ -27,8 +27,9 @@ const COLORS = {
   white: "#FFFFFF",
 };
 
-const HOURS = Array.from({ length: 11 }, (_, i) =>
-  `${(i + 8).toString().padStart(2, "0")}:00`
+const HOURS = Array.from(
+  { length: 11 },
+  (_, i) => `${(i + 8).toString().padStart(2, "0")}:00`
 );
 
 const DAYS = Array.from({ length: 7 }, (_, i) => {
@@ -46,9 +47,9 @@ export default function ServicoConsultaScreen() {
   const vet = vetJson ? JSON.parse(vetJson) : null;
 
   const [pets, setPets] = useState([]);
-  const [selectedPet, setSelectedPet] = useState("");
-  const [selectedDay, setSelectedDay] = useState(DAYS[0].toISOString());
-  const [selectedHour, setSelectedHour] = useState(HOURS[0]);
+  const [selectedPet, setSelectedPet] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedHour, setSelectedHour] = useState(null);
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userInfo, setUserInfo] = useState({ email: "", phone: "" });
@@ -67,8 +68,6 @@ export default function ServicoConsultaScreen() {
           ? petsResp.data
           : petsResp.data.items || [];
         setPets(fetchedPets);
-        if (fetchedPets.length > 0) setSelectedPet(fetchedPets[0]._id);
-
         const userResp = await api.get("/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -79,16 +78,33 @@ export default function ServicoConsultaScreen() {
 
         setLoading(false);
       } catch (err) {
-        console.error("Erro ao carregar dados:", err.response?.data || err.message);
-        Alert.alert("Erro", "Não foi possível carregar pets ou dados do usuário.");
+        console.error(
+          "Erro ao carregar dados:",
+          err.response?.data || err.message
+        );
+        Alert.alert(
+          "Erro",
+          "Não foi possível carregar pets ou dados do usuário."
+        );
         setLoading(false);
       }
     })();
   }, []);
 
   const handleSubmit = async () => {
-    if (!selectedPet || !reason.trim() || !selectedDay || !selectedHour) {
-      Alert.alert("Atenção", "Preencha todos os campos obrigatórios.");
+    if (!selectedPet || !selectedDay || !selectedHour || !reason.trim()) {
+      Alert.alert(
+        "Atenção",
+        "Preencha todos os campos obrigatórios (incluindo o motivo da consulta)."
+      );
+      return;
+    }
+
+    if (!vet || !vet.id) {
+      Alert.alert(
+        "Erro",
+        "ID do prestador não encontrado. Tente voltar e selecionar novamente."
+      );
       return;
     }
 
@@ -102,9 +118,8 @@ export default function ServicoConsultaScreen() {
       appointmentDate.setHours(Number(hour), Number(minute), 0, 0);
 
       const payload = {
-        provider: vet ? vet.nome : "Prestador",
-        type: vet ? vet.type : "",
-        service: vet ? vet.service : "",
+        provider: vet.id,
+        service: vet.id,
         pet: selectedPet,
         dateTime: appointmentDate.toISOString(),
         duration: 60,
@@ -148,10 +163,8 @@ export default function ServicoConsultaScreen() {
       <Pressable style={styles.backButton} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={26} color={COLORS.primary} />
       </Pressable>
-
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Agendar Consulta</Text>
-
         {vet && (
           <View style={styles.vetInfo}>
             <Ionicons
@@ -165,43 +178,42 @@ export default function ServicoConsultaScreen() {
                 {vet.nome} {vet.service ? `- ${vet.service}` : ""}
               </Text>
               <Text style={styles.vetEspecialidade}>
-                {vet.type === "empresa"
-                  ? "Empresa"
-                  : vet.type === "autonomo"
-                    ? "Profissional Autônomo"
-                    : "Profissional Autônomo"}
+                {vet.type === "empresa" ? "Empresa" : "Profissional Autônomo"}
               </Text>
             </View>
           </View>
         )}
-
         <Text style={styles.label}>Selecione o pet:</Text>
         <View style={styles.pickerContainer}>
           <Picker selectedValue={selectedPet} onValueChange={setSelectedPet}>
+            <Picker.Item label="Selecione seu pet" value={null} />
             {pets.map((p) => (
               <Picker.Item key={p._id} label={p.nome} value={p._id} />
             ))}
           </Picker>
         </View>
-
         <Text style={styles.label}>Selecione o dia:</Text>
         <View style={styles.pickerContainer}>
           <Picker selectedValue={selectedDay} onValueChange={setSelectedDay}>
+            <Picker.Item label="Selecione o dia" value={null} />
             {DAYS.map((d, i) => (
-              <Picker.Item key={d.toISOString()} label={DAY_LABELS[i]} value={d.toISOString()} />
+              <Picker.Item
+                key={d.toISOString()}
+                label={DAY_LABELS[i]}
+                value={d.toISOString()}
+              />
             ))}
           </Picker>
         </View>
-
         <Text style={styles.label}>Selecione o horário:</Text>
         <View style={styles.pickerContainer}>
           <Picker selectedValue={selectedHour} onValueChange={setSelectedHour}>
+            <Picker.Item label="Selecione o horário" value={null} />
             {HOURS.map((h) => (
               <Picker.Item key={h} label={h} value={h} />
             ))}
           </Picker>
         </View>
-
         <Text style={styles.label}>Motivo da consulta:</Text>
         <TextInput
           style={styles.input}
@@ -209,11 +221,16 @@ export default function ServicoConsultaScreen() {
           value={reason}
           onChangeText={setReason}
         />
-
         <Pressable
           style={[styles.button, isSubmitting && { opacity: 0.7 }]}
           onPress={handleSubmit}
-          disabled={isSubmitting || !selectedPet || !reason.trim()}
+          disabled={
+            isSubmitting ||
+            !selectedPet ||
+            !selectedDay ||
+            !selectedHour ||
+            !reason.trim()
+          }
         >
           {isSubmitting ? (
             <ActivityIndicator color={COLORS.white} />
@@ -244,13 +261,58 @@ const styles = StyleSheet.create({
     padding: 6,
     elevation: 3,
   },
-  title: { fontSize: 24, fontWeight: "700", color: COLORS.primary, textAlign: "center", marginBottom: 30 },
-  vetInfo: { flexDirection: "row", backgroundColor: COLORS.secondary, borderRadius: 15, padding: 15, marginBottom: 25, alignItems: "center", borderWidth: 1, borderColor: COLORS.primary },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: COLORS.primary,
+    textAlign: "center",
+    marginBottom: 30,
+  },
+  vetInfo: {
+    flexDirection: "row",
+    backgroundColor: COLORS.secondary,
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 25,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+  },
   vetName: { fontSize: 18, fontWeight: "600", color: COLORS.primary },
   vetEspecialidade: { fontSize: 14, color: COLORS.text },
-  label: { fontSize: 14, fontWeight: "600", color: COLORS.text, marginBottom: 6, marginTop: 15 },
-  pickerContainer: { backgroundColor: COLORS.white, borderRadius: 12, borderWidth: 1, borderColor: "#C0C0C0", marginBottom: 15, height: 55, justifyContent: "center" },
-  input: { backgroundColor: COLORS.white, padding: 15, borderRadius: 12, fontSize: 16, marginBottom: 15, borderWidth: 1, borderColor: "#C0C0C0", color: COLORS.text, height: 55 },
-  button: { backgroundColor: COLORS.primary, borderRadius: 12, paddingVertical: 16, alignItems: "center", marginTop: 30 },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: COLORS.text,
+    marginBottom: 6,
+    marginTop: 15,
+  },
+  pickerContainer: {
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#C0C0C0",
+    marginBottom: 15,
+    height: 55,
+    justifyContent: "center",
+  },
+  input: {
+    backgroundColor: COLORS.white,
+    padding: 15,
+    borderRadius: 12,
+    fontSize: 16,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#C0C0C0",
+    color: COLORS.text,
+    height: 55,
+  },
+  button: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: "center",
+    marginTop: 30,
+  },
   buttonText: { color: COLORS.white, fontWeight: "bold", fontSize: 18 },
 });
