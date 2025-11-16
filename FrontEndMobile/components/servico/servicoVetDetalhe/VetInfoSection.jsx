@@ -5,37 +5,56 @@ import * as Linking from "expo-linking";
 
 export default function VetInfoSection({ vet }) {
 
-  const renderStars = (count) =>
-    Array.from({ length: 5 }, (_, i) => (
-      <FontAwesome
-        key={i}
-        name={i < Math.floor(count) ? "star" : i < count ? "star-half-full" : "star-o"}
-        size={14}
-        color="#FFC107"
-        style={{ marginRight: 2 }}
-      />
-    ));
+  const calcularMediaAvaliacoes = () => {
+    if (!vet.avaliacoesList || vet.avaliacoesList.length === 0) return 0;
+    
+    const soma = vet.avaliacoesList.reduce((total, avaliacao) => 
+      total + (avaliacao.rating || 0), 0
+    );
+    return soma / vet.avaliacoesList.length;
+  };
+
+  const mediaAvaliacoes = calcularMediaAvaliacoes();
+  const totalAvaliacoes = vet.avaliacoesList?.length || 0;
+
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <FontAwesome
+          key={i}
+          name={i <= rating ? "star" : "star-o"}
+          size={14}
+          color="#FFC107"
+          style={{ marginRight: 2 }}
+        />
+      );
+    }
+    return stars;
+  };
 
   return (
     <View style={styles.infoSection}>
       <View>
         <Text style={styles.vetName}>{vet.nome}</Text>
-        <Text style={styles.vetSpecialty}>{vet.especialidade}</Text>
-        <View style={styles.ratingRow}>
-          <View style={styles.stars}>{renderStars(vet.estrelas)}</View>
-          <Text style={styles.avaliacoesCount}>({vet.avaliacoes})</Text>
-        </View>
+        <Text style={styles.vetSpecialty}>{vet.service}</Text>
+        <Text style={styles.vetType}>
+          {vet.type === "empresa" ? "Empresa" : "Profissional Autônomo"}
+        </Text>
+        
+        {totalAvaliacoes > 0 ? (
+          <View style={styles.ratingRow}>
+            <View style={styles.stars}>
+              {renderStars(mediaAvaliacoes)}
+            </View>
+            <Text style={styles.avaliacoesCount}>
+              {mediaAvaliacoes.toFixed(1)} ({totalAvaliacoes})
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.noAvaliacoes}>Nenhuma avaliação ainda</Text>
+        )}
       </View>
-      <Pressable
-        style={styles.whatsappButton}
-        onPress={() =>
-          Linking.openURL(
-            `whatsapp://send?phone=5544999999999&text=Olá, gostaria de agendar uma consulta com ${vet.nome}.`
-          )
-        }
-      >
-        <Ionicons name="logo-whatsapp" size={30} color="#fff" />
-      </Pressable>
     </View>
   );
 }
@@ -55,7 +74,13 @@ const styles = StyleSheet.create({
   vetSpecialty: {
     fontSize: 16,
     color: "#4A4A4A",
-    fontWeight: "regular",
+    fontWeight: "600",
+    marginBottom: 2,
+  },
+  vetType: {
+    fontSize: 14,
+    color: "#8E8E8E",
+    marginBottom: 8,
   },
   ratingRow: {
     flexDirection: "row",
@@ -64,19 +89,16 @@ const styles = StyleSheet.create({
   },
   stars: {
     flexDirection: "row",
-    marginRight: 5,
+    marginRight: 8,
   },
   avaliacoesCount: {
     fontSize: 14,
     color: "#8E8E8E",
   },
-  whatsappButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#25D366",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
+  noAvaliacoes: {
+    fontSize: 14,
+    color: "#8E8E8E",
+    fontStyle: "italic",
+    marginTop: 4,
   },
 });

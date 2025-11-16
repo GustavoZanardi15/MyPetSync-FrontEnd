@@ -5,34 +5,61 @@ import { FontAwesome } from "@expo/vector-icons";
 export default function AvaliacaoCard({ avaliacao }) {
   const [expanded, setExpanded] = useState(false);
 
-  const renderStars = (count) =>
-    Array.from({ length: 5 }, (_, i) => (
-      <FontAwesome
-        key={i}
-        name={i < Math.floor(count) ? "star" : i < count ? "star-half-full" : "star-o"}
-        size={14}
-        color="#FFC107"
-        style={{ marginRight: 4 }}
-      />
-    ));
+  // Renderizar estrelas baseadas na avaliação
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <FontAwesome
+          key={i}
+          name={i <= rating ? "star" : "star-o"}
+          size={14}
+          color="#FFC107"
+          style={{ marginRight: 4 }}
+        />
+      );
+    }
+    return stars;
+  };
+
+  // Formatar data
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('pt-BR');
+    } catch (error) {
+      return "";
+    }
+  };
 
   const MAX_LENGTH = 60;
-  const isLong = avaliacao.comentario.length > MAX_LENGTH;
+  const comment = avaliacao.comment || avaliacao.comentario || "";
+  const isLong = comment.length > MAX_LENGTH;
   const displayText = expanded
-    ? avaliacao.comentario
+    ? comment
     : isLong
-    ? avaliacao.comentario.substring(0, MAX_LENGTH) + "..."
-    : avaliacao.comentario;
+    ? comment.substring(0, MAX_LENGTH) + "..."
+    : comment;
+
+  const authorName = avaliacao.author?.name || avaliacao.nome || "Usuário Anônimo";
+  const rating = avaliacao.rating || avaliacao.estrelas || 0;
+  const date = formatDate(avaliacao.createdAt || avaliacao.data);
 
   return (
     <View style={styles.card}>
+      {/* Cabeçalho com nome e data */}
       <View style={styles.header}>
-        <Text style={styles.nome}>{avaliacao.nome}</Text>
-        <Text style={styles.data}>{avaliacao.data}</Text>
+        <Text style={styles.nome}>{authorName}</Text>
+        <Text style={styles.data}>{date}</Text>
       </View>
 
-      <View style={styles.stars}>{renderStars(avaliacao.estrelas)}</View>
+      {/* Estrelas */}
+      <View style={styles.stars}>
+        {renderStars(rating)}
+      </View>
 
+      {/* Comentário com opção de expandir */}
       <Text style={styles.comentario}>
         {displayText}{" "}
         {isLong && (
@@ -56,11 +83,20 @@ const styles = StyleSheet.create({
     marginRight: 15,
     borderWidth: 1,
     borderColor: "#EFEFEF",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 5,
+    alignItems: "center",
+    marginBottom: 8,
   },
   nome: {
     fontWeight: "bold",
@@ -73,7 +109,7 @@ const styles = StyleSheet.create({
   },
   stars: {
     flexDirection: "row",
-    marginBottom: 8,
+    marginBottom: 10,
   },
   comentario: {
     fontSize: 13,
@@ -83,6 +119,6 @@ const styles = StyleSheet.create({
   lerMais: {
     color: "#89CFF0",
     fontSize: 13,
-    fontWeight: "regular",
+    fontWeight: "600",
   },
 });
