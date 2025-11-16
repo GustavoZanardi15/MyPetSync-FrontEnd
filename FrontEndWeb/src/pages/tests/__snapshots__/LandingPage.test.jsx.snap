@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`LandingPage corresponde ao snapshot 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="shared-header"
+  >
+    HEADER
+  </div>
+  <div
+    data-testid="hero"
+  >
+    HERO
+  </div>
+  <div
+    data-testid="about"
+  >
+    ABOUT
+  </div>
+  <div
+    data-testid="features"
+  >
+    FEATURES
+  </div>
+  <div
+    data-testid="providers"
+  >
+    PROVIDERS
+  </div>
+  <div
+    data-testid="footer"
+  >
+    FOOTER
+  </div>
+</DocumentFragment>
+`;
