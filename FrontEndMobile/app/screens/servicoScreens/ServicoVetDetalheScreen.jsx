@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,13 @@ import {
   Pressable,
   Platform,
   StatusBar,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../../../src/service/api";
 
 const COLORS = {
   primary: "#2F8B88",
@@ -21,19 +25,65 @@ const COLORS = {
 
 export default function ServicoVetDetalheScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams();
-  const vet = {
-    id: params.vetId || "69187021702e0d3b8b6a99",
-    nome: "Ana",
-    type: "autonomo",
-    service: "Pet Sitter",
-    descricao:
-      "Profissional com mais de 5 anos de experiência em cuidados com pets.",
-  };
+  const { vetId } = useLocalSearchParams();
+
+  const [vet, setVet] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadVet() {
+      if (!vetId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          Alert.alert("Sessão expirada", "Faça login novamente.");
+          router.replace("/screens/telaInicialScreens/LoginScreen");
+          return;
+        }
+
+        const response = await api.get(`/providers/${vetId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const vetData = response.data;
+
+        setVet({
+          id: vetData._id || vetId,
+          nome: vetData.name || "Prestador Desconhecido",
+          type: vetData.providerType || vetData.type || "autonomo",
+          service:
+            vetData.service ||
+            vetData.servicesOffered?.[0] ||
+            "Serviço Não Definido",
+          descricao: vetData.bio || "Nenhuma biografia disponível no momento.",
+        });
+      } catch (err) {
+        console.error(
+          "Erro ao buscar prestador:",
+          err.response?.data || err.message
+        );
+        Alert.alert(
+          "Erro",
+          "Não foi possível carregar os detalhes do prestador."
+        );
+        setVet(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadVet();
+  }, [vetId]);
 
   const navigateToConsulta = () => {
     if (!vet || !vet.id) {
-      alert("Erro: ID do prestador não disponível.");
+      Alert.alert(
+        "Erro",
+        "Detalhes do prestador indisponíveis para agendamento."
+      );
       return;
     }
 
@@ -49,6 +99,37 @@ export default function ServicoVetDetalheScreen() {
       },
     });
   };
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.outerContainer,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+  if (!vet) {
+    return (
+      <View
+        style={[
+          styles.outerContainer,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <Text style={{ color: COLORS.text, fontSize: 18 }}>
+          Prestador não encontrado.
+        </Text>
+        <Pressable style={{ marginTop: 20 }} onPress={() => router.back()}>
+          <Text style={{ color: COLORS.primary, fontSize: 16 }}>Voltar</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.outerContainer}>
       <Pressable style={styles.backButton} onPress={() => router.back()}>

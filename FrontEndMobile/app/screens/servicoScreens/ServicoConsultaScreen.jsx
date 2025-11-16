@@ -41,6 +41,17 @@ const DAY_LABELS = DAYS.map((d) =>
   moment(d).locale("pt-br").format("ddd, DD/MM")
 );
 
+export const SERVICOS_POR_TIPO_PRESTADOR = {
+  "Pet Sitter": ["Cuidados Domiciliares", "Passeio"],
+  "Pet Sistter": ["Cuidados Domiciliares", "Passeio"],
+  "Veterinário Autônomo": ["Consulta", "Vacinação", "Exames"],
+  Adestrador: ["Adestramento Básico", "Adestramento Avançado"],
+  "Clínica Veterinária": ["Consulta", "Vacinação", "Cirurgia", "Exames"],
+  "Pet Shop": ["Banho", "Tosa", "Banho e Tosa"],
+  "Hotel para Pets": ["Hospedagem", "Diária"],
+  "Banho e Tosa": ["Banho", "Tosa", "Banho e Tosa"],
+};
+
 export default function ServicoConsultaScreen() {
   const router = useRouter();
   const { vet: vetJson } = useLocalSearchParams();
@@ -50,7 +61,7 @@ export default function ServicoConsultaScreen() {
   const [selectedPet, setSelectedPet] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
-  const [reason, setReason] = useState("");
+  const [selectedService, setSelectedService] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userInfo, setUserInfo] = useState({ email: "", phone: "" });
   const [loading, setLoading] = useState(true);
@@ -90,13 +101,27 @@ export default function ServicoConsultaScreen() {
       }
     })();
   }, []);
+  const servicosDisponiveis = (() => {
+    if (!vet || !vet.service) return [];
+    const serviceKeyReceivedNormalized = vet.service
+      .trim()
+      .toLowerCase()
+      .replace(/\s/g, "");
+
+    const foundKey = Object.keys(SERVICOS_POR_TIPO_PRESTADOR).find((key) => {
+      const mappedKeyNormalized = key.trim().toLowerCase().replace(/\s/g, "");
+      return mappedKeyNormalized === serviceKeyReceivedNormalized;
+    });
+
+    if (foundKey) {
+      return SERVICOS_POR_TIPO_PRESTADOR[foundKey];
+    }
+    return [];
+  })();
 
   const handleSubmit = async () => {
-    if (!selectedPet || !selectedDay || !selectedHour || !reason.trim()) {
-      Alert.alert(
-        "Atenção",
-        "Preencha todos os campos obrigatórios (incluindo o motivo da consulta)."
-      );
+    if (!selectedPet || !selectedDay || !selectedHour || !selectedService) {
+      Alert.alert("Atenção", "Preencha todos os campos obrigatórios.");
       return;
     }
 
@@ -123,7 +148,7 @@ export default function ServicoConsultaScreen() {
         pet: selectedPet,
         dateTime: appointmentDate.toISOString(),
         duration: 60,
-        reason,
+        reason: selectedService,
         email: userInfo.email,
         phone: userInfo.phone,
         status: "scheduled",
@@ -215,12 +240,17 @@ export default function ServicoConsultaScreen() {
           </Picker>
         </View>
         <Text style={styles.label}>Motivo da consulta:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ex: Banho, Vacina, Check-up"
-          value={reason}
-          onChangeText={setReason}
-        />
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedService}
+            onValueChange={setSelectedService}
+          >
+            <Picker.Item label="Selecione o serviço" value={null} />
+            {servicosDisponiveis.map((service) => (
+              <Picker.Item key={service} label={service} value={service} />
+            ))}
+          </Picker>
+        </View>
         <Pressable
           style={[styles.button, isSubmitting && { opacity: 0.7 }]}
           onPress={handleSubmit}
@@ -229,7 +259,7 @@ export default function ServicoConsultaScreen() {
             !selectedPet ||
             !selectedDay ||
             !selectedHour ||
-            !reason.trim()
+            !selectedService
           }
         >
           {isSubmitting ? (
