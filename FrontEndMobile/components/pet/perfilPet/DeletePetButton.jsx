@@ -76,7 +76,7 @@ export default function DeletePetButton({ pet, onPetDeleted }) {
 
 const styles = StyleSheet.create({
     deleteButton: {
-        backgroundColor: "#E57373",
+        backgroundColor: "#FF3B30",
         borderRadius: 30,
         paddingVertical: 12,
         width: 250,

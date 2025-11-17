@@ -9,12 +9,11 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
-  TextInput,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import "moment/locale/pt-br";
 import api from "../../../src/service/api";
@@ -62,9 +61,9 @@ export default function ServicoConsultaScreen() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [userInfo, setUserInfo] = useState({ email: "", phone: "" });
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -75,13 +74,17 @@ export default function ServicoConsultaScreen() {
         const petsResp = await api.get("/pets", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const fetchedPets = Array.isArray(petsResp.data)
           ? petsResp.data
           : petsResp.data.items || [];
+
         setPets(fetchedPets);
+
         const userResp = await api.get("/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setUserInfo({
           email: userResp.data.email || "",
           phone: userResp.data.telefone || userResp.data.phone || "",
@@ -89,33 +92,22 @@ export default function ServicoConsultaScreen() {
 
         setLoading(false);
       } catch (err) {
-        console.error(
-          "Erro ao carregar dados:",
-          err.response?.data || err.message
-        );
-        Alert.alert(
-          "Erro",
-          "Não foi possível carregar pets ou dados do usuário."
-        );
+        console.log("Erro ao carregar dados:", err.response?.data || err.message);
+        Alert.alert("Erro", "Não foi possível carregar os dados.");
         setLoading(false);
       }
     })();
   }, []);
+
   const servicosDisponiveis = (() => {
     if (!vet || !vet.service) return [];
-    const serviceKeyReceivedNormalized = vet.service
-      .trim()
-      .toLowerCase()
-      .replace(/\s/g, "");
+    const normalizedReceived = vet.service.trim().toLowerCase().replace(/\s/g, "");
 
-    const foundKey = Object.keys(SERVICOS_POR_TIPO_PRESTADOR).find((key) => {
-      const mappedKeyNormalized = key.trim().toLowerCase().replace(/\s/g, "");
-      return mappedKeyNormalized === serviceKeyReceivedNormalized;
+    const keyFound = Object.keys(SERVICOS_POR_TIPO_PRESTADOR).find((key) => {
+      return key.trim().toLowerCase().replace(/\s/g, "") === normalizedReceived;
     });
 
-    if (foundKey) {
-      return SERVICOS_POR_TIPO_PRESTADOR[foundKey];
-    }
+    if (keyFound) return SERVICOS_POR_TIPO_PRESTADOR[keyFound];
     return [];
   })();
 
@@ -154,13 +146,13 @@ export default function ServicoConsultaScreen() {
         status: "scheduled",
       };
 
-      const response = await api.post("/appointments", payload, {
+      await api.post("/appointments", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      Alert.alert("Sucesso", "Consulta agendada com sucesso!", [
-        { text: "OK", onPress: () => router.back() },
-      ]);
+      console.log("✅ Agendamento criado, navegando para Lembretes...");
+      router.replace("/screens/lembreteScreens/LembreteScreen");
+
     } catch (err) {
       console.error("Erro ao agendar:", err.response?.data || err.message);
       const apiMessage = err.response?.data?.message;
@@ -175,29 +167,18 @@ export default function ServicoConsultaScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.outerContainer}>
       <Pressable style={styles.backButton} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={26} color={COLORS.primary} />
       </Pressable>
+
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Agendar Consulta</Text>
+
         {vet && (
           <View style={styles.vetInfo}>
-            <Ionicons
-              name="medkit-outline"
-              size={24}
-              color={COLORS.primary}
-              style={{ marginRight: 10 }}
-            />
+            <FontAwesome5 name="stethoscope" size={24} color={COLORS.primary} style={{ marginRight: 10 }} />
             <View>
               <Text style={styles.vetName}>
                 {vet.nome} {vet.service ? `- ${vet.service}` : ""}
@@ -208,6 +189,7 @@ export default function ServicoConsultaScreen() {
             </View>
           </View>
         )}
+
         <Text style={styles.label}>Selecione o pet:</Text>
         <View style={styles.pickerContainer}>
           <Picker selectedValue={selectedPet} onValueChange={setSelectedPet}>
@@ -217,19 +199,17 @@ export default function ServicoConsultaScreen() {
             ))}
           </Picker>
         </View>
+
         <Text style={styles.label}>Selecione o dia:</Text>
         <View style={styles.pickerContainer}>
           <Picker selectedValue={selectedDay} onValueChange={setSelectedDay}>
             <Picker.Item label="Selecione o dia" value={null} />
             {DAYS.map((d, i) => (
-              <Picker.Item
-                key={d.toISOString()}
-                label={DAY_LABELS[i]}
-                value={d.toISOString()}
-              />
+              <Picker.Item key={d.toISOString()} label={DAY_LABELS[i]} value={d.toISOString()} />
             ))}
           </Picker>
         </View>
+
         <Text style={styles.label}>Selecione o horário:</Text>
         <View style={styles.pickerContainer}>
           <Picker selectedValue={selectedHour} onValueChange={setSelectedHour}>
@@ -239,28 +219,21 @@ export default function ServicoConsultaScreen() {
             ))}
           </Picker>
         </View>
+
         <Text style={styles.label}>Motivo da consulta:</Text>
         <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={selectedService}
-            onValueChange={setSelectedService}
-          >
+          <Picker selectedValue={selectedService} onValueChange={setSelectedService}>
             <Picker.Item label="Selecione o serviço" value={null} />
             {servicosDisponiveis.map((service) => (
               <Picker.Item key={service} label={service} value={service} />
             ))}
           </Picker>
         </View>
+
         <Pressable
           style={[styles.button, isSubmitting && { opacity: 0.7 }]}
           onPress={handleSubmit}
-          disabled={
-            isSubmitting ||
-            !selectedPet ||
-            !selectedDay ||
-            !selectedHour ||
-            !selectedService
-          }
+          disabled={!selectedPet || !selectedDay || !selectedHour || !selectedService || isSubmitting}
         >
           {isSubmitting ? (
             <ActivityIndicator color={COLORS.white} />
@@ -289,7 +262,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 50,
     padding: 6,
-    elevation: 3,
+    elevation: 5,
   },
   title: {
     fontSize: 24,
@@ -308,7 +281,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.primary,
   },
-  vetName: { fontSize: 18, fontWeight: "600", color: COLORS.primary },
+  vetName: { fontSize: 18, fontWeight: "bold", color: COLORS.primary },
   vetEspecialidade: { fontSize: 14, color: COLORS.text },
   label: {
     fontSize: 14,
@@ -318,25 +291,16 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   pickerContainer: {
-    backgroundColor: COLORS.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#C0C0C0",
-    marginBottom: 15,
-    height: 55,
-    justifyContent: "center",
-  },
-  input: {
-    backgroundColor: COLORS.white,
-    padding: 15,
-    borderRadius: 12,
-    fontSize: 16,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#C0C0C0",
-    color: COLORS.text,
-    height: 55,
-  },
+  backgroundColor: COLORS.white,
+  borderRadius: 14,
+  borderWidth: 1,
+  borderColor: "#B6D8D7",
+  marginBottom: 15,
+  height: 60,
+  justifyContent: "center",
+  paddingHorizontal: 12,
+},
+
   button: {
     backgroundColor: COLORS.primary,
     borderRadius: 12,
