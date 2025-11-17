@@ -34,6 +34,7 @@ export default function ServicoVetDetalheScreen() {
     precoConsulta: 0,
     type: "",
     service: "",
+    endereco: "Endereço não disponível"
   });
   const [loading, setLoading] = useState(true);
 
@@ -126,6 +127,27 @@ export default function ServicoVetDetalheScreen() {
           console.log("Erro ao buscar avaliações:", err.response?.data || err.message);
         }
 
+        // 4. ✅ FORMATAR ENDEREÇO
+        const formatarEndereco = () => {
+          const { street, number, city, state } = vetData;
+          
+          if (!street && !city && !state) {
+            return "Endereço não disponível";
+          }
+          
+          const partes = [];
+          if (street) partes.push(street);
+          if (number) partes.push(number);
+          if (city || state) {
+            const cidadeEstado = [city, state].filter(Boolean).join(" - ");
+            partes.push(cidadeEstado);
+          }
+          
+          return partes.join(", ");
+        };
+
+        const enderecoFormatado = formatarEndereco();
+
         setVet({
           id: vetData._id || vetId,
           nome: vetData.name || "Veterinário",
@@ -139,13 +161,20 @@ export default function ServicoVetDetalheScreen() {
               : 0,
           type: vetData.providerType || vetData.type || "autonomo",
           service: vetData.service || vetData.servicesOffered?.[0] || "Serviço Não Definido",
+          endereco: enderecoFormatado,
+          // ✅ Mantendo os dados individuais do endereço para uso futuro
+          enderecoCompleto: {
+            street: vetData.street,
+            number: vetData.number,
+            city: vetData.city,
+            state: vetData.state
+          }
         });
 
         console.log("📊 Dados carregados:");
         console.log("   Nome do vet:", vetData.name);
+        console.log("   Endereço:", enderecoFormatado);
         console.log("   Avaliações encontradas:", avaliacoes.length);
-        console.log("   Primeira avaliação:", avaliacoes[0]);
-        console.log("   Autor da primeira avaliação:", avaliacoes[0]?.author);
 
       } catch (err) {
         console.error(
@@ -200,6 +229,15 @@ export default function ServicoVetDetalheScreen() {
         <View style={styles.contentCard}>
           <VetInfoSection vet={vet} />
           <Text style={styles.vetBio}>{vet.bio}</Text>
+          
+          {/* ✅ SEÇÃO DE ENDEREÇO SIMPLES */}
+          <View style={styles.enderecoSection}>
+            <Text style={styles.enderecoText}>
+              <Text style={styles.enderecoLabel}>Endereço: </Text>
+              {vet.endereco}
+            </Text>
+          </View>
+
           <VetAvaliacoesSection avaliacoes={vet.avaliacoesList} />
           <Pressable
             style={styles.mainButton}
@@ -212,6 +250,7 @@ export default function ServicoVetDetalheScreen() {
                     nome: vet.nome,
                     type: vet.type,
                     service: vet.service,
+                    endereco: vet.endereco
                   }),
                 },
               })
@@ -245,8 +284,7 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 10,
     padding: 5,
-    borderRadius: 50,
-    backgroundColor: "#FFF"
+    borderRadius: 50
   },
   scroll: { 
     paddingBottom: 100 
@@ -274,7 +312,19 @@ const styles = StyleSheet.create({
     fontSize: 14, 
     color: "#8E8E8E", 
     lineHeight: 18, 
-    marginBottom: 30 
+    marginBottom: 15
+  },
+  enderecoSection: {
+    marginBottom: 25,
+  },
+  enderecoText: {
+    fontSize: 14,
+    color: "#333333",
+    lineHeight: 18,
+  },
+  enderecoLabel: {
+    fontWeight: "600",
+    color: "#2F8B88",
   },
   mainButton: {
     backgroundColor: "#2F8B88",

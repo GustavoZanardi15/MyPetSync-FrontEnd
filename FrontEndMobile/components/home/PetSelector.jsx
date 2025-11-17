@@ -32,8 +32,9 @@ export default function PetSelector({ pets, selectedPet, setSelectedPet }) {
 
 const styles = StyleSheet.create({
   sectionPet: {
-    fontSize: 13,
-    color: "#323232",
+    fontSize: 20,
+    color: "#2F8B88",
+    fontSize: "600",
     lineHeight: 18,
     right: -25
   },
