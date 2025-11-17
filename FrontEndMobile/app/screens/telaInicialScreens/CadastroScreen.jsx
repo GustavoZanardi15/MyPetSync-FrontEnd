@@ -14,17 +14,42 @@ export default function CadastroScreens() {
   const [email, setEmail] = useState("");
   const [celular, setCelular] = useState("");
   const [senha, setSenha] = useState("");
-
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleRegister = async () => {
     setLoading(true);
+    setErrorMessage("");
 
     if (!nome || !email || !celular || !senha) {
-      Alert.alert("Erro", "Preencha todos os campos.");
+      setErrorMessage("Preencha todos os campos."); 
       setLoading(false);
       return;
     }
+    
+    if (!isValidEmail(email) && senha.length < 6) {
+      setErrorMessage("Insira um e-mail válido.\nA senha deve conter no mínimo 6 caracteres.");
+      setLoading(false);
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setErrorMessage("Insira um e-mail válido.");
+      setLoading(false);
+      return;
+    }
+
+    if (senha.length < 6) {
+      setErrorMessage("A senha deve conter no mínimo 6 caracteres.");
+      setLoading(false);
+      return;
+    }
+
 
     try {
       const response = await api.post("/auth/signup", {
@@ -48,11 +73,7 @@ export default function CadastroScreens() {
         "Erro ao tentar cadastrar. Verifique a conexão ou tente um e-mail diferente.";
       console.error("Erro de Cadastro:", errorMessage);
 
-      const displayMessage = Array.isArray(errorMessage)
-        ? errorMessage.join("\n")
-        : errorMessage;
-
-      Alert.alert("Erro no Cadastro", displayMessage);
+      setErrorMessage(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -83,7 +104,6 @@ export default function CadastroScreens() {
         </Pressable>
       </View>
 
-      {/* Conteúdo */}
       <View style={styles.contentContainer}>
         <View style={styles.formWrapper}>
           <CadastroHeader />
@@ -99,6 +119,10 @@ export default function CadastroScreens() {
           senha={senha}
           setSenha={setSenha}
         />
+
+        {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
 
         <BottomActions
           onRegister={handleRegister}
@@ -135,7 +159,7 @@ const styles = StyleSheet.create({
     lineHeight: 27,
   },
   activeTab: {
-    color: "#00695c",
+    color: "#2F8B88",
     borderBottomWidth: 2,
     borderBottomColor: "#89CFF0",
     lineHeight: 27,
@@ -152,5 +176,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+  },
+  errorText: {
+    color: "#D32F2F",
+    fontSize: 14,
+    textAlign: "center",
+    fontWeight: "500",
   },
 });

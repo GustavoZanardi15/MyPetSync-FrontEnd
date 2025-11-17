@@ -151,7 +151,6 @@ export default function EditarPetScreen() {
                     <EditInfo label="Nome:" initialValue={petData.name} onValueChange={(v) => handleFieldChange("name", v)} />
                     <EditInfo label="Raça:" initialValue={petData.race} onValueChange={(v) => handleFieldChange("race", v)} />
                     <EditInfo label="Idade:" initialValue={petData.age} onValueChange={(v) => handleFieldChange("age", v)} keyboardType="numeric" />
-                    <EditInfo label="Peso atual:" initialValue={petData.weight} onValueChange={(v) => handleFieldChange("weight", v)} keyboardType="numeric" />
                     <EditInfo label="Castrado:" initialValue={petData.neutered} onValueChange={(v) => handleFieldChange("neutered", v)} />
                     <EditInfo label="Condição especial:" initialValue={petData.specialCondition} onValueChange={(v) => handleFieldChange("specialCondition", v)} />
                 </View>
