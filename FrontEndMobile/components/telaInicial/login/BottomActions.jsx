@@ -1,25 +1,11 @@
 import React from "react";
-import { View, Text, Pressable, Image, StyleSheet, ActivityIndicator } from "react-native"; // 👈 Adicionado ActivityIndicator
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 
 export default function BottomActions({ onRegister, isLoading }) {
     return (
         <View style={styles.bottomButtonsContainer}>
             <View style={styles.horizontalBottomRow}>
-
-                <View style={styles.socialIconsGroup}>
-                    <Pressable style={styles.socialButton}>
-                        <Ionicons name="logo-apple" size={33.6} color={"#2F8B88"} />
-                    </Pressable>
-
-                    <Pressable style={styles.socialButton}>
-                        <Image
-                            source={require("../../../assets/images/telaInicial/IconGoogle.png")}
-                            style={styles.logoGoogle}
-                        />
-                    </Pressable>
-                </View>
 
                 <Pressable
                     style={[styles.button, isLoading && styles.buttonDisabled]}
@@ -36,7 +22,7 @@ export default function BottomActions({ onRegister, isLoading }) {
             </View>
 
             <Pressable
-                onPress={() => { router.push("/screens/telaInicialScreens/CadastroScreen") }} // 👈 Link para Cadastro
+                onPress={() => { router.push("/screens/telaInicialScreens/CadastroScreen") }}
                 style={styles.loginLinkContainer}
             >
                 <Text style={styles.loginText}>
@@ -57,32 +43,10 @@ const styles = StyleSheet.create({
     },
     horizontalBottomRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
         alignSelf: 'center',
-    },
-    socialIconsGroup: {
-        flexDirection: 'row',
-        gap: 16,
-    },
-    socialButton: {
-        backgroundColor: "#E8F6F6",
-        padding: 10,
-        width: 56,
-        height: 56,
-        borderRadius: 50,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 3,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    logoGoogle: {
-        width: 33.6,
-        height: 33.6,
     },
     button: {
         backgroundColor: "#2F8B88",
@@ -91,7 +55,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         padding: 10,
         alignItems: "center",
-        width: 183,
+        alignSelf: "center",
+        width: 250,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.07,

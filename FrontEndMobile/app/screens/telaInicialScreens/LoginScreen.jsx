@@ -23,13 +23,15 @@ export default function LoginScreen() {
   const [senha, setSenha] = useState("");
   const [aba, setAba] = useState("entrar");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleLogin = async () => {
     setLoading(true);
+    setErrorMessage("");
 
     if (!email || !senha) {
-      Alert.alert("Erro", "Por favor, preencha o E-mail e a Senha.");
+      setErrorMessage("Por favor, preencha o E-mail e a Senha.");
       setLoading(false);
       return;
     }
@@ -67,14 +69,8 @@ export default function LoginScreen() {
       Alert.alert("Sucesso", "Login realizado com sucesso!");
       router.replace("/screens/homeScreens/HomeScreen");
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message ||
-        "Erro ao tentar entrar. Credenciais inválidas ou sem conexão.";
-      console.error("Erro de Login:", errorMessage);
-      Alert.alert(
-        "Erro no Login",
-        Array.isArray(errorMessage) ? errorMessage.join("\n") : errorMessage
-      );
+      setErrorMessage("E-mail ou senha incorretos.");
+      console.error("Erro de Login:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -110,6 +106,11 @@ export default function LoginScreen() {
 
       <View style={styles.contentContainer}>
         <LoginHeader />
+        
+        {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
+        
         <LoginForm
           email={email}
           setEmail={setEmail}
@@ -164,5 +165,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 257,
     paddingBottom: 20,
+  },
+  errorText: {
+    marginBottom: 10,
+    color: "#D32F2F",
+    fontSize: 14,
+    textAlign: "center",
+    fontWeight: "500",
   },
 });

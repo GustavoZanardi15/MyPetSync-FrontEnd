@@ -200,7 +200,6 @@ export default function ServicoVetDetalheScreen() {
         <View style={styles.contentCard}>
           <VetInfoSection vet={vet} />
           <Text style={styles.vetBio}>{vet.bio}</Text>
-          <VetStats vet={vet} />
           <VetAvaliacoesSection avaliacoes={vet.avaliacoesList} />
           <Pressable
             style={styles.mainButton}
