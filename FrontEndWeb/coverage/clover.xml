@@ -1,0 +1,1284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1763344708669" clover="3.2.0">
+  <project timestamp="1763344708669" name="All files">
+    <metrics statements="1089" coveredstatements="784" conditionals="743" coveredconditionals="433" methods="230" coveredmethods="148" elements="2062" coveredelements="1365" complexity="0" loc="1089" ncloc="1089" packages="12" files="51" classes="51"/>
+    <package name="components.agenda">
+      <metrics statements="244" coveredstatements="191" conditionals="204" coveredconditionals="109" methods="64" coveredmethods="49"/>
+      <file name="AgendaCalendar.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\agenda\AgendaCalendar.jsx">
+        <metrics statements="54" coveredstatements="52" conditionals="24" coveredconditionals="15" methods="15" coveredmethods="13"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="27" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="28" count="11" type="stmt"/>
+        <line num="29" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="30" count="11" type="stmt"/>
+        <line num="32" count="11" type="stmt"/>
+        <line num="33" count="77" type="stmt"/>
+        <line num="34" count="77" type="stmt"/>
+        <line num="36" count="77" type="stmt"/>
+        <line num="37" count="14" type="cond" truecount="1" falsecount="1"/>
+        <line num="38" count="14" type="stmt"/>
+        <line num="39" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="77" type="stmt"/>
+        <line num="51" count="11" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="59" count="11" type="stmt"/>
+        <line num="60" count="11" type="stmt"/>
+        <line num="63" count="11" type="stmt"/>
+        <line num="65" count="11" type="stmt"/>
+        <line num="66" count="11" type="stmt"/>
+        <line num="70" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="72" count="11" type="stmt"/>
+        <line num="73" count="11" type="stmt"/>
+        <line num="77" count="11" type="stmt"/>
+        <line num="80" count="11" type="stmt"/>
+        <line num="81" count="2" type="stmt"/>
+        <line num="82" count="2" type="stmt"/>
+        <line num="85" count="11" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="90" count="11" type="stmt"/>
+        <line num="91" count="1" type="stmt"/>
+        <line num="94" count="11" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="99" count="11" type="stmt"/>
+        <line num="133" count="77" type="stmt"/>
+        <line num="134" count="77" type="stmt"/>
+        <line num="136" count="77" type="stmt"/>
+        <line num="137" count="77" type="cond" truecount="2" falsecount="0"/>
+        <line num="138" count="9" type="stmt"/>
+        <line num="141" count="77" type="cond" truecount="2" falsecount="0"/>
+        <line num="142" count="11" type="stmt"/>
+        <line num="144" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="145" count="7" type="stmt"/>
+        <line num="150" count="77" type="stmt"/>
+        <line num="153" count="0" type="stmt"/>
+        <line num="163" count="2" type="stmt"/>
+        <line num="164" count="2" type="stmt"/>
+        <line num="165" count="2" type="stmt"/>
+        <line num="166" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="169" count="2" type="cond" truecount="1" falsecount="2"/>
+        <line num="170" count="2" type="stmt"/>
+      </file>
+      <file name="DailySchedule.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\agenda\DailySchedule.jsx">
+        <metrics statements="25" coveredstatements="24" conditionals="29" coveredconditionals="17" methods="10" coveredmethods="7"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="11" type="stmt"/>
+        <line num="7" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="23" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="24" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="26" count="6" type="stmt"/>
+        <line num="30" count="6" type="stmt"/>
+        <line num="31" count="10" type="stmt"/>
+        <line num="32" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="33" count="10" type="stmt"/>
+        <line num="34" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="37" count="10" type="stmt"/>
+        <line num="46" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="47" count="10" type="stmt"/>
+        <line num="48" count="10" type="stmt"/>
+        <line num="51" count="66" type="cond" truecount="2" falsecount="0"/>
+        <line num="53" count="6" type="stmt"/>
+        <line num="64" count="66" type="stmt"/>
+        <line num="66" count="66" type="stmt"/>
+        <line num="78" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="83" count="10" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="112" count="1" type="stmt"/>
+      </file>
+      <file name="DailySummary.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\agenda\DailySummary.jsx">
+        <metrics statements="11" coveredstatements="11" conditionals="3" coveredconditionals="3" methods="5" coveredmethods="5"/>
+        <line num="5" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="13" count="6" type="stmt"/>
+        <line num="14" count="6" type="stmt"/>
+        <line num="17" count="6" type="stmt"/>
+        <line num="18" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="6" type="stmt"/>
+        <line num="24" count="6" type="stmt"/>
+      </file>
+      <file name="NewAppointmentModal.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\agenda\NewAppointmentModal.jsx">
+        <metrics statements="21" coveredstatements="17" conditionals="48" coveredconditionals="24" methods="13" coveredmethods="9"/>
+        <line num="14" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="15" count="5" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="76" count="3" type="stmt"/>
+        <line num="91" count="16" type="stmt"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="100" count="1" type="stmt"/>
+        <line num="106" count="3" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="125" count="1" type="stmt"/>
+        <line num="146" count="1" type="stmt"/>
+        <line num="148" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="150" count="1" type="stmt"/>
+        <line num="158" count="1" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="223" count="0" type="stmt"/>
+        <line num="226" count="0" type="stmt"/>
+      </file>
+      <file name="TimeSlotButton.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\agenda\TimeSlotButton.jsx">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+      </file>
+      <file name="appointmentConstants.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\agenda\appointmentConstants.jsx">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+      </file>
+      <file name="useAppointmentForm.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\agenda\useAppointmentForm.jsx">
+        <metrics statements="126" coveredstatements="80" conditionals="100" coveredconditionals="50" methods="19" coveredmethods="13"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="21" count="21" type="cond" truecount="2" falsecount="2"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="47" count="21" type="stmt"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="71" count="18" type="stmt"/>
+        <line num="72" count="18" type="stmt"/>
+        <line num="74" count="18" type="stmt"/>
+        <line num="75" count="18" type="stmt"/>
+        <line num="76" count="18" type="stmt"/>
+        <line num="77" count="18" type="stmt"/>
+        <line num="78" count="18" type="stmt"/>
+        <line num="79" count="18" type="stmt"/>
+        <line num="80" count="18" type="stmt"/>
+        <line num="83" count="18" type="stmt"/>
+        <line num="84" count="18" type="stmt"/>
+        <line num="85" count="18" type="stmt"/>
+        <line num="87" count="18" type="stmt"/>
+        <line num="88" count="3" type="stmt"/>
+        <line num="91" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="92" count="3" type="stmt"/>
+        <line num="93" count="3" type="stmt"/>
+        <line num="96" count="18" type="stmt"/>
+        <line num="97" count="5" type="stmt"/>
+        <line num="98" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="113" count="5" type="stmt"/>
+        <line num="116" count="18" type="stmt"/>
+        <line num="117" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="121" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="122" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="123" count="0" type="cond" truecount="0" falsecount="5"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="125" count="0" type="stmt"/>
+        <line num="128" count="3" type="stmt"/>
+        <line num="129" count="3" type="stmt"/>
+        <line num="130" count="3" type="stmt"/>
+        <line num="131" count="3" type="stmt"/>
+        <line num="132" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="135" count="3" type="stmt"/>
+        <line num="136" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="138" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="139" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="147" count="3" type="stmt"/>
+        <line num="151" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="152" count="3" type="stmt"/>
+        <line num="156" count="18" type="stmt"/>
+        <line num="157" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="158" count="7" type="stmt"/>
+        <line num="160" count="7" type="stmt"/>
+        <line num="161" count="7" type="cond" truecount="3" falsecount="1"/>
+        <line num="162" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="163" count="0" type="stmt"/>
+        <line num="168" count="18" type="stmt"/>
+        <line num="169" count="2" type="stmt"/>
+        <line num="170" count="2" type="stmt"/>
+        <line num="171" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="174" count="18" type="stmt"/>
+        <line num="175" count="1" type="stmt"/>
+        <line num="176" count="1" type="stmt"/>
+        <line num="181" count="1" type="stmt"/>
+        <line num="184" count="18" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="188" count="18" type="stmt"/>
+        <line num="189" count="2" type="stmt"/>
+        <line num="190" count="2" type="stmt"/>
+        <line num="191" count="2" type="stmt"/>
+        <line num="193" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="194" count="1" type="stmt"/>
+        <line num="195" count="1" type="stmt"/>
+        <line num="196" count="1" type="stmt"/>
+        <line num="200" count="1" type="cond" truecount="3" falsecount="0"/>
+        <line num="201" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="202" count="0" type="stmt"/>
+        <line num="203" count="0" type="stmt"/>
+        <line num="204" count="0" type="stmt"/>
+        <line num="207" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="208" count="0" type="stmt"/>
+        <line num="209" count="0" type="stmt"/>
+        <line num="210" count="0" type="stmt"/>
+        <line num="213" count="1" type="stmt"/>
+        <line num="224" count="1" type="stmt"/>
+        <line num="225" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="226" count="0" type="stmt"/>
+        <line num="228" count="1" type="stmt"/>
+        <line num="229" count="1" type="stmt"/>
+        <line num="231" count="1" type="stmt"/>
+        <line num="232" count="1" type="stmt"/>
+        <line num="234" count="0" type="stmt"/>
+        <line num="235" count="0" type="stmt"/>
+        <line num="237" count="1" type="stmt"/>
+        <line num="241" count="18" type="stmt"/>
+        <line num="242" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="244" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="249" count="0" type="stmt"/>
+        <line num="252" count="0" type="stmt"/>
+        <line num="253" count="0" type="stmt"/>
+        <line num="254" count="0" type="stmt"/>
+        <line num="255" count="0" type="stmt"/>
+        <line num="256" count="0" type="stmt"/>
+        <line num="257" count="0" type="stmt"/>
+        <line num="259" count="0" type="stmt"/>
+        <line num="260" count="0" type="stmt"/>
+        <line num="262" count="0" type="stmt"/>
+        <line num="266" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="267" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="269" count="18" type="cond" truecount="2" falsecount="1"/>
+        <line num="271" count="18" type="cond" truecount="3" falsecount="0"/>
+        <line num="274" count="18" type="cond" truecount="6" falsecount="0"/>
+        <line num="279" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="281" count="18" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.auth">
+      <metrics statements="180" coveredstatements="180" conditionals="75" coveredconditionals="60" methods="30" coveredmethods="30"/>
+      <file name="AuthSidebar.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\auth\AuthSidebar.jsx">
+        <metrics statements="3" coveredstatements="3" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="9" count="23" type="stmt"/>
+      </file>
+      <file name="ForgotPassword.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\auth\ForgotPassword.jsx">
+        <metrics statements="26" coveredstatements="26" conditionals="12" coveredconditionals="9" methods="4" coveredmethods="4"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="11" count="16" type="stmt"/>
+        <line num="12" count="16" type="stmt"/>
+        <line num="13" count="16" type="stmt"/>
+        <line num="14" count="16" type="stmt"/>
+        <line num="15" count="16" type="stmt"/>
+        <line num="16" count="16" type="stmt"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="18" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="19" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="21" count="16" type="stmt"/>
+        <line num="22" count="3" type="stmt"/>
+        <line num="23" count="3" type="stmt"/>
+        <line num="24" count="3" type="stmt"/>
+        <line num="25" count="3" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="42" count="3" type="stmt"/>
+        <line num="46" count="16" type="stmt"/>
+      </file>
+      <file name="Login.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\auth\Login.jsx">
+        <metrics statements="23" coveredstatements="23" conditionals="6" coveredconditionals="5" methods="4" coveredmethods="4"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="13" count="17" type="stmt"/>
+        <line num="14" count="17" type="stmt"/>
+        <line num="15" count="17" type="stmt"/>
+        <line num="16" count="17" type="stmt"/>
+        <line num="17" count="17" type="stmt"/>
+        <line num="19" count="17" type="stmt"/>
+        <line num="20" count="6" type="stmt"/>
+        <line num="21" count="6" type="stmt"/>
+        <line num="22" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="17" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="28" count="3" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="31" count="3" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="37" count="3" type="stmt"/>
+        <line num="41" count="17" type="stmt"/>
+      </file>
+      <file name="ProtectedRoute.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\auth\ProtectedRoute.jsx">
+        <metrics statements="8" coveredstatements="8" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="9" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="13" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+      </file>
+      <file name="RegisterAutonomo.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\auth\RegisterAutonomo.jsx">
+        <metrics statements="26" coveredstatements="26" conditionals="8" coveredconditionals="6" methods="6" coveredmethods="6"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="13" count="22" type="stmt"/>
+        <line num="22" count="22" type="stmt"/>
+        <line num="23" count="22" type="stmt"/>
+        <line num="24" count="22" type="stmt"/>
+        <line num="25" count="22" type="stmt"/>
+        <line num="26" count="9" type="stmt"/>
+        <line num="27" count="9" type="stmt"/>
+        <line num="28" count="9" type="cond" truecount="1" falsecount="1"/>
+        <line num="30" count="22" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="33" count="22" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="35" count="3" type="stmt"/>
+        <line num="36" count="3" type="stmt"/>
+        <line num="37" count="3" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="50" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="53" count="3" type="stmt"/>
+        <line num="57" count="22" type="stmt"/>
+      </file>
+      <file name="RegisterCompany.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\auth\RegisterCompany.jsx">
+        <metrics statements="25" coveredstatements="25" conditionals="6" coveredconditionals="5" methods="6" coveredmethods="6"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="19" count="16" type="stmt"/>
+        <line num="28" count="16" type="stmt"/>
+        <line num="29" count="16" type="stmt"/>
+        <line num="30" count="16" type="stmt"/>
+        <line num="32" count="16" type="stmt"/>
+        <line num="33" count="8" type="stmt"/>
+        <line num="34" count="8" type="stmt"/>
+        <line num="35" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="37" count="16" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="41" count="16" type="stmt"/>
+        <line num="42" count="2" type="stmt"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="54" count="2" type="stmt"/>
+        <line num="55" count="2" type="stmt"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="64" count="16" type="stmt"/>
+      </file>
+      <file name="ResetPassword.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\auth\ResetPassword.jsx">
+        <metrics statements="43" coveredstatements="43" conditionals="24" coveredconditionals="20" methods="4" coveredmethods="4"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="11" count="23" type="stmt"/>
+        <line num="12" count="23" type="stmt"/>
+        <line num="13" count="23" type="stmt"/>
+        <line num="14" count="23" type="stmt"/>
+        <line num="15" count="23" type="stmt"/>
+        <line num="16" count="23" type="stmt"/>
+        <line num="17" count="23" type="stmt"/>
+        <line num="19" count="23" type="stmt"/>
+        <line num="20" count="23" type="stmt"/>
+        <line num="22" count="23" type="stmt"/>
+        <line num="23" count="10" type="stmt"/>
+        <line num="24" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="5" type="stmt"/>
+        <line num="26" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="27" count="5" type="stmt"/>
+        <line num="29" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="30" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="33" count="23" type="stmt"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="36" count="5" type="stmt"/>
+        <line num="38" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="42" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="46" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="51" count="2" type="stmt"/>
+        <line num="53" count="2" type="stmt"/>
+        <line num="54" count="2" type="stmt"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="71" count="2" type="stmt"/>
+        <line num="75" count="23" type="stmt"/>
+      </file>
+      <file name="VerifyCode.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\auth\VerifyCode.jsx">
+        <metrics statements="26" coveredstatements="26" conditionals="14" coveredconditionals="10" methods="4" coveredmethods="4"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="11" count="18" type="stmt"/>
+        <line num="12" count="18" type="stmt"/>
+        <line num="13" count="18" type="cond" truecount="1" falsecount="1"/>
+        <line num="14" count="18" type="stmt"/>
+        <line num="15" count="18" type="stmt"/>
+        <line num="16" count="18" type="stmt"/>
+        <line num="17" count="18" type="stmt"/>
+        <line num="19" count="18" type="stmt"/>
+        <line num="20" count="5" type="stmt"/>
+        <line num="21" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="22" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="18" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
+        <line num="29" count="4" type="stmt"/>
+        <line num="31" count="4" type="stmt"/>
+        <line num="32" count="4" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="37" count="2" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="41" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="43" count="3" type="stmt"/>
+        <line num="47" count="18" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.common">
+      <metrics statements="42" coveredstatements="2" conditionals="37" coveredconditionals="4" methods="10" coveredmethods="1"/>
+      <file name="Button.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\common\Button.jsx">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="Header.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\common\Header.jsx">
+        <metrics statements="7" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="8" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+      </file>
+      <file name="InputWithIcon.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\common\InputWithIcon.jsx">
+        <metrics statements="2" coveredstatements="2" conditionals="9" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="12" count="50" type="stmt"/>
+      </file>
+      <file name="ServiceDropdown.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\common\ServiceDropdown.jsx">
+        <metrics statements="13" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+      </file>
+      <file name="Sidebar.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\common\Sidebar.jsx">
+        <metrics statements="20" coveredstatements="0" conditionals="13" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.home">
+      <metrics statements="45" coveredstatements="0" conditionals="28" coveredconditionals="0" methods="16" coveredmethods="0"/>
+      <file name="AppointmentItem.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\AppointmentItem.jsx">
+        <metrics statements="8" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+      </file>
+      <file name="DashboardStats.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\DashboardStats.jsx">
+        <metrics statements="6" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+      </file>
+      <file name="HomeSidePanel.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\HomeSidePanel.jsx">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+      </file>
+      <file name="NextAppointments.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\NextAppointments.jsx">
+        <metrics statements="18" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+      </file>
+      <file name="QuickActions.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\QuickActions.jsx">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+      </file>
+      <file name="RecentActivities.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\RecentActivities.jsx">
+        <metrics statements="7" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+      </file>
+      <file name="WelcomeBanner.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\WelcomeBanner.jsx">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.landing">
+      <metrics statements="12" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="0"/>
+      <file name="About.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\landing\About.jsx">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+      </file>
+      <file name="Features.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\landing\Features.jsx">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+      </file>
+      <file name="Hero.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\landing\Hero.jsx">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+      </file>
+      <file name="Providers.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\landing\Providers.jsx">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.profile">
+      <metrics statements="11" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="5" coveredmethods="0"/>
+      <file name="ProfileCard.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\profile\ProfileCard.jsx">
+        <metrics statements="4" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="10" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="0" type="stmt"/>
+      </file>
+      <file name="ProfileInfoBlock.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\profile\ProfileInfoBlock.jsx">
+        <metrics statements="7" coveredstatements="0" conditionals="3" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.shared">
+      <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="0"/>
+      <file name="Footer.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\shared\Footer.jsx">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+      </file>
+      <file name="SharedHeader.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\shared\SharedHeader.jsx">
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="context">
+      <metrics statements="54" coveredstatements="3" conditionals="12" coveredconditionals="0" methods="9" coveredmethods="0"/>
+      <file name="AuthContext.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\context\AuthContext.jsx">
+        <metrics statements="54" coveredstatements="3" conditionals="12" coveredconditionals="0" methods="9" coveredmethods="0"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="102" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="layouts">
+      <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <file name="MainLayout.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\layouts\MainLayout.jsx">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="pages">
+      <metrics statements="285" coveredstatements="242" conditionals="241" coveredconditionals="174" methods="54" coveredmethods="43"/>
+      <file name="AgendaPage.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\pages\AgendaPage.jsx">
+        <metrics statements="76" coveredstatements="61" conditionals="22" coveredconditionals="17" methods="13" coveredmethods="10"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="13" count="24" type="stmt"/>
+        <line num="14" count="24" type="stmt"/>
+        <line num="15" count="24" type="stmt"/>
+        <line num="16" count="24" type="stmt"/>
+        <line num="17" count="24" type="stmt"/>
+        <line num="18" count="24" type="stmt"/>
+        <line num="19" count="24" type="stmt"/>
+        <line num="20" count="24" type="stmt"/>
+        <line num="21" count="24" type="stmt"/>
+        <line num="24" count="24" type="stmt"/>
+        <line num="25" count="24" type="stmt"/>
+        <line num="27" count="24" type="stmt"/>
+        <line num="28" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="30" count="7" type="stmt"/>
+        <line num="31" count="7" type="stmt"/>
+        <line num="32" count="7" type="stmt"/>
+        <line num="35" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="42" count="2" type="stmt"/>
+        <line num="43" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="55" count="24" type="stmt"/>
+        <line num="56" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="61" count="8" type="stmt"/>
+        <line num="62" count="8" type="stmt"/>
+        <line num="63" count="8" type="stmt"/>
+        <line num="66" count="8" type="stmt"/>
+        <line num="70" count="8" type="stmt"/>
+        <line num="71" count="8" type="stmt"/>
+        <line num="72" count="8" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="77" count="8" type="stmt"/>
+        <line num="81" count="24" type="stmt"/>
+        <line num="82" count="9" type="stmt"/>
+        <line num="83" count="9" type="stmt"/>
+        <line num="84" count="9" type="stmt"/>
+        <line num="85" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="86" count="8" type="stmt"/>
+        <line num="89" count="9" type="stmt"/>
+        <line num="91" count="9" type="stmt"/>
+        <line num="92" count="9" type="stmt"/>
+        <line num="96" count="24" type="stmt"/>
+        <line num="97" count="8" type="stmt"/>
+        <line num="100" count="24" type="cond" truecount="1" falsecount="0"/>
+        <line num="101" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="104" count="1" type="stmt"/>
+        <line num="106" count="1" type="stmt"/>
+        <line num="107" count="1" type="stmt"/>
+        <line num="110" count="24" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="115" count="24" type="stmt"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="117" count="1" type="stmt"/>
+        <line num="118" count="1" type="stmt"/>
+        <line num="121" count="24" type="stmt"/>
+        <line num="123" count="0" type="stmt"/>
+        <line num="127" count="24" type="cond" truecount="3" falsecount="0"/>
+        <line num="129" count="24" type="stmt"/>
+        <line num="140" count="1" type="stmt"/>
+        <line num="177" count="0" type="stmt"/>
+      </file>
+      <file name="EditProfilePage.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\pages\EditProfilePage.jsx">
+        <metrics statements="120" coveredstatements="103" conditionals="115" coveredconditionals="75" methods="26" coveredmethods="20"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="48" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="49" count="5" type="stmt"/>
+        <line num="50" count="5" type="cond" truecount="1" falsecount="2"/>
+        <line num="52" count="5" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="61" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="64" count="5" type="cond" truecount="3" falsecount="1"/>
+        <line num="66" count="5" type="cond" truecount="3" falsecount="3"/>
+        <line num="68" count="5" type="cond" truecount="1" falsecount="2"/>
+        <line num="69" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="70" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="72" count="5" type="stmt"/>
+        <line num="159" count="1" type="stmt"/>
+        <line num="160" count="18" type="stmt"/>
+        <line num="161" count="18" type="stmt"/>
+        <line num="162" count="18" type="stmt"/>
+        <line num="163" count="18" type="stmt"/>
+        <line num="164" count="18" type="stmt"/>
+        <line num="165" count="18" type="stmt"/>
+        <line num="166" count="18" type="stmt"/>
+        <line num="168" count="18" type="stmt"/>
+        <line num="169" count="7" type="stmt"/>
+        <line num="170" count="7" type="stmt"/>
+        <line num="171" count="7" type="stmt"/>
+        <line num="176" count="5" type="stmt"/>
+        <line num="178" count="5" type="stmt"/>
+        <line num="179" count="5" type="stmt"/>
+        <line num="181" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="183" count="6" type="stmt"/>
+        <line num="186" count="7" type="stmt"/>
+        <line num="189" count="18" type="stmt"/>
+        <line num="190" count="0" type="stmt"/>
+        <line num="191" count="0" type="stmt"/>
+        <line num="193" count="0" type="stmt"/>
+        <line num="194" count="0" type="stmt"/>
+        <line num="195" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="196" count="0" type="stmt"/>
+        <line num="198" count="0" type="stmt"/>
+        <line num="200" count="0" type="stmt"/>
+        <line num="204" count="18" type="stmt"/>
+        <line num="205" count="3" type="stmt"/>
+        <line num="206" count="3" type="stmt"/>
+        <line num="208" count="3" type="stmt"/>
+        <line num="222" count="3" type="stmt"/>
+        <line num="223" count="9" type="stmt"/>
+        <line num="224" count="27" type="cond" truecount="2" falsecount="0"/>
+        <line num="229" count="3" type="stmt"/>
+        <line num="231" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="232" count="6" type="stmt"/>
+        <line num="233" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="234" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="235" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="236" count="6" type="stmt"/>
+        <line num="237" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="238" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="239" count="18" type="cond" truecount="1" falsecount="1"/>
+        <line num="246" count="18" type="stmt"/>
+        <line num="250" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="251" count="3" type="stmt"/>
+        <line num="253" count="6" type="stmt"/>
+        <line num="254" count="6" type="stmt"/>
+        <line num="256" count="0" type="stmt"/>
+        <line num="258" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="259" count="3" type="stmt"/>
+        <line num="261" count="3" type="stmt"/>
+        <line num="262" count="3" type="stmt"/>
+        <line num="263" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="265" count="0" type="stmt"/>
+        <line num="267" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="269" count="3" type="stmt"/>
+        <line num="270" count="3" type="stmt"/>
+        <line num="271" count="3" type="stmt"/>
+        <line num="273" count="3" type="stmt"/>
+        <line num="276" count="18" type="stmt"/>
+        <line num="277" count="1" type="stmt"/>
+        <line num="280" count="18" type="stmt"/>
+        <line num="281" count="3" type="stmt"/>
+        <line num="282" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="284" count="3" type="stmt"/>
+        <line num="285" count="3" type="stmt"/>
+        <line num="287" count="3" type="stmt"/>
+        <line num="288" count="3" type="stmt"/>
+        <line num="290" count="3" type="stmt"/>
+        <line num="295" count="3" type="stmt"/>
+        <line num="297" count="3" type="stmt"/>
+        <line num="298" count="3" type="cond" truecount="2" falsecount="2"/>
+        <line num="299" count="3" type="stmt"/>
+        <line num="301" count="3" type="stmt"/>
+        <line num="303" count="3" type="stmt"/>
+        <line num="305" count="1" type="stmt"/>
+        <line num="307" count="1" type="stmt"/>
+        <line num="309" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="311" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="312" count="1" type="stmt"/>
+        <line num="316" count="1" type="stmt"/>
+        <line num="319" count="3" type="stmt"/>
+        <line num="323" count="18" type="stmt"/>
+        <line num="324" count="72" type="stmt"/>
+        <line num="327" count="0" type="stmt"/>
+        <line num="330" count="72" type="cond" truecount="3" falsecount="1"/>
+        <line num="333" count="48" type="cond" truecount="2" falsecount="0"/>
+        <line num="335" count="24" type="stmt"/>
+        <line num="337" count="0" type="stmt"/>
+        <line num="341" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="342" count="7" type="stmt"/>
+        <line num="348" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="349" count="3" type="stmt"/>
+        <line num="351" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="352" count="0" type="stmt"/>
+        <line num="359" count="8" type="stmt"/>
+        <line num="411" count="8" type="stmt"/>
+        <line num="419" count="40" type="stmt"/>
+        <line num="427" count="24" type="stmt"/>
+      </file>
+      <file name="HomePage.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\pages\HomePage.jsx">
+        <metrics statements="33" coveredstatements="32" conditionals="41" coveredconditionals="30" methods="5" coveredmethods="4"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="17" type="stmt"/>
+        <line num="29" count="17" type="stmt"/>
+        <line num="30" count="16" type="stmt"/>
+        <line num="31" count="16" type="stmt"/>
+        <line num="32" count="16" type="stmt"/>
+        <line num="34" count="16" type="stmt"/>
+        <line num="35" count="9" type="stmt"/>
+        <line num="36" count="8" type="stmt"/>
+        <line num="37" count="8" type="stmt"/>
+        <line num="39" count="8" type="stmt"/>
+        <line num="40" count="8" type="stmt"/>
+        <line num="41" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="47" count="6" type="stmt"/>
+        <line num="52" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="56" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="57" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="59" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="61" count="6" type="stmt"/>
+        <line num="86" count="18" type="stmt"/>
+        <line num="91" count="6" type="stmt"/>
+        <line num="92" count="6" type="stmt"/>
+        <line num="94" count="2" type="stmt"/>
+        <line num="95" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="97" count="8" type="stmt"/>
+        <line num="100" count="9" type="cond" truecount="5" falsecount="0"/>
+        <line num="101" count="8" type="stmt"/>
+        <line num="105" count="16" type="stmt"/>
+      </file>
+      <file name="LandingPage.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\pages\LandingPage.jsx">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="3" type="stmt"/>
+      </file>
+      <file name="ProfilePage.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\pages\ProfilePage.jsx">
+        <metrics statements="54" coveredstatements="44" conditionals="63" coveredconditionals="52" methods="9" coveredmethods="8"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="32" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="47" count="2" type="stmt"/>
+        <line num="48" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="2" type="stmt"/>
+        <line num="51" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="2" type="stmt"/>
+        <line num="54" count="2" type="cond" truecount="2" falsecount="2"/>
+        <line num="58" count="2" type="cond" truecount="2" falsecount="2"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="63" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="66" count="2" type="stmt"/>
+        <line num="70" count="2" type="cond" truecount="3" falsecount="0"/>
+        <line num="71" count="2" type="cond" truecount="3" falsecount="0"/>
+        <line num="72" count="2" type="cond" truecount="3" falsecount="0"/>
+        <line num="74" count="2" type="stmt"/>
+        <line num="193" count="1" type="stmt"/>
+        <line num="194" count="5" type="stmt"/>
+        <line num="195" count="5" type="stmt"/>
+        <line num="196" count="5" type="stmt"/>
+        <line num="197" count="5" type="stmt"/>
+        <line num="199" count="5" type="stmt"/>
+        <line num="200" count="3" type="stmt"/>
+        <line num="201" count="3" type="stmt"/>
+        <line num="202" count="3" type="stmt"/>
+        <line num="203" count="3" type="stmt"/>
+        <line num="204" count="3" type="stmt"/>
+        <line num="209" count="0" type="stmt"/>
+        <line num="210" count="0" type="stmt"/>
+        <line num="212" count="3" type="stmt"/>
+        <line num="216" count="5" type="stmt"/>
+        <line num="217" count="3" type="stmt"/>
+        <line num="220" count="5" type="stmt"/>
+        <line num="221" count="5" type="stmt"/>
+        <line num="225" count="5" type="stmt"/>
+        <line num="226" count="1" type="stmt"/>
+        <line num="229" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="230" count="3" type="stmt"/>
+        <line num="237" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="238" count="0" type="stmt"/>
+        <line num="245" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="services">
+      <metrics statements="193" coveredstatements="162" conditionals="131" coveredconditionals="86" methods="28" coveredmethods="25"/>
+      <file name="agendaService.js" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\services\agendaService.js">
+        <metrics statements="50" coveredstatements="39" conditionals="50" coveredconditionals="30" methods="7" coveredmethods="6"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="1" type="cond" truecount="1" falsecount="4"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="30" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="37" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="38" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="39" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="66" count="2" type="stmt"/>
+        <line num="67" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="77" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="80" count="2" type="stmt"/>
+        <line num="83" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="84" count="1" type="cond" truecount="1" falsecount="2"/>
+        <line num="86" count="2" type="stmt"/>
+        <line num="89" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="91" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="102" count="2" type="stmt"/>
+        <line num="106" count="2" type="stmt"/>
+        <line num="109" count="2" type="stmt"/>
+        <line num="110" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="111" count="1" type="stmt"/>
+        <line num="114" count="3" type="stmt"/>
+        <line num="115" count="3" type="stmt"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="119" count="2" type="cond" truecount="2" falsecount="1"/>
+        <line num="122" count="2" type="stmt"/>
+        <line num="126" count="2" type="stmt"/>
+        <line num="127" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="130" count="0" type="stmt"/>
+        <line num="131" count="0" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="135" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="138" count="0" type="stmt"/>
+      </file>
+      <file name="appointmentService.js" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\services\appointmentService.js">
+        <metrics statements="20" coveredstatements="16" conditionals="23" coveredconditionals="13" methods="3" coveredmethods="3"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="cond" truecount="1" falsecount="4"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="19" count="3" type="stmt"/>
+        <line num="20" count="3" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="30" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="37" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="38" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="39" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="61" count="2" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+      </file>
+      <file name="authService.js" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\services\authService.js">
+        <metrics statements="53" coveredstatements="46" conditionals="27" coveredconditionals="19" methods="7" coveredmethods="6"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="4" count="4" type="stmt"/>
+        <line num="5" count="4" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="13" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="23" count="4" type="stmt"/>
+        <line num="24" count="3" type="stmt"/>
+        <line num="25" count="3" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="34" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="44" count="4" type="stmt"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="49" count="2" type="cond" truecount="5" falsecount="0"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="58" count="4" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="63" count="0" type="cond" truecount="0" falsecount="5"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="72" count="4" type="stmt"/>
+        <line num="73" count="3" type="stmt"/>
+        <line num="74" count="3" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="80" count="2" type="cond" truecount="5" falsecount="0"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="89" count="4" type="stmt"/>
+        <line num="90" count="2" type="stmt"/>
+        <line num="91" count="2" type="stmt"/>
+        <line num="94" count="4" type="stmt"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="96" count="1" type="stmt"/>
+      </file>
+      <file name="dashboardService.js" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\services\dashboardService.js">
+        <metrics statements="8" coveredstatements="8" conditionals="4" coveredconditionals="4" methods="3" coveredmethods="3"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="18" count="4" type="stmt"/>
+        <line num="20" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="24" count="3" type="stmt"/>
+      </file>
+      <file name="petService.js" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\services\petService.js">
+        <metrics statements="7" coveredstatements="7" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+      </file>
+      <file name="profileService.js" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\services\profileService.js">
+        <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+      </file>
+      <file name="providerService.js" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\services\providerService.js">
+        <metrics statements="31" coveredstatements="22" conditionals="23" coveredconditionals="16" methods="3" coveredmethods="2"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="4" count="4" type="stmt"/>
+        <line num="5" count="4" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="8" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="10" count="2" type="cond" truecount="5" falsecount="0"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="17" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="23" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="38" count="4" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+      </file>
+      <file name="userService.js" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\services\userService.js">
+        <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="utils">
+      <metrics statements="15" coveredstatements="4" conditionals="6" coveredconditionals="0" methods="4" coveredmethods="0"/>
+      <file name="Api.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\utils\Api.jsx">
+        <metrics statements="15" coveredstatements="4" conditionals="6" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="3" count="18" type="stmt"/>
+        <line num="5" count="18" type="stmt"/>
+        <line num="15" count="18" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="30" count="18" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="33" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
