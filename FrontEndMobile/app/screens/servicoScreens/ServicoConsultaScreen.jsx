@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import "moment/locale/pt-br";
@@ -24,6 +24,8 @@ const COLORS = {
   background: "#F9F9F9",
   text: "#333333",
   white: "#FFFFFF",
+  border: "#B6D8D7",
+  placeholder: "#999999",
 };
 
 const HOURS = Array.from(
@@ -58,12 +60,24 @@ export default function ServicoConsultaScreen() {
 
   const [pets, setPets] = useState([]);
   const [selectedPet, setSelectedPet] = useState(null);
+
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
+
   const [userInfo, setUserInfo] = useState({ email: "", phone: "" });
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [openPet, setOpenPet] = useState(false);
+  const [openDay, setOpenDay] = useState(false);
+  const [openHour, setOpenHour] = useState(false);
+  const [openService, setOpenService] = useState(false);
+
+  const [petItems, setPetItems] = useState([]);
+  const [dayItems, setDayItems] = useState([]);
+  const [hourItems, setHourItems] = useState([]);
+  const [serviceItems, setServiceItems] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -80,6 +94,12 @@ export default function ServicoConsultaScreen() {
           : petsResp.data.items || [];
 
         setPets(fetchedPets);
+        setPetItems(
+          fetchedPets.map((p) => ({
+            label: p.nome,
+            value: p._id,
+          }))
+        );
 
         const userResp = await api.get("/users/me", {
           headers: { Authorization: `Bearer ${token}` },
@@ -90,26 +110,36 @@ export default function ServicoConsultaScreen() {
           phone: userResp.data.telefone || userResp.data.phone || "",
         });
 
+        setDayItems(
+          DAYS.map((d, i) => ({
+            label: DAY_LABELS[i],
+            value: d.toISOString(),
+          }))
+        );
+
+        setHourItems(HOURS.map((h) => ({ label: h, value: h })));
+
+        const servicosDisponiveis =
+          SERVICOS_POR_TIPO_PRESTADOR[
+          Object.keys(SERVICOS_POR_TIPO_PRESTADOR).find(
+            (key) =>
+              key.trim().toLowerCase().replace(/\s/g, "") ===
+              vet?.service?.trim().toLowerCase().replace(/\s/g, "")
+          )
+          ] || [];
+
+        setServiceItems(
+          servicosDisponiveis.map((s) => ({ label: s, value: s }))
+        );
+
         setLoading(false);
       } catch (err) {
-        console.log("Erro ao carregar dados:", err.response?.data || err.message);
+        console.log("Erro:", err);
         Alert.alert("Erro", "Não foi possível carregar os dados.");
         setLoading(false);
       }
     })();
   }, []);
-
-  const servicosDisponiveis = (() => {
-    if (!vet || !vet.service) return [];
-    const normalizedReceived = vet.service.trim().toLowerCase().replace(/\s/g, "");
-
-    const keyFound = Object.keys(SERVICOS_POR_TIPO_PRESTADOR).find((key) => {
-      return key.trim().toLowerCase().replace(/\s/g, "") === normalizedReceived;
-    });
-
-    if (keyFound) return SERVICOS_POR_TIPO_PRESTADOR[keyFound];
-    return [];
-  })();
 
   const handleSubmit = async () => {
     if (!selectedPet || !selectedDay || !selectedHour || !selectedService) {
@@ -118,10 +148,7 @@ export default function ServicoConsultaScreen() {
     }
 
     if (!vet || !vet.id) {
-      Alert.alert(
-        "Erro",
-        "ID do prestador não encontrado. Tente voltar e selecionar novamente."
-      );
+      Alert.alert("Erro", "ID do prestador não encontrado.");
       return;
     }
 
@@ -150,18 +177,10 @@ export default function ServicoConsultaScreen() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("✅ Agendamento criado, navegando para Lembretes...");
       router.replace("/screens/lembreteScreens/LembreteScreen");
-
     } catch (err) {
-      console.error("Erro ao agendar:", err.response?.data || err.message);
-      const apiMessage = err.response?.data?.message;
-      const errorMessage = apiMessage
-        ? Array.isArray(apiMessage)
-          ? `Erros de Validação: ${apiMessage.join(", ")}`
-          : apiMessage
-        : err.message || "Erro de rede desconhecido.";
-      Alert.alert("Erro ao agendar", errorMessage);
+      console.error("Erro ao agendar:", err);
+      Alert.alert("Erro ao agendar", err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -178,7 +197,12 @@ export default function ServicoConsultaScreen() {
 
         {vet && (
           <View style={styles.vetInfo}>
-            <FontAwesome5 name="stethoscope" size={24} color={COLORS.primary} style={{ marginRight: 10 }} />
+            <FontAwesome5
+              name="stethoscope"
+              size={24}
+              color={COLORS.primary}
+              style={{ marginRight: 10 }}
+            />
             <View>
               <Text style={styles.vetName}>
                 {vet.nome} {vet.service ? `- ${vet.service}` : ""}
@@ -191,49 +215,99 @@ export default function ServicoConsultaScreen() {
         )}
 
         <Text style={styles.label}>Selecione o pet:</Text>
-        <View style={styles.pickerContainer}>
-          <Picker selectedValue={selectedPet} onValueChange={setSelectedPet}>
-            <Picker.Item label="Selecione seu pet" value={null} />
-            {pets.map((p) => (
-              <Picker.Item key={p._id} label={p.nome} value={p._id} />
-            ))}
-          </Picker>
+        <View style={{ zIndex: 4000 }}>
+          <DropDownPicker
+            open={openPet}
+            value={selectedPet}
+            items={petItems}
+            setOpen={setOpenPet}
+            setValue={setSelectedPet}
+            setItems={setPetItems}
+            placeholder="Selecione seu pet"
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            textStyle={{ color: "#2F8B88" }}
+            placeholderStyle={{ color: "#2F8B88" }}
+            arrowIconStyle={{ tintColor: "#2F8B88" }}
+            fontSize={16}
+          />
         </View>
 
         <Text style={styles.label}>Selecione o dia:</Text>
-        <View style={styles.pickerContainer}>
-          <Picker selectedValue={selectedDay} onValueChange={setSelectedDay}>
-            <Picker.Item label="Selecione o dia" value={null} />
-            {DAYS.map((d, i) => (
-              <Picker.Item key={d.toISOString()} label={DAY_LABELS[i]} value={d.toISOString()} />
-            ))}
-          </Picker>
+        <View style={{ zIndex: 3000 }}>
+          <DropDownPicker
+            open={openDay}
+            value={selectedDay}
+            items={dayItems}
+            setOpen={setOpenDay}
+            setValue={setSelectedDay}
+            setItems={setDayItems}
+            placeholder="Selecione o dia"
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            textStyle={{ color: "#2F8B88" }}
+            placeholderStyle={{ color: "#2F8B88" }}
+            arrowIconStyle={{ tintColor: "#2F8B88" }}
+            fontSize={16}
+          />
         </View>
 
         <Text style={styles.label}>Selecione o horário:</Text>
-        <View style={styles.pickerContainer}>
-          <Picker selectedValue={selectedHour} onValueChange={setSelectedHour}>
-            <Picker.Item label="Selecione o horário" value={null} />
-            {HOURS.map((h) => (
-              <Picker.Item key={h} label={h} value={h} />
-            ))}
-          </Picker>
+        <View style={{ zIndex: 2000 }}>
+          <DropDownPicker
+            open={openHour}
+            value={selectedHour}
+            items={hourItems}
+            setOpen={setOpenHour}
+            setValue={setSelectedHour}
+            setItems={setHourItems}
+            placeholder="Selecione o horário"
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            textStyle={{ color: "#2F8B88" }}
+            placeholderStyle={{ color: "#2F8B88" }}
+            arrowIconStyle={{ tintColor: "#2F8B88" }}
+            fontSize={16}
+          />
         </View>
 
         <Text style={styles.label}>Motivo da consulta:</Text>
-        <View style={styles.pickerContainer}>
-          <Picker selectedValue={selectedService} onValueChange={setSelectedService}>
-            <Picker.Item label="Selecione o serviço" value={null} />
-            {servicosDisponiveis.map((service) => (
-              <Picker.Item key={service} label={service} value={service} />
-            ))}
-          </Picker>
+        <View style={{ zIndex: 1000 }}>
+          <DropDownPicker
+            open={openService}
+            value={selectedService}
+            items={serviceItems}
+            setOpen={setOpenService}
+            setValue={setSelectedService}
+            setItems={setServiceItems}
+            placeholder="Selecione o serviço"
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            textStyle={{ color: "#2F8B88" }}
+            placeholderStyle={{ color: "#2F8B88" }}
+            arrowIconStyle={{ tintColor: "#2F8B88" }}
+            fontSize={16}
+          />
         </View>
 
         <Pressable
-          style={[styles.button, isSubmitting && { opacity: 0.7 }]}
+          style={[
+            styles.button,
+            (!selectedPet ||
+              !selectedDay ||
+              !selectedHour ||
+              !selectedService) &&
+            styles.buttonDisabled,
+            isSubmitting && { opacity: 0.7 },
+          ]}
           onPress={handleSubmit}
-          disabled={!selectedPet || !selectedDay || !selectedHour || !selectedService || isSubmitting}
+          disabled={
+            !selectedPet ||
+            !selectedDay ||
+            !selectedHour ||
+            !selectedService ||
+            isSubmitting
+          }
         >
           {isSubmitting ? (
             <ActivityIndicator color={COLORS.white} />
@@ -247,19 +321,21 @@ export default function ServicoConsultaScreen() {
 }
 
 const styles = StyleSheet.create({
-  outerContainer: { flex: 1, backgroundColor: COLORS.background },
+  outerContainer: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
   container: {
     flexGrow: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 20 : 60,
     paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingBottom: 60,
   },
   backButton: {
     position: "absolute",
-    top: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 30,
+    top: Platform.OS === "android" ? StatusBar.currentHeight + 20 : 60,
     left: 20,
-    zIndex: 10,
-    backgroundColor: COLORS.white,
+    zIndex: 5000,
     borderRadius: 50,
     padding: 6,
     elevation: 5,
@@ -278,11 +354,18 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 25,
     alignItems: "center",
-    borderWidth: 1,
     borderColor: COLORS.primary,
+    borderWidth: 1,
   },
-  vetName: { fontSize: 18, fontWeight: "bold", color: COLORS.primary },
-  vetEspecialidade: { fontSize: 14, color: COLORS.text },
+  vetName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: COLORS.primary,
+  },
+  vetEspecialidade: {
+    fontSize: 14,
+    color: COLORS.text,
+  },
   label: {
     fontSize: 14,
     fontWeight: "600",
@@ -290,17 +373,15 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     marginTop: 15,
   },
-  pickerContainer: {
-  backgroundColor: COLORS.white,
-  borderRadius: 14,
-  borderWidth: 1,
-  borderColor: "#B6D8D7",
-  marginBottom: 15,
-  height: 60,
-  justifyContent: "center",
-  paddingHorizontal: 12,
-},
-
+  dropdown: {
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.white,
+    borderRadius: 14,
+  },
+  dropdownContainer: {
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.white,
+  },
   button: {
     backgroundColor: COLORS.primary,
     borderRadius: 12,
@@ -308,5 +389,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 30,
   },
-  buttonText: { color: COLORS.white, fontWeight: "bold", fontSize: 18 },
+  buttonDisabled: {
+    backgroundColor: "#AAAAAA",
+  },
+  buttonText: {
+    color: COLORS.white,
+    fontWeight: "bold",
+    fontSize: 18,
+  },
 });
