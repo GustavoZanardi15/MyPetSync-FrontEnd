@@ -1,83 +1,40 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, Image, StyleSheet, Pressable, ActivityIndicator } from "react-native";
+import React from "react";
+import { View, Text, ScrollView, Image, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../../src/service/api";
 
 export default function VeterinariosSection({ vets = [] }) {
-  const [vetRatings, setVetRatings] = useState({});
-  const [loadingRatings, setLoadingRatings] = useState({});
-
-  const fetchVetRatings = async (vetId) => {
-    if (vetRatings[vetId]) return; 
-    
-    setLoadingRatings(prev => ({ ...prev, [vetId]: true }));
-    
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) return;
-
-      const response = await api.get("/reviews", {
-        params: { provider: vetId },
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      const reviews = response.data?.reviews || response.data || [];
-      
-      if (reviews.length > 0) {
-        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-        const averageRating = totalRating / reviews.length;
-        
-        setVetRatings(prev => ({
-          ...prev,
-          [vetId]: averageRating
-        }));
-      } else {
-        setVetRatings(prev => ({
-          ...prev,
-          [vetId]: 0
-        }));
-      }
-    } catch (error) {
-      console.error(`Erro ao buscar avaliações do vet ${vetId}:`, error);
-      setVetRatings(prev => ({
-        ...prev,
-        [vetId]: 0
-      }));
-    } finally {
-      setLoadingRatings(prev => ({ ...prev, [vetId]: false }));
-    }
-  };
-
-  useEffect(() => {
-    vets.forEach(vet => {
-      if (vet.id) {
-        fetchVetRatings(vet.id);
-      }
-    });
-  }, [vets]);
-
-  const renderStars = (vetId) => {
-    const rating = vetRatings[vetId] || 0;
-    
-    if (loadingRatings[vetId]) {
-      return <ActivityIndicator size="small" color="#2F8B88" />;
-    }
+  const renderStars = (rating, count) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
 
     return (
-      <View style={styles.stars}>
-        {[1, 2, 3, 4, 5].map((starIndex) => (
-          <Ionicons
-            key={starIndex}
-            name={starIndex <= rating ? "star" : "star-outline"}
-            size={14}
-            color={starIndex <= rating ? "#FFD700" : "#C4C4C4"}
-          />
-        ))}
-        {rating > 0 && (
-          <Text style={styles.ratingText}>({rating.toFixed(1)})</Text>
-        )}
+      <View style={styles.starRow}>
+        {[1, 2, 3, 4, 5].map((i) => {
+          let icon = "star-outline";
+          let color = "#C4C4C4";
+
+          if (i <= fullStars) {
+            icon = "star";
+            color = "#FFD700";
+          } else if (i === fullStars + 1 && hasHalfStar) {
+            icon = "star-half"; 
+            color = "#FFD700";
+          }
+
+          return (
+            <Ionicons
+              key={i}
+              name={icon}
+              size={14}
+              color={color}
+            />
+          );
+        })}
+
+        <Text style={styles.starCount}>
+          {rating ? `(${rating.toFixed(1)})` : `(0.0)`}
+        </Text>
       </View>
     );
   };
@@ -107,10 +64,11 @@ export default function VeterinariosSection({ vets = [] }) {
                 </Text>
               </View>
             )}
+
             <View style={styles.vetOverlay}>
               <Text style={styles.vetName}>{vet.name}</Text>
               <Text style={styles.vetSpecialty}>{vet.specialty}</Text>
-              {renderStars(vet.id)}
+              {renderStars(vet.rating, vet.reviewCount)}
             </View>
           </View>
         ))}
@@ -155,22 +113,22 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
     alignItems: "center",
-    paddingBottom: 10, 
+    paddingBottom: 10,
   },
   vetImage: {
     width: 90,
     height: 90,
     borderRadius: 40,
-    marginTop: 12, 
+    marginTop: 12,
   },
   placeholderAvatar: {
     width: 65,
     height: 65,
     borderRadius: 35,
-    backgroundColor: "#FFA500", 
+    backgroundColor: "#FFA500",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 12, 
+    marginTop: 12,
   },
   initial: {
     color: "#fff",
@@ -179,7 +137,7 @@ const styles = StyleSheet.create({
   },
   vetOverlay: {
     alignItems: "center",
-    marginTop: 10, 
+    marginTop: 10,
     paddingHorizontal: 5,
     width: "100%",
   },
@@ -195,15 +153,14 @@ const styles = StyleSheet.create({
     color: "#777",
     textAlign: "center",
     marginBottom: 4,
-    lineHeight: 12,
   },
-  stars: {
+  starRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    flexWrap: "wrap", 
+    marginTop: 3,
   },
-  ratingText: {
+  starCount: {
     fontSize: 10,
     color: "#777",
     marginLeft: 4,
