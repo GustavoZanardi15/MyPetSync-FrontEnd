@@ -151,6 +151,43 @@ export default function HomeScreen() {
     fetchReminders();
   }, [fetchReminders]);
 
+  const buscarAvaliacoesPorProvider = async (providerId, token) => {
+    try {
+      const response = await api.get(`/reviews`, {
+        params: { provider: providerId },
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data && response.data.items) {
+        return response.data.items.length;
+      }
+      return 0;
+    } catch (error) {
+      console.log(`Erro ao buscar avaliações do provider ${providerId}:`, error.message);
+      return 0;
+    }
+  };
+
+  const buscarMediaAvaliacoes = async (providerId, token) => {
+    try {
+      const response = await api.get(`/reviews`, {
+        params: { provider: providerId },
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data && response.data.items && response.data.items.length > 0) {
+        const soma = response.data.items.reduce((total, avaliacao) => 
+          total + (avaliacao.rating || 0), 0
+        );
+        return soma / response.data.items.length;
+      }
+      return 0;
+    } catch (error) {
+      console.log(`Erro ao buscar média do provider ${providerId}:`, error.message);
+      return 0;
+    }
+  };
+
   const fetchVets = useCallback(async () => {
     if (!authToken) return;
     setLoadingVets(true);
@@ -165,16 +202,25 @@ export default function HomeScreen() {
         ? response.data
         : [];
 
-      const formatted = data.map((vet) => ({
-        id: vet._id,
-        name: vet.name || "Veterinário",
-        specialty:
-          Array.isArray(vet.servicesOffered) && vet.servicesOffered.length > 0
-            ? vet.servicesOffered.join(", ")
-            : vet.service || vet.providerType || "Clínico Geral",
-        imageUrl: vet.avatar ? `${API_BASE_URL}${vet.avatar}` : null,
-        rating: vet.averageRating || 0,
-      }));
+      const formatted = await Promise.all(
+        data.map(async (vet) => {
+          const quantidadeAvaliacoes = await buscarAvaliacoesPorProvider(vet._id, authToken);
+          
+          const mediaAvaliacoes = await buscarMediaAvaliacoes(vet._id, authToken);
+
+          return {
+            id: vet._id,
+            name: vet.name || "Veterinário",
+            specialty:
+              Array.isArray(vet.servicesOffered) && vet.servicesOffered.length > 0
+                ? vet.servicesOffered.join(", ")
+                : vet.service || vet.providerType || "Clínico Geral",
+            imageUrl: vet.avatar ? `${API_BASE_URL}${vet.avatar}` : null,
+            rating: mediaAvaliacoes, // ✅ Média real das avaliações
+            reviewCount: quantidadeAvaliacoes, // ✅ Quantidade real de avaliações
+          };
+        })
+      );
 
       setVets(formatted);
     } catch {
