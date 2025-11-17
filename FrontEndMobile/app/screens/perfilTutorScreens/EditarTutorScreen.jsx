@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet, ActivityIndicator, Platform, StatusBar, Alert, KeyboardAvoidingView } from "react-native";
+import {
+    View,
+    ScrollView,
+    StyleSheet,
+    ActivityIndicator,
+    Platform,
+    StatusBar,
+    Alert,
+    KeyboardAvoidingView
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import api from "../../../src/service/api";
@@ -12,6 +21,7 @@ export default function EditarTutorScreen() {
     const [email, setEmail] = useState("");
     const [telefone, setTelefone] = useState("");
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -38,6 +48,9 @@ export default function EditarTutorScreen() {
     }, []);
 
     const handleSalvar = async () => {
+        if (saving) return;
+
+        setSaving(true);
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Token não encontrado");
@@ -51,14 +64,26 @@ export default function EditarTutorScreen() {
                 pathname: "/screens/perfilTutorScreens/PerfilTutorScreen",
                 params: { updatedUser: JSON.stringify(response.data) },
             });
+
         } catch (error) {
             console.log("Erro ao atualizar perfil:", error);
-            Alert.alert("Erro", "Não foi possível atualizar o perfil.");
+
+            if (error.response?.status === 409) {
+                Alert.alert("Erro", "Este e-mail já está em uso por outro usuário.");
+            } else {
+                Alert.alert("Erro", "Não foi possível atualizar o perfil.");
+            }
+        } finally {
+            setSaving(false);
         }
     };
 
     if (loading) {
-        return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: "center", marginTop: 50 }} />;
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
     }
 
     return (
@@ -72,12 +97,29 @@ export default function EditarTutorScreen() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.formContent}
             >
-                <EditarForm label="Nome:" value={nome} onChange={setNome} />
-                <EditarForm label="E-mail:" value={email} onChange={setEmail} keyboardType="email-address" />
-                <EditarForm label="Telefone:" value={telefone} onChange={setTelefone} keyboardType="phone-pad" />
+                <EditarForm
+                    label="Nome:"
+                    value={nome}
+                    onChange={setNome}
+                    placeholder="Digite seu nome"
+                />
+                <EditarForm
+                    label="E-mail:"
+                    value={email}
+                    onChange={setEmail}
+                    keyboardType="email-address"
+                    placeholder="Digite seu e-mail"
+                />
+                <EditarForm
+                    label="Telefone:"
+                    value={telefone}
+                    onChange={setTelefone}
+                    keyboardType="phone-pad"
+                    placeholder="Digite seu telefone"
+                />
             </ScrollView>
             <View style={styles.buttonContainer}>
-                <SalvarButton onPress={handleSalvar} />
+                <SalvarButton onPress={handleSalvar} loading={saving} />
             </View>
         </KeyboardAvoidingView>
     );
@@ -89,6 +131,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#F8FAF9",
         paddingHorizontal: 20,
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
     form: {
         flex: 1,
