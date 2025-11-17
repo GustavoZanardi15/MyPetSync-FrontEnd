@@ -9,12 +9,11 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
-  TextInput,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import "moment/locale/pt-br";
 import api from "../../../src/service/api";
@@ -27,8 +26,9 @@ const COLORS = {
   white: "#FFFFFF",
 };
 
-const HOURS = Array.from({ length: 11 }, (_, i) =>
-  `${(i + 8).toString().padStart(2, "0")}:00`
+const HOURS = Array.from(
+  { length: 11 },
+  (_, i) => `${(i + 8).toString().padStart(2, "0")}:00`
 );
 
 const DAYS = Array.from({ length: 7 }, (_, i) => {
@@ -40,19 +40,30 @@ const DAY_LABELS = DAYS.map((d) =>
   moment(d).locale("pt-br").format("ddd, DD/MM")
 );
 
+export const SERVICOS_POR_TIPO_PRESTADOR = {
+  "Pet Sitter": ["Cuidados Domiciliares", "Passeio"],
+  "Pet Sistter": ["Cuidados Domiciliares", "Passeio"],
+  "Veterinário Autônomo": ["Consulta", "Vacinação", "Exames"],
+  Adestrador: ["Adestramento Básico", "Adestramento Avançado"],
+  "Clínica Veterinária": ["Consulta", "Vacinação", "Cirurgia", "Exames"],
+  "Pet Shop": ["Banho", "Tosa", "Banho e Tosa"],
+  "Hotel para Pets": ["Hospedagem", "Diária"],
+  "Banho e Tosa": ["Banho", "Tosa", "Banho e Tosa"],
+};
+
 export default function ServicoConsultaScreen() {
   const router = useRouter();
   const { vet: vetJson } = useLocalSearchParams();
   const vet = vetJson ? JSON.parse(vetJson) : null;
 
   const [pets, setPets] = useState([]);
-  const [selectedPet, setSelectedPet] = useState("");
-  const [selectedDay, setSelectedDay] = useState(DAYS[0].toISOString());
-  const [selectedHour, setSelectedHour] = useState(HOURS[0]);
-  const [reason, setReason] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedPet, setSelectedPet] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedHour, setSelectedHour] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
   const [userInfo, setUserInfo] = useState({ email: "", phone: "" });
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -63,15 +74,17 @@ export default function ServicoConsultaScreen() {
         const petsResp = await api.get("/pets", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const fetchedPets = Array.isArray(petsResp.data)
           ? petsResp.data
           : petsResp.data.items || [];
+
         setPets(fetchedPets);
-        if (fetchedPets.length > 0) setSelectedPet(fetchedPets[0]._id);
 
         const userResp = await api.get("/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setUserInfo({
           email: userResp.data.email || "",
           phone: userResp.data.telefone || userResp.data.phone || "",
@@ -79,16 +92,36 @@ export default function ServicoConsultaScreen() {
 
         setLoading(false);
       } catch (err) {
-        console.error("Erro ao carregar dados:", err.response?.data || err.message);
-        Alert.alert("Erro", "Não foi possível carregar pets ou dados do usuário.");
+        console.log("Erro ao carregar dados:", err.response?.data || err.message);
+        Alert.alert("Erro", "Não foi possível carregar os dados.");
         setLoading(false);
       }
     })();
   }, []);
 
+  const servicosDisponiveis = (() => {
+    if (!vet || !vet.service) return [];
+    const normalizedReceived = vet.service.trim().toLowerCase().replace(/\s/g, "");
+
+    const keyFound = Object.keys(SERVICOS_POR_TIPO_PRESTADOR).find((key) => {
+      return key.trim().toLowerCase().replace(/\s/g, "") === normalizedReceived;
+    });
+
+    if (keyFound) return SERVICOS_POR_TIPO_PRESTADOR[keyFound];
+    return [];
+  })();
+
   const handleSubmit = async () => {
-    if (!selectedPet || !reason.trim() || !selectedDay || !selectedHour) {
+    if (!selectedPet || !selectedDay || !selectedHour || !selectedService) {
       Alert.alert("Atenção", "Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    if (!vet || !vet.id) {
+      Alert.alert(
+        "Erro",
+        "ID do prestador não encontrado. Tente voltar e selecionar novamente."
+      );
       return;
     }
 
@@ -102,25 +135,24 @@ export default function ServicoConsultaScreen() {
       appointmentDate.setHours(Number(hour), Number(minute), 0, 0);
 
       const payload = {
-        provider: vet ? vet.nome : "Prestador",
-        type: vet ? vet.type : "",
-        service: vet ? vet.service : "",
+        provider: vet.id,
+        service: vet.id,
         pet: selectedPet,
         dateTime: appointmentDate.toISOString(),
         duration: 60,
-        reason,
+        reason: selectedService,
         email: userInfo.email,
         phone: userInfo.phone,
         status: "scheduled",
       };
 
-      const response = await api.post("/appointments", payload, {
+      await api.post("/appointments", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      Alert.alert("Sucesso", "Consulta agendada com sucesso!", [
-        { text: "OK", onPress: () => router.back() },
-      ]);
+      console.log("✅ Agendamento criado, navegando para Lembretes...");
+      router.replace("/screens/lembreteScreens/LembreteScreen");
+
     } catch (err) {
       console.error("Erro ao agendar:", err.response?.data || err.message);
       const apiMessage = err.response?.data?.message;
@@ -135,14 +167,6 @@ export default function ServicoConsultaScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.outerContainer}>
       <Pressable style={styles.backButton} onPress={() => router.back()}>
@@ -154,22 +178,13 @@ export default function ServicoConsultaScreen() {
 
         {vet && (
           <View style={styles.vetInfo}>
-            <Ionicons
-              name="medkit-outline"
-              size={24}
-              color={COLORS.primary}
-              style={{ marginRight: 10 }}
-            />
+            <FontAwesome5 name="stethoscope" size={24} color={COLORS.primary} style={{ marginRight: 10 }} />
             <View>
               <Text style={styles.vetName}>
                 {vet.nome} {vet.service ? `- ${vet.service}` : ""}
               </Text>
               <Text style={styles.vetEspecialidade}>
-                {vet.type === "empresa"
-                  ? "Empresa"
-                  : vet.type === "autonomo"
-                    ? "Profissional Autônomo"
-                    : "Profissional Autônomo"}
+                {vet.type === "empresa" ? "Empresa" : "Profissional Autônomo"}
               </Text>
             </View>
           </View>
@@ -178,6 +193,7 @@ export default function ServicoConsultaScreen() {
         <Text style={styles.label}>Selecione o pet:</Text>
         <View style={styles.pickerContainer}>
           <Picker selectedValue={selectedPet} onValueChange={setSelectedPet}>
+            <Picker.Item label="Selecione seu pet" value={null} />
             {pets.map((p) => (
               <Picker.Item key={p._id} label={p.nome} value={p._id} />
             ))}
@@ -187,6 +203,7 @@ export default function ServicoConsultaScreen() {
         <Text style={styles.label}>Selecione o dia:</Text>
         <View style={styles.pickerContainer}>
           <Picker selectedValue={selectedDay} onValueChange={setSelectedDay}>
+            <Picker.Item label="Selecione o dia" value={null} />
             {DAYS.map((d, i) => (
               <Picker.Item key={d.toISOString()} label={DAY_LABELS[i]} value={d.toISOString()} />
             ))}
@@ -196,6 +213,7 @@ export default function ServicoConsultaScreen() {
         <Text style={styles.label}>Selecione o horário:</Text>
         <View style={styles.pickerContainer}>
           <Picker selectedValue={selectedHour} onValueChange={setSelectedHour}>
+            <Picker.Item label="Selecione o horário" value={null} />
             {HOURS.map((h) => (
               <Picker.Item key={h} label={h} value={h} />
             ))}
@@ -203,17 +221,19 @@ export default function ServicoConsultaScreen() {
         </View>
 
         <Text style={styles.label}>Motivo da consulta:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ex: Banho, Vacina, Check-up"
-          value={reason}
-          onChangeText={setReason}
-        />
+        <View style={styles.pickerContainer}>
+          <Picker selectedValue={selectedService} onValueChange={setSelectedService}>
+            <Picker.Item label="Selecione o serviço" value={null} />
+            {servicosDisponiveis.map((service) => (
+              <Picker.Item key={service} label={service} value={service} />
+            ))}
+          </Picker>
+        </View>
 
         <Pressable
           style={[styles.button, isSubmitting && { opacity: 0.7 }]}
           onPress={handleSubmit}
-          disabled={isSubmitting || !selectedPet || !reason.trim()}
+          disabled={!selectedPet || !selectedDay || !selectedHour || !selectedService || isSubmitting}
         >
           {isSubmitting ? (
             <ActivityIndicator color={COLORS.white} />
@@ -242,15 +262,51 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 50,
     padding: 6,
-    elevation: 3,
+    elevation: 5,
   },
-  title: { fontSize: 24, fontWeight: "700", color: COLORS.primary, textAlign: "center", marginBottom: 30 },
-  vetInfo: { flexDirection: "row", backgroundColor: COLORS.secondary, borderRadius: 15, padding: 15, marginBottom: 25, alignItems: "center", borderWidth: 1, borderColor: COLORS.primary },
-  vetName: { fontSize: 18, fontWeight: "600", color: COLORS.primary },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: COLORS.primary,
+    textAlign: "center",
+    marginBottom: 30,
+  },
+  vetInfo: {
+    flexDirection: "row",
+    backgroundColor: COLORS.secondary,
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 25,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+  },
+  vetName: { fontSize: 18, fontWeight: "bold", color: COLORS.primary },
   vetEspecialidade: { fontSize: 14, color: COLORS.text },
-  label: { fontSize: 14, fontWeight: "600", color: COLORS.text, marginBottom: 6, marginTop: 15 },
-  pickerContainer: { backgroundColor: COLORS.white, borderRadius: 12, borderWidth: 1, borderColor: "#C0C0C0", marginBottom: 15, height: 55, justifyContent: "center" },
-  input: { backgroundColor: COLORS.white, padding: 15, borderRadius: 12, fontSize: 16, marginBottom: 15, borderWidth: 1, borderColor: "#C0C0C0", color: COLORS.text, height: 55 },
-  button: { backgroundColor: COLORS.primary, borderRadius: 12, paddingVertical: 16, alignItems: "center", marginTop: 30 },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: COLORS.text,
+    marginBottom: 6,
+    marginTop: 15,
+  },
+  pickerContainer: {
+  backgroundColor: COLORS.white,
+  borderRadius: 14,
+  borderWidth: 1,
+  borderColor: "#B6D8D7",
+  marginBottom: 15,
+  height: 60,
+  justifyContent: "center",
+  paddingHorizontal: 12,
+},
+
+  button: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: "center",
+    marginTop: 30,
+  },
   buttonText: { color: COLORS.white, fontWeight: "bold", fontSize: 18 },
 });

@@ -4,6 +4,41 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 export default function VeterinariosSection({ vets = [] }) {
+  const renderStars = (rating, count) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+
+    return (
+      <View style={styles.starRow}>
+        {[1, 2, 3, 4, 5].map((i) => {
+          let icon = "star-outline";
+          let color = "#C4C4C4";
+
+          if (i <= fullStars) {
+            icon = "star";
+            color = "#FFD700";
+          } else if (i === fullStars + 1 && hasHalfStar) {
+            icon = "star-half"; 
+            color = "#FFD700";
+          }
+
+          return (
+            <Ionicons
+              key={i}
+              name={icon}
+              size={14}
+              color={color}
+            />
+          );
+        })}
+
+        <Text style={styles.starCount}>
+          {rating ? `(${rating.toFixed(1)})` : `(0.0)`}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <View style={{ marginTop: 40 }}>
       <View style={styles.sectionHeader}>
@@ -29,19 +64,11 @@ export default function VeterinariosSection({ vets = [] }) {
                 </Text>
               </View>
             )}
+
             <View style={styles.vetOverlay}>
               <Text style={styles.vetName}>{vet.name}</Text>
               <Text style={styles.vetSpecialty}>{vet.specialty}</Text>
-              <View style={styles.stars}>
-                {Array.from({ length: 5 }).map((_, starIndex) => (
-                  <Ionicons
-                    key={starIndex}
-                    name={starIndex < (vet.rating || 0) ? "star" : "star-outline"}
-                    size={14}
-                    color={starIndex < (vet.rating || 0) ? "#FFD700" : "#C4C4C4"}
-                  />
-                ))}
-              </View>
+              {renderStars(vet.rating, vet.reviewCount)}
             </View>
           </View>
         ))}
@@ -73,8 +100,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   vetCard: {
-    width: 114,
-    height: 136,
+    width: 130,
+    height: 160,
     marginRight: 15,
     marginTop: 10,
     borderRadius: 10,
@@ -86,21 +113,22 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
     alignItems: "center",
+    paddingBottom: 10,
   },
   vetImage: {
     width: 90,
     height: 90,
     borderRadius: 40,
-    marginTop: 8,
+    marginTop: 12,
   },
   placeholderAvatar: {
     width: 65,
     height: 65,
     borderRadius: 35,
-    backgroundColor: "#FFA500", 
+    backgroundColor: "#FFA500",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 12,
   },
   initial: {
     color: "#fff",
@@ -109,22 +137,32 @@ const styles = StyleSheet.create({
   },
   vetOverlay: {
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 10,
+    paddingHorizontal: 5,
+    width: "100%",
   },
   vetName: {
     fontSize: 13,
     fontWeight: "700",
     color: "#2F8B88",
     textAlign: "center",
+    marginBottom: 2,
   },
   vetSpecialty: {
     fontSize: 11,
     color: "#777",
     textAlign: "center",
-    marginTop: 2,
+    marginBottom: 4,
   },
-  stars: {
+  starRow: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 3,
+  },
+  starCount: {
+    fontSize: 10,
+    color: "#777",
+    marginLeft: 4,
   },
 });

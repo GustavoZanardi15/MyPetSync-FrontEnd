@@ -33,6 +33,45 @@ export default function ServicoVetScreen() {
   const [filtroExtra, setFiltroExtra] = useState(null);
   const { servico } = useLocalSearchParams();
 
+  // ✅ NOVA FUNÇÃO: Buscar quantidade de avaliações por provider
+  const buscarAvaliacoesPorProvider = async (providerId, token) => {
+    try {
+      const response = await api.get(`/reviews`, {
+        params: { provider: providerId },
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data && response.data.items) {
+        return response.data.items.length;
+      }
+      return 0;
+    } catch (error) {
+      console.log(`Erro ao buscar avaliações do provider ${providerId}:`, error.message);
+      return 0;
+    }
+  };
+
+  // ✅ NOVA FUNÇÃO: Buscar média de avaliações por provider
+  const buscarMediaAvaliacoes = async (providerId, token) => {
+    try {
+      const response = await api.get(`/reviews`, {
+        params: { provider: providerId },
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data && response.data.items && response.data.items.length > 0) {
+        const soma = response.data.items.reduce((total, avaliacao) => 
+          total + (avaliacao.rating || 0), 0
+        );
+        return soma / response.data.items.length;
+      }
+      return 0;
+    } catch (error) {
+      console.log(`Erro ao buscar média do provider ${providerId}:`, error.message);
+      return 0;
+    }
+  };
+
   const carregarProviders = useCallback(async () => {
     setLoading(true);
     try {
@@ -45,25 +84,36 @@ export default function ServicoVetScreen() {
 
       const data = response.data.items || response.data || [];
 
-      const formatados = data.map((p) => ({
-        id: p._id,
-        nome: p.name,
-        tipo: p.providerType || "",
-        especialidade:
-          Array.isArray(p.servicesOffered) && p.servicesOffered.length > 0
-            ? p.servicesOffered.join(", ")
-            : p.service || "",
-        especialidades:
-          Array.isArray(p.servicesOffered) && p.servicesOffered.length > 0
-            ? p.servicesOffered
-            : [p.service || ""],
-        estrelas: p.averageRating || 0,
-        avaliacoes: p.ratings?.length || 0,
-        bio: p.bio || "Nenhuma bio disponível.",
-        phone: p.phone || "",
-        city: p.city || "",
-        whatsapp: p.whatsapp || "",
-      }));
+      // ✅ BUSCAR AVALIAÇÕES PARA CADA PROVIDER
+      const formatados = await Promise.all(
+        data.map(async (p) => {
+          // Buscar quantidade de avaliações
+          const quantidadeAvaliacoes = await buscarAvaliacoesPorProvider(p._id, token);
+          
+          // Buscar média das avaliações
+          const mediaAvaliacoes = await buscarMediaAvaliacoes(p._id, token);
+
+          return {
+            id: p._id,
+            nome: p.name,
+            tipo: p.providerType || "",
+            especialidade:
+              Array.isArray(p.servicesOffered) && p.servicesOffered.length > 0
+                ? p.servicesOffered.join(", ")
+                : p.service || "",
+            especialidades:
+              Array.isArray(p.servicesOffered) && p.servicesOffered.length > 0
+                ? p.servicesOffered
+                : [p.service || ""],
+            estrelas: mediaAvaliacoes, // ✅ Média real das avaliações
+            avaliacoes: quantidadeAvaliacoes, // ✅ Quantidade real de avaliações
+            bio: p.bio || "Nenhuma bio disponível.",
+            phone: p.phone || "",
+            city: p.city || "",
+            whatsapp: p.whatsapp || "",
+          };
+        })
+      );
 
       setPrestadores(formatados);
 

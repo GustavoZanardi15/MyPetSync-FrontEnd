@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  RefreshControl,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -28,6 +29,8 @@ export default function LembretesScreen() {
   const [dias, setDias] = useState([]);
   const [lembretesPorDia, setLembretesPorDia] = useState({});
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const scrollRef = useRef(null);
 
   // --- Carregar contexto do usuário ---
@@ -66,128 +69,187 @@ export default function LembretesScreen() {
     setDias(gerarDiasDoMes(dataAtual));
   }, [dataAtual]);
 
-  // --- Carregar lembretes ---
-  const carregarLembretes = useCallback(
-  async (dataReferencia) => {
-    if (!userContext || !userContext.userType) {
-      setLembretesPorDia({});
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
+  // --- Pega userId atual ---
+  const loadCurrentUser = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("Token ausente.");
-
-      let url = "";
-      let params = {};
-
-      if (userContext.userType === "provider" && userContext.providerId)
-        url = `/providers/${userContext.providerId}/appointments`;
-      else if (userContext.userType === "tutor" && userContext.petId)
-        url = `/pets/${userContext.petId}/appointments`;
-      else if (userContext.userType === "tutor" && userContext.tutorId) {
-        url = `/appointments`;
-        params = { tutorId: userContext.tutorId };
-      } else url = `/appointments`;
-
-      const response = await api.get(url, {
-        params,
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const raw = response?.data;
-      const data = Array.isArray(raw?.items)
-        ? raw.items
-        : Array.isArray(raw)
-        ? raw
-        : Array.isArray(raw?.data)
-        ? raw.data
-        : [];
-
-      const anoAtual = dataReferencia.getFullYear();
-      const mesAtual = dataReferencia.getMonth();
-
-      const agrupado = {};
-      data.forEach((item) => {
-        if (!item) return;
-
-        // Garante que exista dateTime, caso web envie date
-        const dataObj = item.dateTime
-          ? new Date(item.dateTime)
-          : item.date
-          ? new Date(item.date)
-          : null;
-        if (!dataObj || isNaN(dataObj)) return;
-
-        const anoItem = dataObj.getFullYear();
-        const mesItem = dataObj.getMonth();
-        const diaItem = dataObj.getDate().toString().padStart(2, "0");
-
-        // FILTRO PRINCIPAL: Garante que só agendamentos do mês atual sejam exibidos.
-        if (anoItem !== anoAtual || mesItem !== mesAtual) return;
-
-        const hora = dataObj.toLocaleTimeString("pt-BR", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        // Mapeia status para cores, aceitando português ou original
-        const statusOriginal =
-          item.status === "Agendado"
-            ? "scheduled"
-            : item.status === "Confirmado"
-            ? "confirmed"
-            : item.status === "Concluído"
-            ? "completed"
-            : item.status === "Cancelado"
-            ? "canceled"
-            : item.status || "scheduled";
-
-        if (!agrupado[diaItem]) agrupado[diaItem] = [];
-        agrupado[diaItem].push({
-          id: item._id || item.id,
-          hora,
-          titulo: item.reason || "Consulta",
-          descricao:
-            item.pet?.nome && item.provider?.name
-              ? `${item.pet.nome} - ${item.provider.name}`
-              : item.pet?.nome
-              ? item.pet.nome
-              : item.provider?.name || "Agendamento",
-          cor:
-            statusOriginal === "scheduled"
-              ? "#2F8B88"
-              : statusOriginal === "confirmed"
-              ? "#87CEEB"
-              : statusOriginal === "completed"
-              ? "#90EE90"
-              : statusOriginal === "rated"
-              ? "#A8E6CF"
-              : "#FF7F50",
-          status: statusOriginal,
-        });
-      });
-
-      setLembretesPorDia(agrupado);
-    } catch (error) {
-      console.error("Erro ao carregar lembretes:", error.response?.data || error.message);
-      Alert.alert(
-        "Erro",
-        error.response?.status === 401
-          ? "Sessão expirada. Faça login novamente."
-          : "Não foi possível carregar os lembretes."
-      );
-      setLembretesPorDia({});
-    } finally {
-      setLoading(false);
+      if (!token) return;
+      const res = await api.get("/users/me", { headers: { Authorization: `Bearer ${token}` } });
+      setCurrentUserId(res.data?._id || res.data?.id || null);
+    } catch (err) {
+      console.warn("Erro ao obter usuário:", err?.response?.data || err.message);
+      setCurrentUserId(null);
     }
-  },
-  [userContext]
-);
+  }, []);
 
-  // --- Atualizar lembrete (CORREÇÃO APLICADA) ---
+  useEffect(() => {
+    loadCurrentUser();
+  }, [loadCurrentUser]);
+
+  // ✅ Função auxiliar para definir cores
+  const getCorPorStatus = (status, isRated) => {
+    if (isRated) {
+      return "#A8E6CF"; // Verde claro - já avaliado
+    }
+    
+    switch (status) {
+      case "scheduled":
+      case "Agendado":
+        return "#2F8B88"; // Verde escuro - agendado
+        
+      case "confirmed":
+      case "Confirmado":
+        return "#87CEEB"; // Azul claro - confirmado
+        
+      case "completed":
+      case "Concluído":
+        return "#90EE90"; // Verde - concluído
+        
+      case "canceled":
+      case "Cancelado":
+        return "#FF7F50"; // Laranja - cancelado
+        
+      default:
+        return "#2F8B88"; // Padrão verde escuro
+    }
+  };
+
+  // --- Carregar lembretes ---
+  const carregarLembretes = useCallback(
+    async (dataReferencia) => {
+      if (!userContext || !userContext.userType) {
+        console.log("Sem contexto do usuário");
+        setLembretesPorDia({});
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) throw new Error("Token ausente.");
+
+        let url = "";
+        let params = {};
+
+        if (userContext.userType === "provider" && userContext.providerId)
+          url = `/providers/${userContext.providerId}/appointments`;
+        else if (userContext.userType === "tutor" && userContext.petId)
+          url = `/pets/${userContext.petId}/appointments`;
+        else if (userContext.userType === "tutor" && userContext.tutorId) {
+          url = `/appointments`;
+          params = { tutorId: userContext.tutorId };
+        } else 
+          url = `/appointments`;
+
+        const response = await api.get(url, {
+          params,
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const raw = response?.data;
+        const data = Array.isArray(raw?.items)
+          ? raw.items
+          : Array.isArray(raw)
+          ? raw
+          : Array.isArray(raw?.data)
+          ? raw.data
+          : [];
+
+        const agrupado = {};
+
+        await Promise.all(
+          data.map(async (item) => {
+            if (!item) return;
+
+            const dataObj = item.dateTime ? new Date(item.dateTime) : item.date ? new Date(item.date) : null;
+            if (!dataObj || isNaN(dataObj)) {
+              console.warn("Data inválida:", item.dateTime || item.date);
+              return;
+            }
+
+            const diaItem = dataObj.getDate().toString().padStart(2, "0");
+
+            const hora = dataObj.toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            const statusOriginal =
+              item.status === "Agendado"
+                ? "scheduled"
+                : item.status === "Confirmado"
+                ? "confirmed"
+                : item.status === "Concluído"
+                ? "completed"
+                : item.status === "Cancelado"
+                ? "canceled"
+                : item.status || "scheduled";
+
+            let isRated = false;
+            try {
+              const reviewParams = {};
+              if (item.service?._id) reviewParams.service = item.service._id;
+              else if (item.provider?._id) reviewParams.provider = item.provider._id;
+
+              if (Object.keys(reviewParams).length > 0) {
+                const reviewRes = await api.get("/reviews", {
+                  headers: { Authorization: `Bearer ${token}` },
+                  params: reviewParams,
+                });
+
+                const itemsList = reviewRes.data?.items || reviewRes.data || [];
+                const arr = Array.isArray(itemsList) ? itemsList : reviewRes.data?.items || [];
+                if (arr.length > 0 && currentUserId) {
+                  isRated = arr.some((r) => r.author?._id === currentUserId || r.author === currentUserId);
+                } else if (arr.length > 0 && !currentUserId) {
+                  isRated = true;
+                }
+              }
+            } catch (err) {
+              isRated = false;
+            }
+
+            const cor = getCorPorStatus(statusOriginal, isRated);
+
+            if (!agrupado[diaItem]) agrupado[diaItem] = [];
+            agrupado[diaItem].push({
+              id: item._id || item.id,
+              hora,
+              titulo: item.reason || "Consulta",
+              descricao:
+                item.pet?.nome && item.provider?.name
+                  ? `${item.pet.nome} - ${item.provider.name}`
+                  : item.pet?.nome
+                  ? item.pet.nome
+                  : item.provider?.name || "Agendamento",
+              cor: cor,
+              status: statusOriginal,
+              isRated,
+              providerId: item.provider?._id || null,
+              serviceId: item.service?._id || null,
+            });
+          })
+        );
+
+        setLembretesPorDia(agrupado);
+      } catch (error) {
+        console.error("❌ Erro ao carregar lembretes:", error.response?.data || error.message);
+        Alert.alert(
+          "Erro",
+          error.response?.status === 401
+            ? "Sessão expirada. Faça login novamente."
+            : "Não foi possível carregar os lembretes."
+        );
+        setLembretesPorDia({});
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userContext, currentUserId]
+  );
+
+  // --- Atualizar lembrete ---
   const atualizarLembrete = useCallback(
     async (lembreteId, dadosAtualizados) => {
       try {
@@ -196,16 +258,17 @@ export default function LembretesScreen() {
 
         setLoading(true);
 
-        // 1. Atualiza no servidor
-        await api.patch(`/appointments/${lembreteId}`, dadosAtualizados, {
+        const response = await api.patch(`/appointments/${lembreteId}`, dadosAtualizados, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // 2. Força o recarregamento total após a atualização bem-sucedida.
-        // Isso é crucial para que o filtro de data (anoItem !== anoAtual || mesItem !== mesAtual)
-        // seja re-aplicado e o agendamento seja movido corretamente ou removido da visualização atual.
+        // ✅ Aguarda MAIS tempo
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // ✅ Recarrega COMPLETAMENTE
         await carregarLembretes(dataAtual);
 
+        Alert.alert("Sucesso", "Lembrete atualizado!");
       } catch (error) {
         console.error("Erro ao atualizar lembrete:", error.response?.data || error.message);
         Alert.alert("Erro", "Não foi possível atualizar o lembrete.");
@@ -213,24 +276,30 @@ export default function LembretesScreen() {
         setLoading(false);
       }
     },
-    [dataAtual, carregarLembretes] // Dependências atualizadas
+    [dataAtual, carregarLembretes]
   );
 
-  // --- Carregar lembretes quando userContext muda ---
+  // Carregar quando context mudar
   useEffect(() => {
     if (userContext) carregarLembretes(dataAtual);
   }, [userContext, dataAtual, carregarLembretes]);
 
-  // --- Recarregar lembretes sempre que a tela voltar a foco ---
+  // Recarregar ao voltar ao foco
   useFocusEffect(
     useCallback(() => {
       if (userContext) {
+        loadCurrentUser();
         carregarLembretes(dataAtual);
       }
-    }, [userContext, dataAtual, carregarLembretes])
+    }, [userContext, dataAtual, carregarLembretes, loadCurrentUser])
   );
 
-  // --- Mudar mês ---
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await carregarLembretes(dataAtual);
+    setRefreshing(false);
+  };
+
   const mudarMes = (direcao) => {
     const novaData = new Date(dataAtual);
     novaData.setMonth(dataAtual.getMonth() + direcao);
@@ -269,10 +338,19 @@ export default function LembretesScreen() {
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
-          <View style={{ marginTop: 15 }}>
-            <LembretesList lembretes={lembretes} onAtualizar={atualizarLembrete} />
-          </View>
+          {lembretes.length > 0 ? (
+            <View style={{ marginTop: 15 }}>
+              <LembretesList lembretes={lembretes} onAtualizar={atualizarLembrete} />
+            </View>
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Nenhum lembrete para este dia</Text>
+            </View>
+          )}
         </ScrollView>
       )}
       <BottomNav />
@@ -300,5 +378,15 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingBottom: 120,
+  },
+  emptyContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#2F8B88",
+    fontWeight: "500",
   },
 });

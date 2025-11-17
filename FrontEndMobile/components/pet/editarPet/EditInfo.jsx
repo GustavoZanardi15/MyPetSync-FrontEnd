@@ -3,17 +3,28 @@ import { View, Text, StyleSheet, TextInput } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function EditInfo({ label, initialValue, onValueChange }) {
-
+    
     const keyboardType = label.includes("Idade") || label.includes("Peso") ? "numeric" : "default";
+    const displayValue = (keyboardType === "numeric" && initialValue)
+        ? String(initialValue).replace(/\D/g, '') 
+        : initialValue; 
+
+    const handleChange = (text) => {
+        let numericText = text;
+        if (keyboardType === "numeric") {
+            numericText = text.replace(/\D/g, ''); 
+        }
+        onValueChange(numericText);
+    };
 
     return (
         <View style={styles.editableContainer}>
             <Text style={styles.editableLabel}>{label}</Text>
             <TextInput
                 style={[styles.editableValue]}
-                value={initialValue}
+                value={displayValue}
                 editable={true}
-                onChangeText={onValueChange}
+                onChangeText={handleChange} 
                 placeholderTextColor="#A9A9A9"
                 keyboardType={keyboardType}
             />

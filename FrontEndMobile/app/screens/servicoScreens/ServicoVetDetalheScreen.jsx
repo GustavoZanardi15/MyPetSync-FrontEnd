@@ -5,20 +5,21 @@ import {
   ScrollView,
   StyleSheet,
   Pressable,
-  StatusBar,
   Platform,
+  StatusBar,
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../../../src/service/api";
 
+// Importando os componentes existentes
 import VetInfoSection from "../../../components/servico/servicoVetDetalhe/VetInfoSection";
 import VetStats from "../../../components/servico/servicoVetDetalhe/VetStats";
 import VetAvaliacoesSection from "../../../components/servico/servicoVetDetalhe/VetAvaliacoesSection";
 import BottomNav from "../../../components/servico/servicoVetDetalhe/BottomNav";
-import api from "../../../src/service/api";
 
 export default function ServicoVetDetalheScreen() {
   const router = useRouter();
@@ -38,7 +39,10 @@ export default function ServicoVetDetalheScreen() {
 
   useEffect(() => {
     async function loadVet() {
-      if (!vetId) return setLoading(false);
+      if (!vetId) {
+        setLoading(false);
+        return;
+      }
 
       try {
         const token = await AsyncStorage.getItem("userToken");
@@ -48,39 +52,115 @@ export default function ServicoVetDetalheScreen() {
           return;
         }
 
+        // 1. Buscar dados do provider
         const response = await api.get(`/providers/${vetId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const vetData = response.data;
 
-        const appointmentsResponse = await api.get(
-          `/providers/${vetId}/appointments`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const appointments = appointmentsResponse.data;
+        // 2. Buscar appointments para estatísticas
+        let appointments = [];
+        try {
+          const appointmentsResponse = await api.get(
+            `/providers/${vetId}/appointments`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          appointments = appointmentsResponse.data;
+        } catch (err) {
+          console.log("Erro ao buscar appointments:", err.message);
+        }
+
+        // 3. ✅ BUSCAR AVALIAÇÕES SEPARADAMENTE
+        let avaliacoes = [];
+        try {
+          const reviewsResponse = await api.get(`/reviews`, {
+            params: { provider: vetId },
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          
+          if (reviewsResponse.data && reviewsResponse.data.items) {
+            avaliacoes = reviewsResponse.data.items;
+            console.log("✅ Avaliações encontradas:", avaliacoes.length);
+            
+            // ✅ CORREÇÃO: Buscar nomes reais dos usuários
+            const avaliacoesComNomes = await Promise.all(
+              avaliacoes.map(async (avaliacao) => {
+                try {
+                  // Buscar dados completos do usuário
+                  const userResponse = await api.get(`/users/${avaliacao.author}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                  });
+                  
+                  const userData = userResponse.data;
+                  console.log("👤 Dados do usuário:", userData);
+                  
+                  // Extrair nome real do usuário
+                  const userName = userData.nome || userData.name || "Usuário";
+                  
+                  return {
+                    ...avaliacao,
+                    author: {
+                      _id: avaliacao.author,
+                      name: userName
+                    }
+                  };
+                  
+                } catch (error) {
+                  console.log("❌ Erro ao buscar usuário:", error.message);
+                  console.log("   Author ID:", avaliacao.author);
+                  
+                  return {
+                    ...avaliacao,
+                    author: { 
+                      _id: avaliacao.author,
+                      name: "Usuário Anônimo" 
+                    }
+                  };
+                }
+              })
+            );
+            avaliacoes = avaliacoesComNomes;
+          }
+        } catch (err) {
+          console.log("Erro ao buscar avaliações:", err.response?.data || err.message);
+        }
 
         setVet({
           id: vetData._id || vetId,
           nome: vetData.name || "Veterinário",
           bio: vetData.bio || "Nenhuma bio disponível no momento.",
-          avaliacoesList: vetData.avaliacoesList || [],
+          avaliacoesList: avaliacoes,
           experiencia: vetData.experiencia || "—",
-          consultasRealizadas: appointments.length,
+          consultasRealizadas: appointments.length || 0,
           precoConsulta:
             appointments.length > 0
-              ? appointments.reduce((sum, a) => sum + a.price, 0) / appointments.length
+              ? appointments.reduce((sum, a) => sum + (a.price || 0), 0) / appointments.length
               : 0,
-          type: vetData.type || "autonomo",
-          service: vetData.service || "Serviço não definido",
+          type: vetData.providerType || vetData.type || "autonomo",
+          service: vetData.service || vetData.servicesOffered?.[0] || "Serviço Não Definido",
         });
+
+        console.log("📊 Dados carregados:");
+        console.log("   Nome do vet:", vetData.name);
+        console.log("   Avaliações encontradas:", avaliacoes.length);
+        console.log("   Primeira avaliação:", avaliacoes[0]);
+        console.log("   Autor da primeira avaliação:", avaliacoes[0]?.author);
+
       } catch (err) {
-        console.log("Erro ao buscar prestador:", err.response?.data || err.message);
-        Alert.alert("Erro", "Não foi possível carregar os detalhes do prestador.");
+        console.error(
+          "Erro ao buscar prestador:",
+          err.response?.data || err.message
+        );
+        Alert.alert(
+          "Erro",
+          "Não foi possível carregar os detalhes do prestador."
+        );
+        setVet(null);
       } finally {
         setLoading(false);
       }
     }
-
     loadVet();
   }, [vetId]);
 
@@ -107,7 +187,6 @@ export default function ServicoVetDetalheScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#2F8B88" translucent />
       <View style={styles.topBackground} />
       <ScrollView contentContainerStyle={styles.scroll}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
@@ -130,6 +209,7 @@ export default function ServicoVetDetalheScreen() {
                 pathname: "/screens/servicoScreens/ServicoConsultaScreen",
                 params: {
                   vet: JSON.stringify({
+                    id: vet.id,
                     nome: vet.nome,
                     type: vet.type,
                     service: vet.service,
@@ -148,7 +228,10 @@ export default function ServicoVetDetalheScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F9F9F9" },
+  container: { 
+    flex: 1, 
+    backgroundColor: "#F9F9F9" 
+  },
   topBackground: {
     position: "absolute",
     top: 0,
@@ -164,9 +247,11 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 5,
     borderRadius: 50,
-    backgroundColor: "rgba(47, 139, 136, 0.7)",
+    backgroundColor: "#FFF"
   },
-  scroll: { paddingBottom: 100 },
+  scroll: { 
+    paddingBottom: 100 
+  },
   mainAvatar: {
     width: "100%",
     height: 280,
@@ -174,7 +259,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  mainAvatarText: { fontSize: 100, fontWeight: "bold", color: "#FFFFFF" },
+  mainAvatarText: { 
+    fontSize: 100, 
+    fontWeight: "bold", 
+    color: "#FFFFFF" 
+  },
   contentCard: {
     backgroundColor: "#F9F9F9",
     borderTopLeftRadius: 30,
@@ -182,7 +271,12 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: -30,
   },
-  vetBio: { fontSize: 14, color: "#8E8E8E", lineHeight: 18, marginBottom: 30 },
+  vetBio: { 
+    fontSize: 14, 
+    color: "#8E8E8E", 
+    lineHeight: 18, 
+    marginBottom: 30 
+  },
   mainButton: {
     backgroundColor: "#2F8B88",
     borderRadius: 16,
@@ -194,5 +288,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 20,
   },
-  mainButtonText: { color: "#FFFFFF", fontSize: 15, fontWeight: "bold" },
+  mainButtonText: { 
+    color: "#FFFFFF", 
+    fontSize: 15, 
+    fontWeight: "bold" 
+  },
 });
