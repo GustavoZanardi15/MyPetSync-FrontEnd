@@ -208,7 +208,7 @@ export default function HomeScreen() {
         )}
 
         {loadingVets ? (
-          <ActivityIndicator size="large" color="#2F8B88" style={{ marginTop: 20 }} />
+          <ActivityIndicator size="large" color="#2F8B88" style={{ marginTop: 30 }} />
         ) : (
           <VeterinariosSection vets={vets || []} />
         )}

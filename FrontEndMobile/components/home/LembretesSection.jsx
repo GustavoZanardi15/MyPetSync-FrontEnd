@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -26,13 +26,6 @@ const EmptyStateMessage = () => (
 );
 
 export default function LembretesSection({ reminders }) {
-  const [avaliados, setAvaliados] = useState({});
-
-  const handleAvaliar = (index) => {
-    setAvaliados((prev) => ({ ...prev, [index]: true }));
-    router.push("/screens/lembreteScreens/AvaliarScreen");
-  };
-
   return (
     <View style={{ marginTop: 40 }}>
       <View style={styles.sectionHeader}>
@@ -54,7 +47,6 @@ export default function LembretesSection({ reminders }) {
         >
           {reminders.map((reminder, index) => {
             const translatedRepeat = translateRepeatStatus(reminder.repeat);
-            const isCompleted = translatedRepeat.toLowerCase() === "concluído";
 
             return (
               <View style={styles.card} key={index}>
@@ -78,22 +70,6 @@ export default function LembretesSection({ reminders }) {
                       <Text style={styles.cardTime}>{reminder.time}</Text>
                       <Text style={styles.cardRepeatText}>{translatedRepeat}</Text>
                     </View>
-
-                    {isCompleted && (
-                      <Pressable
-                        style={[
-                          styles.btnAvaliar,
-                          avaliados[index] && { backgroundColor: "#ccc" },
-                        ]}
-                        onPress={() =>
-                          !avaliados[index] ? handleAvaliar(index) : null
-                        }
-                      >
-                        <Text style={styles.btnAvaliarText}>
-                          {avaliados[index] ? "Avaliado" : "Avaliar"}
-                        </Text>
-                      </Pressable>
-                    )}
                   </View>
                 </View>
               </View>
@@ -108,7 +84,6 @@ export default function LembretesSection({ reminders }) {
 }
 
 const styles = StyleSheet.create({
-
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
@@ -126,7 +101,6 @@ const styles = StyleSheet.create({
     color: "#999",
     fontWeight: "400",
   },
-
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -201,17 +175,5 @@ const styles = StyleSheet.create({
     color: "#2F8B88",
     fontWeight: "400",
     marginTop: 2,
-  },
-  btnAvaliar: {
-    marginLeft: "auto",
-    backgroundColor: "#2F8B88",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-  },
-  btnAvaliarText: {
-    color: "#fff",
-    fontSize: 13,
-    fontWeight: "bold",
   },
 });
