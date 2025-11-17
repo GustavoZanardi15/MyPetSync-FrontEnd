@@ -32,7 +32,6 @@ export default function PlaceholderFotoCard({ scaleAnim }) {
                 ]}
             >
                 <Feather name="plus-square" size={80} color="#343434" style={{ opacity: 0.6 }} />
-                <Text style={styles.placeholderText}>Adicionar Foto</Text>
             </Animated.View>
         </View>
     );
@@ -57,12 +56,5 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-    },
-    placeholderText: {
-        fontSize: 16,
-        color: "#343434",
-        fontWeight: "600",
-        marginTop: 10,
-        opacity: 0.7,
-    },
+    }
 });
