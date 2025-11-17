@@ -154,7 +154,6 @@ export default function PerfilPetScreen() {
                             <PetImageInfo pet={selectedPet} router={router} petColor={selectedPetColor} />
                             <PetInfo label="Espécie:" value={selectedPet.especie} />
                             <PetInfo label="Raça:" value={selectedPet.race} />
-                            <PetInfo label="Peso atual:" value={selectedPet.weight} />
                             <PetInfo label="Castrado:" value={selectedPet.neutered} />
                             <PetInfo label="Condições especiais:" value={selectedPet.specialCondition} />
                             <DeletePetButton pet={selectedPet} onPetDeleted={handlePetDeleted} />
@@ -207,13 +206,13 @@ const styles = StyleSheet.create({
     },
     addButton: {
         marginTop: 30,
-        backgroundColor: "#A8E6CF",
+        backgroundColor: "#2F8B88",
         paddingVertical: 12,
         paddingHorizontal: 25,
         borderRadius: 8
     },
     addButtonText: {
-        color: "#1e1e1e",
+        color: "#FFF",
         fontSize: 16,
         fontWeight: "bold"
     },
