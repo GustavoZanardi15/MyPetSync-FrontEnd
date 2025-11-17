@@ -1,8 +1,5 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-
+import { View, Text, StyleSheet } from "react-native";
 export default function LembretesHeader() {
   return (
     <View style={styles.header}>
@@ -24,6 +21,5 @@ const styles = StyleSheet.create({
     color: "#2F8B88",
     textAlign: "center",
     flex: 1,
-    right: 20
   }
 });
