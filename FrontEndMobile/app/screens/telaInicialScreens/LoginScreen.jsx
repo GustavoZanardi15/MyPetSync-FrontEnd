@@ -5,8 +5,7 @@ import {
   Pressable,
   StyleSheet,
   Image,
-  Dimensions,
-  Alert,
+  Dimensions
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -66,7 +65,6 @@ export default function LoginScreen() {
 
       console.log("Dados de autenticação salvos com sucesso.");
 
-      Alert.alert("Sucesso", "Login realizado com sucesso!");
       router.replace("/screens/homeScreens/HomeScreen");
     } catch (error) {
       setErrorMessage("E-mail ou senha incorretos.");
