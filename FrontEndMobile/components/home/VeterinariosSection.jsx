@@ -42,7 +42,7 @@ export default function VeterinariosSection({ vets = [] }) {
   return (
     <View style={{ marginTop: 40 }}>
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Médicos Veterinários</Text>
+        <Text style={styles.sectionTitle}>Prestadores</Text>
         <Pressable onPress={() => router.push("/screens/servicoScreens/ServicoVetScreen")}>
           <Text style={styles.verTudo}>Ver tudo</Text>
         </Pressable>

@@ -21,10 +21,6 @@ export default function PetSelector({ pets, selectedPet, setSelectedPet }) {
             </View>
           </Pressable>
         ))}
-
-        <Pressable style={styles.addPet} onPress={() => router.push("/screens/addPetScreens/AddPetScreen")} >
-          <Ionicons name="add" size={22} color="#2F8B88" />
-        </Pressable>
       </ScrollView>
     </View>
   );
@@ -34,7 +30,7 @@ const styles = StyleSheet.create({
   sectionPet: {
     fontSize: 20,
     color: "#2F8B88",
-    fontSize: "600",
+    fontWeight: "600",
     lineHeight: 18,
     right: -25
   },
