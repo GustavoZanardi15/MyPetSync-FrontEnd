@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Linking } from "react-native";
 import {
   View,
   Text,
@@ -139,6 +140,7 @@ export default function ServicoVetDetalheScreen() {
               : 0,
           type: vetData.providerType || vetData.type || "autonomo",
           service: vetData.service || vetData.servicesOffered?.[0] || "Serviço Não Definido",
+          whatsapp: vetData.whatsapp || vetData.phone || vetData.telefone || "",
         });
 
         console.log("📊 Dados carregados:");
@@ -219,6 +221,32 @@ export default function ServicoVetDetalheScreen() {
           >
             <Text style={styles.mainButtonText}>Marque uma Consulta!</Text>
           </Pressable>
+          <Pressable
+            style={{
+              backgroundColor: "#25D366",
+              borderRadius: 16,
+              height: 35,
+              width: 177,
+              paddingVertical: 15,
+              alignItems: "center",
+              alignSelf: "center",
+              justifyContent: "center",
+              marginBottom: 20,
+            }}
+            onPress={() => {
+              if (!vet.whatsapp) {
+                Alert.alert("Erro", "Este profissional não possui WhatsApp cadastrado.");
+                return;
+              }
+              const url = `https://wa.me/${vet.whatsapp.replace(/\D/g, "")}`;
+              Linking.openURL(url);
+            }}
+          >
+            <Text style={{ color: "#FFFFFF", fontSize: 15, fontWeight: "bold" }}>
+              WhatsApp
+            </Text>
+          </Pressable>
+
         </View>
       </ScrollView>
       <BottomNav />
