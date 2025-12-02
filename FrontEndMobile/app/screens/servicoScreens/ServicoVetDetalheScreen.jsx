@@ -1,23 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Platform,
-  StatusBar,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { Linking } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Pressable, Platform, StatusBar, ActivityIndicator, Alert } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../src/service/api";
-
-// Importando os componentes existentes
 import VetInfoSection from "../../../components/servico/servicoVetDetalhe/VetInfoSection";
-import VetStats from "../../../components/servico/servicoVetDetalhe/VetStats";
 import VetAvaliacoesSection from "../../../components/servico/servicoVetDetalhe/VetAvaliacoesSection";
 import BottomNav from "../../../components/servico/servicoVetDetalhe/BottomNav";
 
@@ -34,8 +22,8 @@ export default function ServicoVetDetalheScreen() {
     precoConsulta: 0,
     type: "",
     service: "",
-    endereco: "Endereço não disponível"
   });
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,14 +41,12 @@ export default function ServicoVetDetalheScreen() {
           return;
         }
 
-        // 1. Buscar dados do provider
         const response = await api.get(`/providers/${vetId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         const vetData = response.data;
 
-        // 2. Buscar appointments para estatísticas
         let appointments = [];
         try {
           const appointmentsResponse = await api.get(
@@ -72,81 +58,57 @@ export default function ServicoVetDetalheScreen() {
           console.log("Erro ao buscar appointments:", err.message);
         }
 
-        // 3. ✅ BUSCAR AVALIAÇÕES SEPARADAMENTE
         let avaliacoes = [];
         try {
           const reviewsResponse = await api.get(`/reviews`, {
             params: { provider: vetId },
-            headers: { Authorization: `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
           });
-          
+
           if (reviewsResponse.data && reviewsResponse.data.items) {
             avaliacoes = reviewsResponse.data.items;
-            console.log("✅ Avaliações encontradas:", avaliacoes.length);
-            
-            // ✅ CORREÇÃO: Buscar nomes reais dos usuários
+
             const avaliacoesComNomes = await Promise.all(
               avaliacoes.map(async (avaliacao) => {
                 try {
-                  // Buscar dados completos do usuário
-                  const userResponse = await api.get(`/users/${avaliacao.author}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                  });
-                  
+                  const userResponse = await api.get(
+                    `/users/${avaliacao.author}`,
+                    {
+                      headers: { Authorization: `Bearer ${token}` },
+                    }
+                  );
+
                   const userData = userResponse.data;
-                  console.log("👤 Dados do usuário:", userData);
-                  
-                  // Extrair nome real do usuário
-                  const userName = userData.nome || userData.name || "Usuário";
-                  
+
                   return {
                     ...avaliacao,
                     author: {
                       _id: avaliacao.author,
-                      name: userName
-                    }
+                      name: userData.nome || userData.name || "Usuário",
+                    },
                   };
-                  
                 } catch (error) {
                   console.log("❌ Erro ao buscar usuário:", error.message);
-                  console.log("   Author ID:", avaliacao.author);
-                  
+
                   return {
                     ...avaliacao,
-                    author: { 
+                    author: {
                       _id: avaliacao.author,
-                      name: "Usuário Anônimo" 
-                    }
+                      name: "Usuário Anônimo",
+                    },
                   };
                 }
               })
             );
+
             avaliacoes = avaliacoesComNomes;
           }
         } catch (err) {
-          console.log("Erro ao buscar avaliações:", err.response?.data || err.message);
+          console.log(
+            "Erro ao buscar avaliações:",
+            err.response?.data || err.message
+          );
         }
-
-        // 4. ✅ FORMATAR ENDEREÇO
-        const formatarEndereco = () => {
-          const { street, number, city, state } = vetData;
-          
-          if (!street && !city && !state) {
-            return "Endereço não disponível";
-          }
-          
-          const partes = [];
-          if (street) partes.push(street);
-          if (number) partes.push(number);
-          if (city || state) {
-            const cidadeEstado = [city, state].filter(Boolean).join(" - ");
-            partes.push(cidadeEstado);
-          }
-          
-          return partes.join(", ");
-        };
-
-        const enderecoFormatado = formatarEndereco();
 
         setVet({
           id: vetData._id || vetId,
@@ -157,25 +119,16 @@ export default function ServicoVetDetalheScreen() {
           consultasRealizadas: appointments.length || 0,
           precoConsulta:
             appointments.length > 0
-              ? appointments.reduce((sum, a) => sum + (a.price || 0), 0) / appointments.length
+              ? appointments.reduce((sum, a) => sum + (a.price || 0), 0) /
+                appointments.length
               : 0,
           type: vetData.providerType || vetData.type || "autonomo",
-          service: vetData.service || vetData.servicesOffered?.[0] || "Serviço Não Definido",
-          endereco: enderecoFormatado,
-          // ✅ Mantendo os dados individuais do endereço para uso futuro
-          enderecoCompleto: {
-            street: vetData.street,
-            number: vetData.number,
-            city: vetData.city,
-            state: vetData.state
-          }
+          service:
+            vetData.service ||
+            vetData.servicesOffered?.[0] ||
+            "Serviço Não Definido",
+          whatsapp: vetData.whatsapp || vetData.phone || vetData.telefone || "",
         });
-
-        console.log("📊 Dados carregados:");
-        console.log("   Nome do vet:", vetData.name);
-        console.log("   Endereço:", enderecoFormatado);
-        console.log("   Avaliações encontradas:", avaliacoes.length);
-
       } catch (err) {
         console.error(
           "Erro ao buscar prestador:",
@@ -190,12 +143,34 @@ export default function ServicoVetDetalheScreen() {
         setLoading(false);
       }
     }
+
     loadVet();
   }, [vetId]);
 
+  const abrirWhatsApp = () => {
+    if (!vet.whatsapp) {
+      Alert.alert("Erro", "Este profissional não possui WhatsApp cadastrado.");
+      return;
+    }
+
+    const phone = vet.whatsapp.replace(/\D/g, "");
+    const message = `Olá ${vet.nome}, tudo bem? Encontrei seu perfil no MyPetSync e gostaria de mais informações.`;
+
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+    Linking.openURL(url).catch(() =>
+      alert("Não foi possível abrir o WhatsApp.")
+    );
+  };
+
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <ActivityIndicator size="large" color="#2F8B88" />
       </View>
     );
@@ -203,7 +178,12 @@ export default function ServicoVetDetalheScreen() {
 
   if (!vet) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <Text style={{ fontSize: 18, color: "#FF0000" }}>
           Erro: Detalhes do Veterinário não encontrados
         </Text>
@@ -217,6 +197,7 @@ export default function ServicoVetDetalheScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.topBackground} />
+
       <ScrollView contentContainerStyle={styles.scroll}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#2F8B88" />
@@ -227,18 +208,12 @@ export default function ServicoVetDetalheScreen() {
         </View>
 
         <View style={styles.contentCard}>
-          <VetInfoSection vet={vet} />
+          <VetInfoSection vet={vet} abrirWhatsApp={abrirWhatsApp} />
+
           <Text style={styles.vetBio}>{vet.bio}</Text>
-          
-          {/* ✅ SEÇÃO DE ENDEREÇO SIMPLES */}
-          <View style={styles.enderecoSection}>
-            <Text style={styles.enderecoText}>
-              <Text style={styles.enderecoLabel}>Endereço: </Text>
-              {vet.endereco}
-            </Text>
-          </View>
 
           <VetAvaliacoesSection avaliacoes={vet.avaliacoesList} />
+
           <Pressable
             style={styles.mainButton}
             onPress={() =>
@@ -250,7 +225,6 @@ export default function ServicoVetDetalheScreen() {
                     nome: vet.nome,
                     type: vet.type,
                     service: vet.service,
-                    endereco: vet.endereco
                   }),
                 },
               })
@@ -260,15 +234,16 @@ export default function ServicoVetDetalheScreen() {
           </Pressable>
         </View>
       </ScrollView>
+
       <BottomNav />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#F9F9F9" 
+  container: {
+    flex: 1,
+    backgroundColor: "#F9F9F9",
   },
   topBackground: {
     position: "absolute",
@@ -284,10 +259,11 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 10,
     padding: 5,
-    borderRadius: 50
+    borderRadius: 50,
+    backgroundColor: "#FFF",
   },
-  scroll: { 
-    paddingBottom: 100 
+  scroll: {
+    paddingBottom: 100,
   },
   mainAvatar: {
     width: "100%",
@@ -296,10 +272,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  mainAvatarText: { 
-    fontSize: 100, 
-    fontWeight: "bold", 
-    color: "#FFFFFF" 
+  mainAvatarText: {
+    fontSize: 100,
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   contentCard: {
     backgroundColor: "#F9F9F9",
@@ -308,38 +284,25 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: -30,
   },
-  vetBio: { 
-    fontSize: 14, 
-    color: "#8E8E8E", 
-    lineHeight: 18, 
-    marginBottom: 15
-  },
-  enderecoSection: {
-    marginBottom: 25,
-  },
-  enderecoText: {
+  vetBio: {
     fontSize: 14,
-    color: "#333333",
+    color: "#8E8E8E",
     lineHeight: 18,
-  },
-  enderecoLabel: {
-    fontWeight: "600",
-    color: "#2F8B88",
+    marginBottom: 30,
   },
   mainButton: {
     backgroundColor: "#2F8B88",
     borderRadius: 16,
-    height: 35,
-    width: 177,
-    paddingVertical: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 26,
     alignItems: "center",
     alignSelf: "center",
     justifyContent: "center",
     marginBottom: 20,
   },
-  mainButtonText: { 
-    color: "#FFFFFF", 
-    fontSize: 15, 
-    fontWeight: "bold" 
+  mainButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "bold",
   },
 });
