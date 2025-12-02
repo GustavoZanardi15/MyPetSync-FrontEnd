@@ -1,6 +1,6 @@
+import React from "react";
+import LoginScreen from "./screens/telaInicialScreens/LoginScreen";
 
-import PerfilTutorScreen from "./screens/perfilTutorScreens/PerfilTutorScreen";
-
-export default function Index() {
-  return <PerfilTutorScreen />;
+export default function App() {
+  return <LoginScreen />;
 }
