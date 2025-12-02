@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1764707779682" clover="3.2.0">
-  <project timestamp="1764707779682" name="All files">
-    <metrics statements="1165" coveredstatements="823" conditionals="780" coveredconditionals="464" methods="259" coveredmethods="157" elements="2204" coveredelements="1444" complexity="0" loc="1165" ncloc="1165" packages="14" files="54" classes="54"/>
+<coverage generated="1764712628047" clover="3.2.0">
+  <project timestamp="1764712628047" name="All files">
+    <metrics statements="1165" coveredstatements="832" conditionals="780" coveredconditionals="473" methods="259" coveredmethods="160" elements="2204" coveredelements="1465" complexity="0" loc="1165" ncloc="1165" packages="14" files="54" classes="54"/>
     <package name="components.agenda">
       <metrics statements="244" coveredstatements="191" conditionals="204" coveredconditionals="109" methods="64" coveredmethods="49"/>
       <file name="AgendaCalendar.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\agenda\AgendaCalendar.jsx">
@@ -634,23 +634,23 @@
       </file>
     </package>
     <package name="components.profile">
-      <metrics statements="11" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="5" coveredmethods="0"/>
+      <metrics statements="11" coveredstatements="9" conditionals="9" coveredconditionals="9" methods="5" coveredmethods="3"/>
       <file name="ProfileCard.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\profile\ProfileCard.jsx">
-        <metrics statements="4" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="1" count="0" type="stmt"/>
-        <line num="10" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="12" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="15" count="0" type="stmt"/>
+        <metrics statements="4" coveredstatements="4" conditionals="6" coveredconditionals="6" methods="1" coveredmethods="1"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="10" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="12" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="5" type="stmt"/>
       </file>
       <file name="ProfileInfoBlock.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\profile\ProfileInfoBlock.jsx">
-        <metrics statements="7" coveredstatements="0" conditionals="3" coveredconditionals="0" methods="4" coveredmethods="0"/>
-        <line num="1" count="0" type="stmt"/>
+        <metrics statements="7" coveredstatements="5" conditionals="3" coveredconditionals="3" methods="4" coveredmethods="2"/>
+        <line num="1" count="1" type="stmt"/>
         <line num="2" count="0" type="stmt"/>
-        <line num="18" count="0" type="cond" truecount="0" falsecount="1"/>
-        <line num="19" count="0" type="stmt"/>
+        <line num="18" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="19" count="4" type="stmt"/>
         <line num="20" count="0" type="stmt"/>
-        <line num="22" count="0" type="stmt"/>
-        <line num="29" count="0" type="stmt"/>
+        <line num="22" count="4" type="stmt"/>
+        <line num="29" count="12" type="stmt"/>
       </file>
     </package>
     <package name="components.shared">
