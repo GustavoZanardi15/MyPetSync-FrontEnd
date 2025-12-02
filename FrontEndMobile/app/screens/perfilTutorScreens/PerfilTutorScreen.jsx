@@ -55,7 +55,7 @@ export default function PerfilTutorScreen() {
         )}
         <OpcoesPerfilCard
           onEndereco={() => router.push("/screens/perfilTutorScreens/EnderecoScreens/EnderecoScreen")}
-          onServicos={() => router.push("/screens/servicoScreens/ServicoPetScreen")}
+          onServicos={() => router.push("/screens/perfilTutorScreens/HistoricoServicosScreen")}                     
           onLembretes={() => router.push("/screens/lembreteScreens/LembreteScreen")}
           onLogout={async () => { 
             await AsyncStorage.removeItem("userToken");
