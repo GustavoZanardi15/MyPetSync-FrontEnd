@@ -16,8 +16,11 @@ import ResetPassword from "./components/auth/ResetPassword.jsx";
 import EditProfilePage from "./pages/EditProfilePage.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import ChatListPage from "./pages/chat/ChatListPage.jsx";
+import ChatRoomPage from "./pages/chat/ChatRoomPage.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
+
 const router = createBrowserRouter([
   { path: "/", element: <LandingPage /> },
   { path: "/registerCompany", element: <RegisterCompany /> },
@@ -58,6 +61,22 @@ const router = createBrowserRouter([
         element: (
           <LayoutWrapper>
             <EditProfilePage />
+          </LayoutWrapper>
+        ),
+      },
+      {
+        path: "/app/chat",
+        element: (
+          <LayoutWrapper>
+            <ChatListPage />
+          </LayoutWrapper>
+        ),
+      },
+      {
+        path: "/app/chat/:roomId",
+        element: (
+          <LayoutWrapper>
+            <ChatRoomPage />
           </LayoutWrapper>
         ),
       },
