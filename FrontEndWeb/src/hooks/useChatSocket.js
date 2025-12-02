@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import io from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
+import { getToken } from "../services/authService";
 import api from "../utils/Api";
 
 const SOCKET_URL = "http://localhost:3000/chat";
 
 export function useChatSocket(roomId) {
-  const { token, user } = useAuth();
+  const { user } = useAuth();
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -25,9 +26,12 @@ export function useChatSocket(roomId) {
   }, [roomId, setHistory]);
 
   useEffect(() => {
-    if (!token || !roomId) return;
+    const currentToken = getToken();
+
+    if (!currentToken || !roomId) return;
+
     const newSocket = io(SOCKET_URL, {
-      query: { token },
+      query: { token: currentToken },
     });
 
     newSocket.on("connect", () => {
@@ -50,7 +54,7 @@ export function useChatSocket(roomId) {
     return () => {
       newSocket.disconnect();
     };
-  }, [token, roomId, fetchHistory]);
+  }, [roomId, fetchHistory]);
 
   const sendMessage = useCallback(
     (content) => {
@@ -60,7 +64,7 @@ export function useChatSocket(roomId) {
     },
     [socket, isConnected, roomId]
   );
-  const currentUserId = user?.userId;
 
+  const currentUserId = user?.userId;
   return { messages, sendMessage, isConnected, setHistory, currentUserId };
 }
