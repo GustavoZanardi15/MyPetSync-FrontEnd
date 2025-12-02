@@ -95,3 +95,7 @@ export const logout = () => {
   localStorage.removeItem("myPetSyncToken");
   delete api.defaults.headers.common["Authorization"];
 };
+
+export const getToken = () => {
+  return localStorage.getItem("myPetSyncToken");
+};
