@@ -259,8 +259,7 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 10,
     padding: 5,
-    borderRadius: 50,
-    backgroundColor: "#FFF",
+    borderRadius: 50
   },
   scroll: {
     paddingBottom: 100,
