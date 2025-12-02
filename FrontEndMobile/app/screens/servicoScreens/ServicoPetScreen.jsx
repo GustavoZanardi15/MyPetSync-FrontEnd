@@ -6,7 +6,7 @@ import api from "../../../src/service/api";
 
 import ServicoHeader from "../../../components/servico/servicoLista/ServicoHeader";
 import ServicoCard from "../../../components/servico/servicoLista/ServicoCard";
-import BottomNav from "../../../components/servico/servicoLista/BottomNav";
+import BottomNav from "../../../components/servico/BottomNav";
 
 const servicosData = [
   {

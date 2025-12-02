@@ -6,7 +6,7 @@ import api, { API_BASE_URL } from "../../../src/service/api";
 import SaudeHeader from "../../../components/pet/saudePet/SaudeHeader";
 import PetSelector from "../../../components/pet/saudePet/PetSelector";
 import VacinaList from "../../../components/pet/saudePet/VacinaList";
-import BottomNav from "../../../components/pet/saudePet/BottomNav";
+import BottomNav from "../../../components/pet/BottomNav";
 
 const DEFAULT_AVATAR_DOG = require("../../../assets/images/addPet/Dog.png");
 const DEFAULT_AVATAR_CAT = require("../../../assets/images/addPet/Cat.png");

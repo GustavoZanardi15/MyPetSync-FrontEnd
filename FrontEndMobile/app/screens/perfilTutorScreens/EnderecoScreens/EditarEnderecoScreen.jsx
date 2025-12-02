@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../../src/service/api";
 import EditarEnderecoHeader from "../../../../components/tutor/editarEnderecoTutor/EditarEnderecoHeader";
 import FormInput from "../../../../components/tutor/editarEnderecoTutor/FormInput";
-import BottomNav from "../../../../components/tutor/editarEnderecoTutor/BottomNav";
+import BottomNav from "../../../../components/tutor/BottomNav";
 
 export default function EditarEnderecoScreen() {
     const router = useRouter();

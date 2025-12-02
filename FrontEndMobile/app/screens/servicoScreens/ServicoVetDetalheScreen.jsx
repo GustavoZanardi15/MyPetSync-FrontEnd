@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../src/service/api";
 import VetInfoSection from "../../../components/servico/servicoVetDetalhe/VetInfoSection";
 import VetAvaliacoesSection from "../../../components/servico/servicoVetDetalhe/VetAvaliacoesSection";
-import BottomNav from "../../../components/servico/servicoVetDetalhe/BottomNav";
+import BottomNav from "../../../components/servico/BottomNav";
 
 export default function ServicoVetDetalheScreen() {
   const router = useRouter();
