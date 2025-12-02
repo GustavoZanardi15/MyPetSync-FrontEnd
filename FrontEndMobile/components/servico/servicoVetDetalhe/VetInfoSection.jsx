@@ -1,15 +1,25 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, Linking } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import * as Linking from "expo-linking";
 
 export default function VetInfoSection({ vet }) {
 
+  const abrirWhatsApp = () => {
+    if (!vet.whatsapp) return;
+
+    const phone = vet.whatsapp.replace(/\D/g, "");
+    const message = `Olá ${vet.nome}, tudo bem? Encontrei seu perfil no MyPetSync e gostaria de mais informações.`;
+
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    Linking.openURL(url);
+  };
+
   const calcularMediaAvaliacoes = () => {
     if (!vet.avaliacoesList || vet.avaliacoesList.length === 0) return 0;
-    
-    const soma = vet.avaliacoesList.reduce((total, avaliacao) => 
-      total + (avaliacao.rating || 0), 0
+
+    const soma = vet.avaliacoesList.reduce(
+      (total, avaliacao) => total + (avaliacao.rating || 0),
+      0
     );
     return soma / vet.avaliacoesList.length;
   };
@@ -35,42 +45,57 @@ export default function VetInfoSection({ vet }) {
 
   return (
     <View style={styles.infoSection}>
-      <View>
+      <View style={styles.nameRow}>
         <Text style={styles.vetName}>{vet.nome}</Text>
-        <Text style={styles.vetSpecialty}>{vet.service}</Text>
-        <Text style={styles.vetType}>
-          {vet.type === "empresa" ? "Empresa" : "Profissional Autônomo"}
-        </Text>
-        
-        {totalAvaliacoes > 0 ? (
-          <View style={styles.ratingRow}>
-            <View style={styles.stars}>
-              {renderStars(mediaAvaliacoes)}
-            </View>
-            <Text style={styles.avaliacoesCount}>
-              {mediaAvaliacoes.toFixed(1)} ({totalAvaliacoes})
-            </Text>
-          </View>
-        ) : (
-          <Text style={styles.noAvaliacoes}>Nenhuma avaliação ainda</Text>
-        )}
+
+        {vet.whatsapp ? (
+          <Pressable onPress={abrirWhatsApp} style={styles.whatsIconButton}>
+            <Ionicons name="logo-whatsapp" size={24} color="#FFF" />
+          </Pressable>
+        ) : null}
       </View>
+
+      <Text style={styles.vetSpecialty}>{vet.service}</Text>
+      <Text style={styles.vetType}>
+        {vet.type === "empresa" ? "Empresa" : "Profissional Autônomo"}
+      </Text>
+
+      {totalAvaliacoes > 0 ? (
+        <View style={styles.ratingRow}>
+          <View style={styles.stars}>{renderStars(mediaAvaliacoes)}</View>
+          <Text style={styles.avaliacoesCount}>
+            {mediaAvaliacoes.toFixed(1)} ({totalAvaliacoes})
+          </Text>
+        </View>
+      ) : (
+        <Text style={styles.noAvaliacoes}>Nenhuma avaliação ainda</Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   infoSection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     marginBottom: 15,
   },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
   vetName: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#2F8B88",
   },
+
+  whatsIconButton: {
+    padding: 12,
+    backgroundColor: "#60D66A",
+    borderRadius: 50,
+  },
+
   vetSpecialty: {
     fontSize: 16,
     color: "#4A4A4A",
@@ -82,6 +107,7 @@ const styles = StyleSheet.create({
     color: "#8E8E8E",
     marginBottom: 8,
   },
+
   ratingRow: {
     flexDirection: "row",
     alignItems: "center",
