@@ -3,136 +3,139 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
   FlatList,
   ActivityIndicator,
+  Platform,
+  StatusBar,
+  Pressable,
+  Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import api from "../../../src/service/api";
-
-const TYPE_META = {
-  home: { chip: "Casa", icon: "home-outline", color: "#2F7D73" },
-  work: { chip: "Work", icon: "briefcase-outline", color: "#2F7D73" },
-  other: { chip: "Other", icon: "map-marker-outline", color: "#8B5CF6" },
-};
+import { useRouter, useNavigation } from "expo-router";
+import api from "../../../../src/service/api";
+import EnderecoHeader from "../../../../components/tutor/enderecoTutor/EnderecoHeader";
+import EnderecoItem from "../../../../components/tutor/enderecoTutor/EnderecoItem";
+import BottomNav from "../../../../components/tutor/BottomNav";
 
 export default function EnderecoScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
   const [addresses, setAddresses] = useState([]);
 
   const fetchEnderecos = useCallback(async () => {
     setLoading(true);
     try {
-      const token = await AsyncStorage.getItem("userToken");
+      const token =
+        (await AsyncStorage.getItem("access-token")) ||
+        (await AsyncStorage.getItem("userToken"));
       if (!token) throw new Error("Token ausente");
 
-      let data;
-      try {
-        const resp = await api.get("/tutor/enderecos", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        data = resp?.data;
-      } catch {
-        const me = await api.get("/usuarios/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        data = me?.data?.enderecos;
-      }
+      const resp = await api.get("/tutors/mine", {
+        headers: { Authorization: Bearer ${token} },
+      });
 
-      if (!Array.isArray(data) || data.length === 0) {
-        data = [
-          { id: "1", type: "home", line: "Rua Antonio Salema 666, Zona 02" },
-          { id: "2", type: "work", line: "Av Humaitá 542, Zona 02" },
-          { id: "3", type: "other", line: "Rua José de Alencar 1091, Centro" },
-        ];
-      }
-
-      setAddresses(
-        data.map((a, idx) => ({
-          id: a.id ?? String(idx + 1),
-          type: (a.type ?? "other").toLowerCase(),
-          line: a.line ?? a.endereco ?? "",
-        }))
-      );
+      const tutor = resp?.data;
+      const data = tutor?.addresses ?? [];
+      setAddresses(Array.isArray(data) ? data : []);
     } catch (e) {
-      setAddresses([
-        { id: "1", type: "home", line: "Rua Antonio Salema 666, Zona 02" },
-        { id: "2", type: "work", line: "Av Humaitá 542, Zona 02" },
-        { id: "3", type: "other", line: "Rua José de Alencar 1091, Centro" },
-      ]);
+      console.log("Erro ao buscar endereços:", e);
+      setAddresses([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchEnderecos();
-  }, [fetchEnderecos]);
+    const unsubscribe = navigation.addListener("focus", fetchEnderecos);
+    return unsubscribe;
+  }, [navigation, fetchEnderecos]);
 
-  const renderItem = ({ item }) => {
-    const meta = TYPE_META[item.type] ?? TYPE_META.other;
+  const handleDelete = async (indexToRemove) => {
+    try {
+      const token =
+        (await AsyncStorage.getItem("access-token")) ||
+        (await AsyncStorage.getItem("userToken"));
+      if (!token) throw new Error("Token ausente");
 
-    return (
-      <View style={styles.itemWrapper}>
-        <Pressable
-          style={({ pressed }) => [styles.item, pressed && { opacity: 0.85 }]}
-          onPress={() => router.push("/screens/perfilTutorScreens/RemoverEnderecoScreen")}
-        >
-          {/* Chip de tipo */}
-          <View style={[styles.chip, { backgroundColor: `${meta.color}1A`, borderColor: meta.color }]}>
-            <MaterialCommunityIcons name={meta.icon} size={16} color={meta.color} />
-            <Text style={[styles.chipText, { color: meta.color }]}>{meta.chip}</Text>
-          </View>
+      const tutorResp = await api.get("/tutors/mine", {
+        headers: { Authorization: Bearer ${token} },
+      });
+      const tutor = tutorResp.data;
 
-          {/* Linha do endereço */}
-          <Text style={styles.addressText}>{item.line}</Text>
-        </Pressable>
+      const updatedAddresses = tutor.addresses.filter(
+        (_, index) => index !== indexToRemove
+      );
 
-        <View style={styles.divider} />
-      </View>
-    );
+      await api.put(
+        "/tutors/mine",
+        { addresses: updatedAddresses },
+        { headers: { Authorization: Bearer ${token} } }
+      );
+
+      setAddresses(updatedAddresses);
+    } catch (e) {
+      console.error("Erro ao deletar endereço:", e);
+      Alert.alert("Erro", "Não foi possível excluir o endereço.");
+    }
+  };
+
+  const handleEdit = (item) => {
+    router.push({
+      pathname:
+        "/screens/perfilTutorScreens/EnderecoScreens/EditarEnderecoScreen",
+      params: { endereco: JSON.stringify(item) },
+    });
   };
 
   if (loading) {
     return (
-      <View style={[styles.screen, { justifyContent: "center", alignItems: "center" }]}>
-        <ActivityIndicator size="large" />
+      <View
+        style={[
+          styles.screen,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color="#2F8B88" />
       </View>
     );
   }
 
   return (
     <View style={styles.screen}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={({ pressed }) => [styles.backBtn, pressed && { opacity: 0.6 }]}>
-          <MaterialCommunityIcons name="chevron-left" size={24} color="#2F7D73" />
-        </Pressable>
-        <Text style={styles.headerTitle}>Endereço</Text>
-        <View style={{ width: 24 }} />
-      </View>
+      <EnderecoHeader />
+      <View style={styles.contentWrapper}>
+        {addresses.length > 0 ? (
+          <FlatList
+            data={addresses}
+            keyExtractor={(item, index) =>
+              String(item._id || item.id || index)
+            }
+            renderItem={({ item, index }) => (
+              <EnderecoItem
+                item={item}
+                onDelete={() => handleDelete(index)}
+                onEdit={handleEdit} 
+              />
+            )}
+            contentContainerStyle={{ paddingBottom: 16 }}
+          />
+        ) : (
+          <Text style={styles.emptyText}>Nenhum endereço cadastrado.</Text>
+        )}
 
-      <View style={styles.card}>
-        <FlatList
-          data={addresses}
-          keyExtractor={(it) => String(it.id)}
-          renderItem={renderItem}
-          contentContainerStyle={{ paddingTop: 8, paddingBottom: 8 }}
-        />
-
-       
         <Pressable
-          style={({ pressed }) => [styles.addBtn, pressed && { transform: [{ translateY: 1 }] }]}
-          onPress={() => router.push("/screens/perfilTutorScreens/NovoEnderecoScreen")}
+          style={styles.addBtn}
+          onPress={() =>
+            router.push(
+              "/screens/perfilTutorScreens/EnderecoScreens/NovoEnderecoScreen"
+            )
+          }
         >
-          <Text style={styles.addBtnText}>+ Adicionar novo endereço</Text>
+          <Text style={styles.addBtnText}>Adicionar novo endereço</Text>
         </Pressable>
       </View>
-
-      <View style={{ height: 20 }} />
+      <BottomNav />
     </View>
   );
 }
@@ -140,81 +143,41 @@ export default function EnderecoScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F4F6F6",
-    paddingHorizontal: 24,
-    paddingTop: 60,
+    backgroundColor: "#F7F7F7",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 60,
   },
-  header: {
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 16,
-  },
-  backBtn: {
-    width: 24,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#2A2A2A",
-  },
-  card: {
+  contentWrapper: {
+    flex: 1,
     backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    paddingHorizontal: 16,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    marginTop: 24,
+    paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 12,
     shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
-  },
-  itemWrapper: {
-    position: "relative",
-  },
-  item: {
-    paddingVertical: 10,
-    paddingRight: 44,
-  },
-  chip: {
-    alignSelf: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    marginBottom: 6,
-  },
-  chipText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  addressText: {
-    fontSize: 14,
-    color: "#2A2A2A",
-    marginBottom: 6,
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: "#E5E7EB",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 5,
   },
   addBtn: {
     alignSelf: "center",
-    marginTop: 14,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: "#2F7D73",
+    marginTop: 16,
+    marginBottom: 90,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 16,
+    backgroundColor: "#2F8B88",
   },
   addBtnText: {
     color: "#FFFFFF",
-    fontWeight: "700",
+    fontWeight: "bold",
     fontSize: 14,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#888",
+    fontSize: 14,
+    marginTop: 20,
   },
 });
