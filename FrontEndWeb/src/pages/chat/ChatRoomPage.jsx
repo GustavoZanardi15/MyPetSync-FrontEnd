@@ -38,14 +38,14 @@ function ChatRoomPage() {
 
   if (isLoading)
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-full">
         Carregando chat...
       </div>
     );
   return (
-    <div className="flex flex-col h-screen max-w-xl mx-auto border-x border-gray-200">
-      <header className="p-4 border-b bg-white sticky top-0 z-10">
-        <h1 className="text-xl font-bold text-indigo-700">
+    <div className="flex flex-col h-full w-full border-x border-gray-200">
+      <header className="p-4 border-b bg-slate-200 sticky top-0 z-10">
+        <h1 className="text-xl font-bold text-[#045f61]">
           Conversa na Sala {roomId.substring(0, 8)}
         </h1>
         <p
@@ -56,8 +56,7 @@ function ChatRoomPage() {
           {isConnected ? "Conectado" : "Tentando reconectar..."}
         </p>
       </header>
-
-      <div className="flex-grow overflow-y-auto p-4 space-y-3 bg-gray-50">
+      <div className="flex-grow overflow-y-auto p-4 space-y-3 bg-gray-100">
         {messages.map((msg) => (
           <div
             key={msg._id}
@@ -66,7 +65,7 @@ function ChatRoomPage() {
             }`}
           >
             <div
-              className={`max-w-[75%] px-4 py-2 rounded-xl text-white shadow-md ${
+              className={`max-w-[75%] px-4 py-2 rounded-xl text-white shadow-md break-words ${
                 msg.senderId === currentUserId
                   ? "bg-indigo-500 rounded-br-none"
                   : "bg-gray-700 rounded-tl-none"
