@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/Api";
-import { useAuth } from "src/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 function ChatListPage() {
   const [rooms, setRooms] = useState([]);
