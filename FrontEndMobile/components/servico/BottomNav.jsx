@@ -1,25 +1,24 @@
+import { router } from "expo-router";
 import React from "react";
-import { View, StyleSheet, Pressable, Image } from "react-native";
-import { useRouter } from "expo-router";
+import { View, Image, Pressable, StyleSheet } from "react-native";
 
-export default function BottomNav() {
-    const router = useRouter();
+export default function BottomNav({ }) {
     return (
         <View style={styles.bottomNav}>
             <Pressable onPress={() => router.push("/screens/lembreteScreens/LembreteScreen")}>
-                <Image source={require("../../../assets/images/home/NavBarCalendar.png")} />
+                <Image source={require("../../assets/images/home/NavBarCalendar.png")} />
             </Pressable>
             <Pressable onPress={() => router.push("/screens/servicoScreens/ServicoPetScreen")}>
-                <Image source={require("../../../assets/images/home/NavBarServico.png")} />
+                <Image source={require("../../assets/images/home/NavBarServicoSelect.png")} />
             </Pressable>
             <Pressable onPress={() => router.push("/screens/homeScreens/HomeScreen")}>
-                <Image source={require("../../../assets/images/home/NavBarHome.png")} />
+                <Image source={require("../../assets/images/home/NavBarHome.png")} />
             </Pressable>
-            <Pressable onPress={() => router.push("/screens/petPerfilScreens/PerfilPetScreen")}>
-                <Image source={require("../../../assets/images/home/NavBarPetSelect.png")} />
+            <Pressable onPress={() => router.push("/screens/perfilPetScreens/PerfilPetScreen")}>
+                <Image source={require("../../assets/images/home/NavBarPet.png")} />
             </Pressable>
             <Pressable onPress={() => router.push("/screens/perfilTutorScreens/PerfilTutorScreen")}>
-                <Image source={require("../../../assets/images/home/NavBarPerfil.png")} />
+                <Image source={require("../../assets/images/home/NavBarPerfil.png")} />
             </Pressable>
         </View>
     );
@@ -40,5 +39,9 @@ const styles = StyleSheet.create({
         right: 0,
         height: 70,
         elevation: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
 });

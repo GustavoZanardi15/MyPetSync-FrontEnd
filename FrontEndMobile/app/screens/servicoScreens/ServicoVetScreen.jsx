@@ -14,7 +14,7 @@ import { useLocalSearchParams } from "expo-router";
 import api from "../../../src/service/api";
 import VetHeader from "../../../components/servico/servicoVet/VetHeader";
 import VetCard from "../../../components/servico/servicoVet/VetCard";
-import BottomNav from "../../../components/servico/servicoVet/BottomNav";
+import BottomNav from "../../../components/servico/BottomNav";
 import FiltroVet from "../../../components/servico/servicoVet/FiltrarVet";
 
 const servicosRelacionados = {

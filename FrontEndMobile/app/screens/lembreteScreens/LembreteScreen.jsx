@@ -18,7 +18,7 @@ import LembretesHeader from "../../../components/lembrete/LembreteScreen/Lembret
 import SelectMonth from "../../../components/lembrete/LembreteScreen/SelectMonth";
 import SelectDay from "../../../components/lembrete/LembreteScreen/SelectDay";
 import LembretesList from "../../../components/lembrete/LembreteScreen/LembreteList";
-import BottomNav from "../../../components/lembrete/LembreteScreen/BottomNav";
+import BottomNav from "../../../components/lembrete/BottomNav";
 
 export default function LembretesScreen() {
   const [userContext, setUserContext] = useState(null);
@@ -33,7 +33,6 @@ export default function LembretesScreen() {
   const [currentUserId, setCurrentUserId] = useState(null);
   const scrollRef = useRef(null);
 
-  // --- Carregar contexto do usuário ---
   useEffect(() => {
     const loadUserContext = async () => {
       try {
@@ -50,7 +49,6 @@ export default function LembretesScreen() {
     loadUserContext();
   }, []);
 
-  // --- Gera dias do mês ---
   const gerarDiasDoMes = (dataBase) => {
     const ano = dataBase.getFullYear();
     const mes = dataBase.getMonth();
@@ -69,7 +67,6 @@ export default function LembretesScreen() {
     setDias(gerarDiasDoMes(dataAtual));
   }, [dataAtual]);
 
-  // --- Pega userId atual ---
   const loadCurrentUser = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -86,35 +83,33 @@ export default function LembretesScreen() {
     loadCurrentUser();
   }, [loadCurrentUser]);
 
-  // ✅ Função auxiliar para definir cores
   const getCorPorStatus = (status, isRated) => {
     if (isRated) {
-      return "#A8E6CF"; // Verde claro - já avaliado
+      return "#A8E6CF";
     }
     
     switch (status) {
       case "scheduled":
       case "Agendado":
-        return "#2F8B88"; // Verde escuro - agendado
+        return "#2F8B88"; 
         
       case "confirmed":
       case "Confirmado":
-        return "#87CEEB"; // Azul claro - confirmado
+        return "#87CEEB"; 
         
       case "completed":
       case "Concluído":
-        return "#90EE90"; // Verde - concluído
+        return "#90EE90";
         
       case "canceled":
       case "Cancelado":
-        return "#FF7F50"; // Laranja - cancelado
+        return "#FF7F50"; 
         
       default:
-        return "#2F8B88"; // Padrão verde escuro
+        return "#2F8B88";
     }
   };
 
-  // --- Carregar lembretes ---
   const carregarLembretes = useCallback(
     async (dataReferencia) => {
       if (!userContext || !userContext.userType) {
@@ -249,7 +244,6 @@ export default function LembretesScreen() {
     [userContext, currentUserId]
   );
 
-  // --- Atualizar lembrete ---
   const atualizarLembrete = useCallback(
     async (lembreteId, dadosAtualizados) => {
       try {
@@ -262,10 +256,8 @@ export default function LembretesScreen() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // ✅ Aguarda MAIS tempo
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // ✅ Recarrega COMPLETAMENTE
         await carregarLembretes(dataAtual);
 
         Alert.alert("Sucesso", "Lembrete atualizado!");
@@ -279,12 +271,10 @@ export default function LembretesScreen() {
     [dataAtual, carregarLembretes]
   );
 
-  // Carregar quando context mudar
   useEffect(() => {
     if (userContext) carregarLembretes(dataAtual);
   }, [userContext, dataAtual, carregarLembretes]);
 
-  // Recarregar ao voltar ao foco
   useFocusEffect(
     useCallback(() => {
       if (userContext) {

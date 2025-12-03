@@ -15,7 +15,7 @@ import { useRouter, useNavigation } from "expo-router";
 import api from "../../../../src/service/api";
 import EnderecoHeader from "../../../../components/tutor/enderecoTutor/EnderecoHeader";
 import EnderecoItem from "../../../../components/tutor/enderecoTutor/EnderecoItem";
-import BottomNav from "../../../../components/tutor/enderecoTutor/BottomNav";
+import BottomNav from "../../../../components/tutor/BottomNav";
 
 export default function EnderecoScreen() {
   const router = useRouter();
@@ -23,7 +23,6 @@ export default function EnderecoScreen() {
   const [loading, setLoading] = useState(true);
   const [addresses, setAddresses] = useState([]);
 
-  // 🔹 Busca os endereços do tutor logado
   const fetchEnderecos = useCallback(async () => {
     setLoading(true);
     try {
@@ -47,13 +46,11 @@ export default function EnderecoScreen() {
     }
   }, []);
 
-  // 🔹 Atualiza lista quando a tela ganha foco
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", fetchEnderecos);
     return unsubscribe;
   }, [navigation, fetchEnderecos]);
 
-  // 🔹 Exclui o endereço
   const handleDelete = async (indexToRemove) => {
     try {
       const token =
@@ -83,7 +80,6 @@ export default function EnderecoScreen() {
     }
   };
 
-  // 🔹 Editar endereço
   const handleEdit = (item) => {
     router.push({
       pathname:
@@ -119,7 +115,7 @@ export default function EnderecoScreen() {
               <EnderecoItem
                 item={item}
                 onDelete={() => handleDelete(index)}
-                onEdit={handleEdit} // ✅ botão de editar funcionando
+                onEdit={handleEdit} 
               />
             )}
             contentContainerStyle={{ paddingBottom: 16 }}
