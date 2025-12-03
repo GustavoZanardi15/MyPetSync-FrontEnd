@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api, { API_BASE_URL } from "../../../src/service/api";
 import PetInfo from "../../../components/pet/perfilPet/PetInfo";
-import BottomNav from "../../../components/pet/perfilPet/BottomNav";
+import BottomNav from "../../../components/pet/BottomNav";
 import PetAvatarSelector from "../../../components/pet/perfilPet/PetAvatarSelector";
 import PetImageInfo from "../../../components/pet/perfilPet/PetImageInfo";
 import DeletePetButton from "../../../components/pet/perfilPet/DeletePetButton";

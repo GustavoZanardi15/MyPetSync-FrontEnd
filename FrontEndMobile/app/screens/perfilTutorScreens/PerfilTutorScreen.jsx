@@ -6,7 +6,7 @@ import api from "../../../src/service/api";
 import PerfilTutorHeader from "../../../components/tutor/perfilTutor/PerfilTutorHeader";
 import InfoTutorCard from "../../../components/tutor/perfilTutor/InfoTutorCard";
 import OpcoesPerfilCard from "../../../components/tutor/perfilTutor/OpcoesPerfilCard";
-import BottomNav from "../../../components/tutor/perfilTutor/BottomNav";
+import BottomNav from "../../../components/tutor/BottomNav";
 
 export default function PerfilTutorScreen() {
   const router = useRouter();
@@ -55,8 +55,8 @@ export default function PerfilTutorScreen() {
         )}
         <OpcoesPerfilCard
           onEndereco={() => router.push("/screens/perfilTutorScreens/EnderecoScreens/EnderecoScreen")}
-          onServicos={() => router.push("/screens/servicoScreens/ServicoPetScreen")}
-          onLembretes={() => router.push("/screens/lembreteScreens/LembreteScreen")}
+          onServicos={() => router.push("/screens/perfilTutorScreens/HistoricoServicoScreen")} 
+          onMensagens={() => router.push("/screens/lembreteScreens/LembreteScreen")}
           onLogout={async () => { 
             await AsyncStorage.removeItem("userToken");
             router.replace("/screens/telaInicialScreens/LoginScreen");

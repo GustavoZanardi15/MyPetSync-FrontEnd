@@ -6,7 +6,7 @@ import api from "../../../src/service/api";
 import EditInfo from "../../../components/pet/editarPet/EditInfo";
 import EditPetHeader from "../../../components/pet/editarPet/EditPetHeader";
 import EditPetImage from "../../../components/pet/editarPet/EditPetImage";
-import BottomNav from "../../../components/pet/editarPet/BottomNav";
+import BottomNav from "../../../components/pet/BottomNav";
 
 
 const createUpdateDto = (data) => {

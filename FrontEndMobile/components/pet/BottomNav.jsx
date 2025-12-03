@@ -6,19 +6,19 @@ export default function BottomNav({ }) {
   return (
     <View style={styles.bottomNav}>
       <Pressable onPress={() => router.push("/screens/lembreteScreens/LembreteScreen")}>
-        <Image source={require("../../../assets/images/home/NavBarCalendar.png")} />
+        <Image source={require("../../assets/images/home/NavBarCalendar.png")} />
       </Pressable>
       <Pressable onPress={() => router.push("/screens/servicoScreens/ServicoPetScreen")}>
-        <Image source={require("../../../assets/images/home/NavBarServico.png")} />
+        <Image source={require("../../assets/images/home/NavBarServico.png")} />
       </Pressable>
       <Pressable onPress={() => router.push("/screens/homeScreens/HomeScreen")}>
-        <Image source={require("../../../assets/images/home/NavBarHome.png")} />
+        <Image source={require("../../assets/images/home/NavBarHome.png")} />
       </Pressable>
       <Pressable onPress={() => router.push("/screens/perfilPetScreens/PerfilPetScreen")}>
-        <Image source={require("../../../assets/images/home/NavBarPetSelect.png")} />
+        <Image source={require("../../assets/images/home/NavBarPetSelect.png")} />
       </Pressable>
       <Pressable onPress={() => router.push("/screens/perfilTutorScreens/PerfilTutorScreen")}>
-        <Image source={require("../../../assets/images/home/NavBarPerfil.png")} />
+        <Image source={require("../../assets/images/home/NavBarPerfil.png")} />
       </Pressable>
     </View>
   );
