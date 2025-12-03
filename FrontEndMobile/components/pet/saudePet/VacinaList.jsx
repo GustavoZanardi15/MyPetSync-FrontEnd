@@ -1,15 +1,33 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function VacinaList({ vacinas, petName }) {
+export default function VacinaList({ vacinas, petName, onAdd }) {
     return (
         <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Vacinas:</Text>
+            
+            <View style={styles.titleRow}>
+                <Text style={styles.sectionTitle}>Vacinas</Text>
+                
+                <Pressable style={styles.addButton} onPress={onAdd}>
+                    <Ionicons name="add" size={20} color="#fff" />
+                </Pressable>
+            </View>
+
             {vacinas?.length > 0 ? (
                 vacinas.map((v, index) => (
-                    <View key={index} style={styles.vacinaCard}>
-                        <Text style={styles.vacinaDose}>{v.dose}</Text>
-                        <Text style={styles.vacinaSub}>{v.proxima}</Text>
+                    <View key={index} style={styles.card}>
+                        <Text style={styles.vacinaName}>{v.nome ?? "Vacina"}</Text>
+
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Dose:</Text>
+                            <Text style={styles.value}>{v.dose ?? "-"}</Text>
+                        </View>
+
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Próxima:</Text>
+                            <Text style={styles.value}>{v.proxima ?? "-"}</Text>
+                        </View>
                     </View>
                 ))
             ) : (
@@ -21,39 +39,61 @@ export default function VacinaList({ vacinas, petName }) {
 
 const styles = StyleSheet.create({
     section: {
-        marginBottom: 20,
-        marginLeft: 10,
+        marginBottom: 25,
+    },
+    titleRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 12,
+        paddingRight: 8,
     },
     sectionTitle: {
-        fontSize: 20,
-        fontWeight: "semibold",
+        fontSize: 22,
+        fontWeight: "bold",
         color: "#2F8B88",
-        marginBottom: 10
+    },
+    addButton: {
+        width: 34,
+        height: 34,
+        borderRadius: 17,
+        backgroundColor: "#2F8B88",
+        justifyContent: "center",
+        alignItems: "center",
     },
     emptyText: {
-        fontSize: 13,
-        color: "#979797",
-        fontWeight: "regular",
-        marginTop: 5
+        fontSize: 14,
+        color: "#999",
+        marginTop: 5,
     },
-    vacinaCard: {
+    card: {
         backgroundColor: "#FFFFFF",
-        borderRadius: 12,
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        marginBottom: 10,
+        borderRadius: 16,
+        paddingVertical: 14,
+        paddingHorizontal: 18,
+        marginBottom: 12,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 3 },
         elevation: 2,
     },
-    vacinaDose: {
+    vacinaName: {
+        fontSize: 17,
+        fontWeight: "bold",
         color: "#2F8B88",
-        fontSize: 15
+        marginBottom: 6,
     },
-    vacinaSub: {
-        color: "#979797",
-        fontSize: 13
+    row: {
+        flexDirection: "row",
+        marginBottom: 3,
+    },
+    label: {
+        color: "#777",
+        fontWeight: "600",
+        width: 70,
+    },
+    value: {
+        color: "#444",
     },
 });

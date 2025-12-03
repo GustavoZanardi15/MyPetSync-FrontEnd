@@ -37,20 +37,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#2F8B88",
   },
-  editCircleButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 2,
-    right: 85,
-    borderColor: "#CCCCCC",
-    backgroundColor: "#F9F9F9",
+ editCircleButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 1.6,
+    borderColor: "#2F8B88",
+    backgroundColor: "#E9F7F6",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#2F8B88",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 4,
-  }
+}
+
 });
