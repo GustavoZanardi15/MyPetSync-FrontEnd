@@ -216,8 +216,8 @@ export default function HomeScreen() {
                 ? vet.servicesOffered.join(", ")
                 : vet.service || vet.providerType || "Clínico Geral",
             imageUrl: vet.avatar ? `${API_BASE_URL}${vet.avatar}` : null,
-            rating: mediaAvaliacoes, // ✅ Média real das avaliações
-            reviewCount: quantidadeAvaliacoes, // ✅ Quantidade real de avaliações
+            rating: mediaAvaliacoes,
+            reviewCount: quantidadeAvaliacoes,
           };
         })
       );

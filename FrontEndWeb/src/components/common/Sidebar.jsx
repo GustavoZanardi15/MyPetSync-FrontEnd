@@ -1,4 +1,10 @@
-import { VscHome, VscCalendar, VscAccount, VscSignOut } from "react-icons/vsc";
+import {
+  VscHome,
+  VscCalendar,
+  VscAccount,
+  VscSignOut,
+  VscComment,
+} from "react-icons/vsc";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../assets/Logo.png";
 
@@ -6,6 +12,7 @@ const navItems = [
   { name: "Home", icon: VscHome, path: "/homePage" },
   { name: "Agenda", icon: VscCalendar, path: "/agenda" },
   { name: "Perfil", icon: VscAccount, path: "/profile" },
+  { name: "Mensagens", icon: VscComment, path: "/app/chat" },
 ];
 const Sidebar = () => {
   const location = useLocation();

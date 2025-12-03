@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">88.88% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>8/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -121,32 +121,26 @@
 <a name='L56'></a><a href='#L56'>56</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -158,9 +152,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -176,26 +176,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState } from "react";
 import { VscChevronDown } from "react-icons/vsc";
 &nbsp;
-const COLOR_TEAL = <span class="cstat-no" title="statement not covered" >"#058789";</span>
-const ServiceDropdown = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >({</span></span>
+const COLOR_TEAL = "#058789";
+const ServiceDropdown = ({
   services,
-  placeholder = <span class="branch-0 cbranch-no" title="branch not covered" >"Selecione o Tipo de Serviço",</span>
+  placeholder = "Selecione o Tipo de Serviço",
   onChange,
   value,
 }) =&gt; {
-  const [isDropdownOpen, setIsDropdownOpen] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
-  const displayValue = <span class="cstat-no" title="statement not covered" >value || placeholder;</span>
-  const handleToggleDropdown = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    setIsDropdownOpen(!isDropdownOpen);</span>
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const displayValue = value || placeholder;
+  const handleToggleDropdown = () =&gt; {
+    setIsDropdownOpen(!isDropdownOpen);
   };
-  const handleSelectService = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(s</span>ervice) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    if (onChange) {</span>
-<span class="cstat-no" title="statement not covered" >      onChange(service);</span>
+  const handleSelectService = (service) =&gt; {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (onChange) {
+      onChange(service);
     }
-<span class="cstat-no" title="statement not covered" >    setIsDropdownOpen(false);</span>
+    setIsDropdownOpen(false);
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className="relative pt-2"&gt;
       &lt;button
         type="button"
@@ -212,10 +212,10 @@ const ServiceDropdown = <span class="cstat-no" title="statement not covered" ><s
       &lt;/button&gt;
       {isDropdownOpen &amp;&amp; (
         &lt;ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg top-full mt-1 max-h-60 overflow-y-auto"&gt;
-          {services.map(<span class="fstat-no" title="function not covered" >(s</span>ervice) =&gt; (
-<span class="cstat-no" title="statement not covered" >            &lt;li</span>
+          {services.map((service) =&gt; (
+            &lt;li
               key={service}
-              onClick={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >handleSelectService(service)}</span>
+              onClick={() =&gt; handleSelectService(service)}
               className="p-3 text-sm text-gray-700 font-semibold hover:bg-gray-100 cursor-pointer transition"
             &gt;
               {service}
@@ -235,7 +235,7 @@ export default ServiceDropdown;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-17T01:58:28.573Z
+                at 2025-12-02T21:57:07.935Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

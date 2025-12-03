@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import api from "../../../src/service/api";
 import CadastroHeader from "../../../components/telaInicial/cadastro/CadastroHeader";
