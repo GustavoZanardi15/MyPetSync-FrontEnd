@@ -56,7 +56,7 @@ export default function PerfilTutorScreen() {
         <OpcoesPerfilCard
           onEndereco={() => router.push("/screens/perfilTutorScreens/EnderecoScreens/EnderecoScreen")}
           onServicos={() => router.push("/screens/perfilTutorScreens/HistoricoServicoScreen")} 
-          onMensagens={() => router.push("/screens/lembreteScreens/LembreteScreen")}
+          onMensagens={() => router.push("/screens/perfilTutorScreens/ChatScreens/ListaPrestadores")}
           onLogout={async () => { 
             await AsyncStorage.removeItem("userToken");
             router.replace("/screens/telaInicialScreens/LoginScreen");
