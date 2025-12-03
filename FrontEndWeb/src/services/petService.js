@@ -12,3 +12,16 @@ export const searchPets = async (query) => {
     return [];
   }
 };
+
+export const getPetById = async (petId) => {
+  if (!petId) {
+    throw new Error("ID do Pet é obrigatório para a busca.");
+  }
+  try {
+    const response = await api.get(`/pets/provider/${petId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao buscar pet com ID ${petId}:`, error);
+    throw error;
+  }
+};

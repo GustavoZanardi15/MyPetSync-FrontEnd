@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import ChatListPage from "./pages/chat/ChatListPage.jsx";
 import ChatRoomPage from "./pages/chat/ChatRoomPage.jsx";
+import PetRecordPage from "./pages/PetRecordPage.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
 
@@ -45,6 +46,14 @@ const router = createBrowserRouter([
         element: (
           <LayoutWrapper>
             <AgendaPage />
+          </LayoutWrapper>
+        ),
+      },
+      {
+        path: "/pets/:petId/record",
+        element: (
+          <LayoutWrapper>
+            <PetRecordPage />
           </LayoutWrapper>
         ),
       },

@@ -6,121 +6,14 @@ import {
   VscPerson,
   VscMail,
   VscTrash,
+  VscListSelection,
 } from "react-icons/vsc";
 import { MdOutlinePets, MdOutlineWatchLater } from "react-icons/md";
 import { FiPhoneCall } from "react-icons/fi";
 import { useAppointmentForm } from "./useAppointmentForm.jsx";
-
-const Section = ({ title, icon: Icon, color, children, className = "" }) => (
-  <div className={`p-4 rounded-lg ${className}`}>
-    <h3 className={`font-semibold mb-4 flex items-center ${color}`}>
-      <Icon className="w-5 h-5 mr-2" /> {title}
-    </h3>
-    {children}
-  </div>
-);
-
-const Input = ({
-  label,
-  icon: Icon,
-  placeholder,
-  type = "text",
-  name,
-  value,
-  onChange,
-  ...rest
-}) => (
-  <div className="flex flex-col">
-    <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
-    <div className="relative">
-      {Icon && (
-        <Icon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-      )}
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 ${
-          Icon ? "pl-10" : "pl-3"
-        }`}
-        {...rest}
-      />
-    </div>
-  </div>
-);
-
-const TextArea = ({ placeholder, name, value, onChange }) => (
-  <div className="flex flex-col mt-4">
-    <textarea
-      placeholder={placeholder}
-      rows="3"
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 bg-white"
-    ></textarea>
-  </div>
-);
-
-const Select = ({
-  label,
-  options,
-  defaultMessage = "Selecione o serviço...",
-  name,
-  value,
-  onChange,
-  disabled,
-}) => (
-  <div className="flex flex-col">
-    <label className="text-sm font-medium text-[#F0F0F0] mb-1">{label}</label>
-    <select
-      name={name}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      className={`w-full p-2.5 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 text-gray-800 appearance-none bg-white ${
-        disabled ? "bg-gray-200 cursor-not-allowed" : ""
-      }`}
-    >
-      <option value="" disabled>
-        {defaultMessage}
-      </option>
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
-  </div>
-);
-
-const StatusRadios = ({ value, onChange }) => (
-  <div className="mb-4">
-    <label className="text-sm font-medium text-gray-700 block mb-2">
-      Status do Agendamento
-    </label>
-    <div className="flex gap-6">
-      {["Agendado", "Confirmado", "Concluído"].map((status) => (
-        <label
-          key={status}
-          className="flex items-center space-x-2 text-gray-800"
-        >
-          <input
-            type="radio"
-            name="status"
-            value={status}
-            checked={value === status}
-            onChange={() => onChange(status)}
-            className="text-teal-600 focus:ring-teal-500"
-          />
-          <span>{status}</span>
-        </label>
-      ))}
-    </div>
-  </div>
-);
+import { Link } from "react-router-dom";
+import { Section, Input, TextArea, Select } from "./AppointmentFormHelpers.jsx";
+import StatusRadios from "./StatusRadios.jsx";
 
 const NewAppointmentModal = (props) => {
   const {
@@ -170,7 +63,6 @@ const NewAppointmentModal = (props) => {
             <VscClose className="w-6 h-6" />
           </button>
         </div>
-
         <div className="p-6 space-y-8">
           {error && (
             <div className="p-3 bg-red-100 text-red-700 rounded font-medium">
@@ -225,16 +117,24 @@ const NewAppointmentModal = (props) => {
                         className="p-2 cursor-pointer hover:bg-teal-100"
                         onClick={() => handlePetSelect(pet)}
                       >
-                        {pet.nome} ({pet.especie}) - Tutor:
-                        {pet.tutorId.name}
+                        {pet.nome} ({pet.especie}) - Tutor: {pet.tutorId.name}
                       </div>
                     ))}
                   </div>
                 )}
                 {selectedPetId && (
-                  <p className="text-xs text-yellow-300 mt-1">
-                    Pet selecionado (ID: {selectedPetId.substring(0, 4)}...)
-                  </p>
+                  <div className="flex items-center space-x-3 mt-1">
+                    <p className="text-xs text-yellow-300">
+                      Pet selecionado (ID: {selectedPetId.substring(0, 4)}...)
+                    </p>
+                    <Link
+                      to={`/pets/${selectedPetId}/record`}
+                      onClick={props.onClose}
+                      className="text-xs text-blue-300 hover:text-blue-100 underline flex items-center"
+                    >
+                      <VscListSelection className="w-3 h-3 mr-1" /> Prontuário
+                    </Link>
+                  </div>
                 )}
               </div>
               <Input
@@ -274,7 +174,7 @@ const NewAppointmentModal = (props) => {
           >
             <div className="pb-2">
               <p className="text-sm font-medium text-yellow-300 mb-2">
-                Prestador:{" "}
+                Prestador:
                 {isAwaitingProviderType
                   ? "Carregando..."
                   : providerType || "Não identificado"}
@@ -387,7 +287,6 @@ const NewAppointmentModal = (props) => {
               )}
             </button>
           )}
-
           <div className="flex gap-3 ml-auto">
             <button
               type="button"
