@@ -33,7 +33,7 @@ const PetRecordPage = () => {
   if (loading) {
     return (
       <div className="p-8 text-center text-gray-500">
-        <h1 className="text-3xl font-bold mb-6 text-indigo-700">
+        <h1 className="text-3xl font-bold mb-6 text-[#076163]">
           Prontuário Médico
         </h1>
         Carregando prontuário...
@@ -43,7 +43,7 @@ const PetRecordPage = () => {
   if (!petId || !petData) {
     return (
       <div className="p-8 text-center text-red-500">
-        <h1 className="text-3xl font-bold mb-6 text-indigo-700">
+        <h1 className="text-3xl font-bold mb-6 text-[#076163]">
           Prontuário Médico
         </h1>
         Erro: Não foi possível carregar os dados do Pet.
@@ -53,7 +53,7 @@ const PetRecordPage = () => {
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-indigo-700 border-b pb-2">
+      <h1 className="text-3xl font-bold mb-6 text-[#076163] border-b pb-2">
         Prontuário Médico: {petName}
       </h1>
       <PetHealthSection petId={petId} petName={petName} />

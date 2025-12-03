@@ -32,9 +32,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
       console.warn(
-        "Sessão expirada ou acesso negado. Redirecionando para login."
+        "Sessão expirada ou acesso negado. Deixando o AuthContext lidar com o logout."
       );
-      localStorage.removeItem("myPetSyncToken");
     }
     return Promise.reject(error);
   }
