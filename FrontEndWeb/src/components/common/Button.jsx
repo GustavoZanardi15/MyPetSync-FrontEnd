@@ -9,7 +9,7 @@ const getStyle = (variant) => {
       return "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500";
     case "primary":
     default:
-      return "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500";
+      return "bg-[#058789] text-white hover:bg-[#003637] focus:ring-[#003637]";
   }
 };
 
