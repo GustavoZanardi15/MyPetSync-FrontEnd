@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import InputWithIcon from "../common/InputWithIcon.jsx";
 import Button from "../common/Button.jsx";
 import { createVaccine } from "../../services/vaccineService";
+import { useAuth } from "../../context/AuthContext";
 
 const ROUTES = ["SC", "IM", "Oral", "Nasal"];
 
 const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     pet: petId,
     name: "",
@@ -17,6 +19,7 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
     nextDoseAt: "",
     veterinarian: "",
     notes: "",
+    providerId: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -34,12 +37,18 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
     setLoading(true);
 
     try {
-      const dataToSend = {
+      let dataToSend = {
         ...formData,
         doseMl: formData.doseMl ? parseFloat(formData.doseMl) : undefined,
         appliedAt: formData.appliedAt || undefined,
         nextDoseAt: formData.nextDoseAt || undefined,
       };
+      if (user?.role === "tutor") {
+        delete dataToSend.providerId;
+      }
+      if (dataToSend.providerId === "") {
+        delete dataToSend.providerId;
+      }
 
       if (!dataToSend.pet || !dataToSend.name) {
         setError("O Nome da vacina é obrigatório.");
@@ -51,10 +60,11 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
       setSuccessMessage("Vacina registrada com sucesso!");
       setTimeout(() => onSuccess(dataToSend), 1000);
     } catch (err) {
-      const message =
+      console.error("Erro no cadastro de vacina:", err);
+      const errorMessage =
         err.response?.data?.message ||
-        "Falha ao registrar vacina. Verifique os campos.";
-      setError(message);
+        "Falha ao registrar vacina. Verifique os campos e se seu perfil de provedor está completo.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -62,10 +72,9 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-xl max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-indigo-600">
+      <h2 className="text-2xl font-bold mb-6 text-[#0b8385]">
         Registrar Nova Vacina
       </h2>
-
       {error && (
         <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
           {error}
@@ -117,7 +126,7 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
               name="route"
               value={formData.route}
               onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-md shadow-sm focus:border-[#129597] focus:ring-[#003637]"
             >
               <option value="">Selecione...</option>
               {ROUTES.map((route) => (
@@ -127,7 +136,6 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
               ))}
             </select>
           </div>
-
           <InputWithIcon
             label="Data de Aplicação"
             name="appliedAt"
@@ -156,6 +164,15 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
             onChange={handleChange}
             placeholder="Ex: Dra. Marina K."
           />
+          {user?.role === "provider" && (
+            <InputWithIcon
+              label="ID do Provedor (Deixe vazio para usar seu ID)"
+              name="providerId"
+              value={formData.providerId}
+              onChange={handleChange}
+              placeholder="ID do seu Provedor (se for diferente)"
+            />
+          )}
 
           <div className="md:col-span-2">
             <label
@@ -175,7 +192,6 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
             ></textarea>
           </div>
         </div>
-
         <div className="mt-6 flex justify-end space-x-3">
           <Button
             type="button"

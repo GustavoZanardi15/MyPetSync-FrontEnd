@@ -11,7 +11,6 @@ const normalize = (str) =>
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s/g, "");
 
-const PROVIDER_TYPE_FIELD = "service";
 const AUTHORIZED_PROVIDER_TYPES_RAW = [
   "Clínica Veterinária",
   "Veterinário Autônomo",
@@ -27,12 +26,10 @@ const PetHealthSection = ({ petId, petName = "o Pet" }) => {
   const [vaccines, setVaccines] = useState([]);
   const [isListLoading, setIsListLoading] = useState(false);
   const [listError, setListError] = useState(null);
-  const rawUserProviderType = user ? user[PROVIDER_TYPE_FIELD] : null;
-  const normalizedUserType = normalize(rawUserProviderType);
-  const canAddVaccine =
-    !isLoading &&
-    normalizedUserType &&
-    AUTHORIZED_PROVIDER_TYPES_NORMALIZED.includes(normalizedUserType);
+  const rawUserRole = user ? user.role : null;
+  const rawUserProviderType = user ? user.service : null;
+
+  const canAddVaccine = !isLoading && rawUserRole === "provider";
   const loadVaccines = useCallback(async () => {
     if (!petId) return;
     setIsListLoading(true);
@@ -76,37 +73,33 @@ const PetHealthSection = ({ petId, petName = "o Pet" }) => {
       <h3 className="text-2xl font-bold mb-4 text-gray-800">
         Prontuário de Vacinação - {petName}
       </h3>
-
       <div className="mb-6 flex justify-between items-center">
         {canAddVaccine ? (
           <Button onClick={() => setIsModalOpen(true)} variant="primary">
             Registrar Nova Vacina
           </Button>
         ) : (
-          <p className="text-sm text-yellow-700 bg-yellow-50 p-3 rounded border border-yellow-200">
-            **Autorização Necessária:** Apenas **Veterinário Autônomo** e
-            **Clínica Veterinária** podem adicionar registros. Tipo de Prestador
-            Atual: **{rawUserProviderType || "Não Encontrado"}**
-          </p>
+          rawUserRole !== "provider" && (
+            <p className="text-sm text-yellow-700 bg-yellow-50 p-3 rounded border border-yellow-200">
+              **Autorização Necessária:** Apenas Provedores
+              (Veterinários/Clínicas) podem adicionar registros.
+            </p>
+          )
         )}
       </div>
-
       <div className="border-t pt-4">
         <h4 className="font-semibold text-lg text-gray-700 mb-3">
           Histórico de Vacinas
         </h4>
-
         {isListLoading && (
           <p className="text-center text-gray-500">Carregando histórico...</p>
         )}
         {listError && <p className="text-red-500">{listError}</p>}
-
         {!isListLoading && vaccines.length === 0 && !listError && (
           <p className="text-gray-500">
             Nenhuma vacina registrada para {petName}.
           </p>
         )}
-
         {!isListLoading && vaccines.length > 0 && (
           <ul className="space-y-3">
             {vaccines.map((v) => (
@@ -114,16 +107,16 @@ const PetHealthSection = ({ petId, petName = "o Pet" }) => {
                 key={v._id || v.id}
                 className="p-3 border rounded-lg bg-gray-50 shadow-sm"
               >
-                <div className="font-bold text-indigo-700">{v.name}</div>
+                <div className="font-bold text-[#003637]">{v.name}</div>
                 <p className="text-sm text-gray-600">
-                  Aplicada em:{" "}
+                  Aplicada em:
                   {v.appliedAt
                     ? new Date(v.appliedAt).toLocaleDateString("pt-BR")
                     : "Data Desconhecida"}
                 </p>
                 {v.nextDoseAt && (
                   <p className="text-xs text-red-500">
-                    Próxima Dose:{" "}
+                    Próxima Dose:
                     {new Date(v.nextDoseAt).toLocaleDateString("pt-BR")}
                   </p>
                 )}
