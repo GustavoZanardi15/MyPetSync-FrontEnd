@@ -7,8 +7,7 @@ import {
   RefreshControl,
   Platform,
   StatusBar,
-  Alert,
-  Pressable
+  Alert
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,69 +16,7 @@ import BottomNav from "../../../../components/tutor/BottomNav";
 import ListaHeader from "../../../../components/tutor/mensagensTutor/ListaHeader";
 import EmptyState from "../../../../components/tutor/mensagensTutor/EmptyState";
 import LoadingState from "../../../../components/tutor/mensagensTutor/LoadingState";
-
-function Card({ tutor, onPress }) {
-    const initial = tutor.nome ? tutor.nome[0].toUpperCase() : "?";
-
-    const getHorario = () => {
-        if (tutor.updatedAt || tutor.ultimaData) {
-            const data = new Date(tutor.updatedAt || tutor.ultimaData);
-            
-            const hoje = new Date();
-            const isHoje = data.toDateString() === hoje.toDateString();
-            
-            const ontem = new Date(hoje);
-            ontem.setDate(hoje.getDate() - 1);
-            const isOntem = data.toDateString() === ontem.toDateString();
-            
-            if (isHoje) {
-                return data.toLocaleTimeString('pt-BR', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            } else if (isOntem) {
-                return "Ontem";
-            } else {
-                return data.toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit'
-                });
-            }
-        }
-    
-        if (tutor.horario) return tutor.horario;
-        if (tutor.hora) return tutor.hora;
-        
-        return "--:--";
-    };
-
-    return (
-        <Pressable 
-            style={styles.card}
-            onPress={onPress}
-            android_ripple={{ color: "#FFF" }}
-        >
-            <View style={[styles.linhaLateral, { backgroundColor: "#3FA796" }]} />
-
-            <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{initial}</Text>
-            </View>
-
-            <View style={styles.infoContainer}>
-                <Text style={styles.nome} numberOfLines={1}>
-                    {tutor.nome}
-                </Text>
-                <Text style={styles.especialidade} numberOfLines={1}>
-                    {tutor.especialidade || "Prestador de serviços"}
-                </Text>
-            </View>
-
-            <Text style={styles.horario}>
-                {getHorario()}
-            </Text>
-        </Pressable>
-    );
-}
+import Card from "../../../../components/tutor/mensagensTutor/Card";
 
 const fetchTutoresData = async () => {
   try {
@@ -87,9 +24,6 @@ const fetchTutoresData = async () => {
 
     const token = await AsyncStorage.getItem("userToken");
     const tutorId = await AsyncStorage.getItem("tutorId");
-
-    console.log("🔍 [DEBUG] Token encontrado:", token ? "SIM" : "NÃO");
-    console.log("🔍 [DEBUG] Tutor ID do AsyncStorage:", tutorId);
 
     if (!token) {
       return { success: false, error: "Token de autenticação não encontrado" };
@@ -136,12 +70,6 @@ const fetchTutoresData = async () => {
       appointmentsData = response.data.items;
     } else if (Array.isArray(response.data)) {
       appointmentsData = response.data;
-    }
-
-    console.log("📊 [DEBUG] Total de appointments encontrados:", appointmentsData.length);
-
-    if (appointmentsData.length === 0) {
-      return { success: true, data: [] };
     }
 
     const uniqueProviders = new Map();
@@ -200,20 +128,9 @@ const fetchTutoresData = async () => {
       return new Date(b.updatedAt) - new Date(a.updatedAt);
     });
     
-    console.log("✅ [DEBUG] Prestadores extraídos:", providers.length);
-    
-    providers.forEach((provider, index) => {
-      console.log(`📅 [DEBUG] Provider ${index + 1}: ${provider.nome}`);
-      console.log(`   - updatedAt: ${provider.updatedAt}`);
-      console.log(`   - ultimaData: ${provider.ultimaData}`);
-      console.log(`   - Horário formatado: ${new Date(provider.updatedAt).toLocaleTimeString('pt-BR')}`);
-    });
-    
     return { success: true, data: providers };
     
   } catch (apiError) {
-    console.log("❌ [DEBUG] Erro na requisição API:", apiError.message);
-    
     let errorMsg = "Não foi possível carregar seus prestadores.";
     
     if (apiError.response?.status === 401) {
@@ -374,65 +291,5 @@ const styles = StyleSheet.create({
   errorText: {
     color: "#D32F2F",
     fontSize: 14,
-  },
-  card: {
-    width: "92%",
-    backgroundColor: "#fff",
-    marginVertical: 8,
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "center",
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 1,
-    position: "relative",
-  },
-  linhaLateral: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 8,
-    borderTopLeftRadius: 12,
-    borderBottomLeftRadius: 12,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#FFA500",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 14,
-  },
-  avatarText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#FFF",
-  },
-  infoContainer: {
-    flex: 1,
-  },
-  nome: {
-    fontSize: 16,
-    color: "#2F8B88",
-    fontWeight: "bold",
-    marginBottom: 2,
-  },
-  especialidade: {
-    fontSize: 12,
-    color: "#666",
-  },
-  horario: {
-    fontSize: 12,
-    color: "#777",
-    fontWeight: "500",
-    marginLeft: 8,
   },
 });

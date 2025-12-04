@@ -36,6 +36,9 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFFFFF",
         flexDirection: "row",
         alignItems: "center",
+        borderLeftWidth: 6,
+        borderLeftColor: "#2F8B88",
+        colorBorder: "#FFFFFF",
         paddingHorizontal: 16,
         paddingVertical: 14,
         alignSelf: "center",
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: "#3FA796",
+        backgroundColor: "#FFA500",
         justifyContent: "center",
         alignItems: "center",
     },
@@ -70,8 +73,8 @@ const styles = StyleSheet.create({
 
     nome: {
         fontSize: 16,
-        color: "#1C1C1C",
-        fontWeight: "600",
+        color: "#2F8B88",
+        fontWeight: "bold",
         marginBottom: 3,
     },
 

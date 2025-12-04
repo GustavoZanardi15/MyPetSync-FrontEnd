@@ -27,15 +27,18 @@ let globalCurrentUserId = null;
 let globalIsConnected = false;
 let isInitialized = false;
 
+// 🔥 CHAVE DE ARMAZENAMENTO
+const CHAT_STORAGE_KEY = 'chat_state_';
+
 export default function ChatScreen() {
-    const [messages, setMessages] = useState(globalMessages);
+    const [messages, setMessages] = useState([]);
     const [text, setText] = useState("");
     const [providerName, setProviderName] = useState("Prestador");
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [providerPhoto, setProviderPhoto] = useState(null);
-    const [roomId, setRoomId] = useState(globalRoomId);
-    const [isConnected, setIsConnected] = useState(globalIsConnected);
-    const [currentUserId, setCurrentUserId] = useState(globalCurrentUserId);
+    const [roomId, setRoomId] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [debugInfo, setDebugInfo] = useState("");
 
     const router = useRouter();
@@ -43,14 +46,62 @@ export default function ChatScreen() {
 
     const flatListRef = useRef(null);
     const isMountedRef = useRef(true);
+    const messageHandlerRef = useRef(null);
+    const connectedHandlerRef = useRef(null);
+    const disconnectedHandlerRef = useRef(null);
 
     // 🔥 SINCRONIZAR ESTADO GLOBAL
-    const syncGlobalState = useCallback(() => {
-        globalMessages = [...messages];
-        globalRoomId = roomId;
-        globalCurrentUserId = currentUserId;
-        globalIsConnected = isConnected;
-    }, [messages, roomId, currentUserId, isConnected]);
+    const syncGlobalState = useCallback(async () => {
+        try {
+            if (!providerId || !roomId) return;
+            
+            await AsyncStorage.setItem(
+                `${CHAT_STORAGE_KEY}${providerId}`,
+                JSON.stringify({
+                    messages: messages,
+                    roomId: roomId,
+                    providerName: providerName,
+                    providerPhoto: providerPhoto,
+                    timestamp: Date.now()
+                })
+            );
+            
+            // Atualizar variáveis globais
+            globalMessages = [...messages];
+            globalRoomId = roomId;
+            globalCurrentUserId = currentUserId;
+            globalIsConnected = isConnected;
+            
+        } catch (error) {
+            console.error("❌ Erro ao salvar estado:", error);
+        }
+    }, [messages, roomId, providerId, providerName, providerPhoto, currentUserId, isConnected]);
+
+    // 🔥 CARREGAR ESTADO SALVO
+    const loadSavedState = useCallback(async () => {
+        try {
+            if (!providerId) return null;
+            
+            const saved = await AsyncStorage.getItem(`${CHAT_STORAGE_KEY}${providerId}`);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                
+                // Verificar se é recente (menos de 1 hora)
+                if (Date.now() - parsed.timestamp < 3600000) {
+                    setMessages(parsed.messages || []);
+                    globalMessages = parsed.messages || [];
+                    
+                    if (parsed.providerName) setProviderName(parsed.providerName);
+                    if (parsed.providerPhoto) setProviderPhoto(parsed.providerPhoto);
+                    
+                    return parsed.roomId; // Retorna o roomId salvo
+                }
+            }
+        } catch (error) {
+            console.error("❌ Erro ao carregar estado salvo:", error);
+        }
+        return null;
+    }, [providerId]);
 
     // 🔥 OBTER USERID
     const getCurrentUserId = useCallback(async () => {
@@ -134,7 +185,7 @@ export default function ChatScreen() {
         }
     }, [providerId, pName]);
 
-    // 🔥 CARREGAR MENSAGENS
+    // 🔥 CARREGAR MENSAGENS DA API
     const loadMessages = useCallback(async (roomId) => {
         if (!roomId) return [];
 
@@ -182,13 +233,12 @@ export default function ChatScreen() {
 
         const updatedMessages = [...messages, newMessage];
         setMessages(updatedMessages);
-        globalMessages = updatedMessages;
         setText("");
         setDebugInfo(`Enviando: "${messageText.substring(0, 20)}..."`);
 
         try {
             // Verifica se WebSocket está conectado
-            if (!websocket.isConnected()) {
+            if (!websocket.isSocketConnected()) {
                 console.log("🔄 WebSocket não conectado, tentando conectar...");
                 await websocket.connect();
             }
@@ -221,7 +271,6 @@ export default function ChatScreen() {
                         : msg
                 );
                 setMessages(updated);
-                globalMessages = updated;
 
             } catch (apiError) {
                 console.error("❌ Erro no fallback API:", apiError.message);
@@ -234,7 +283,6 @@ export default function ChatScreen() {
                         : msg
                 );
                 setMessages(updated);
-                globalMessages = updated;
             }
         }
     };
@@ -266,7 +314,6 @@ export default function ChatScreen() {
                     if (existingTempIndex > -1) {
                         const updated = [...prev];
                         updated[existingTempIndex] = newMsg;
-                        globalMessages = updated;
                         console.log("🔄 Mensagem temporária substituída");
                         return updated;
                     }
@@ -274,7 +321,6 @@ export default function ChatScreen() {
                     // Adicionar se não existir
                     if (!prev.some(msg => msg.id === newMsg.id)) {
                         const updated = [...prev, newMsg];
-                        globalMessages = updated;
                         console.log("➕ Nova mensagem adicionada");
                         return updated;
                     }
@@ -284,74 +330,67 @@ export default function ChatScreen() {
             }
         };
 
-        // Remove listener anterior se existir
-        websocket.off('newMessage', handleNewMessage);
+        messageHandlerRef.current = handleNewMessage;
         websocket.on('newMessage', handleNewMessage);
-
+        
         return handleNewMessage;
     }, []);
 
-    // 🔥 INICIALIZAR CHAT APENAS UMA VEZ
+    // 🔥 INICIALIZAR CHAT
     useEffect(() => {
         console.log("🚀 Inicializando chat...");
         console.log("ProviderId:", providerId);
         console.log("ProviderName:", pName);
-        console.log("Já inicializado?", isInitialized);
 
-        isMountedRef.current = true;
-
-        // Restaurar estado global se já inicializado
-        if (isInitialized && globalMessages.length > 0) {
-            console.log("🔄 Restaurando estado global...");
-            setMessages(globalMessages);
-            setRoomId(globalRoomId);
-            setCurrentUserId(globalCurrentUserId);
-            setIsConnected(globalIsConnected);
-            setDebugInfo("Estado restaurado");
+        if (!providerId) {
+            Alert.alert("Erro", "Prestador não identificado");
+            router.back();
             return;
         }
 
         if (pName) setProviderName(pName);
         if (pPhoto) setProviderPhoto(pPhoto);
 
-        const initializeChat = async () => {
-            if (!providerId) {
-                Alert.alert("Erro", "Prestador não identificado");
-                router.back();
-                return;
-            }
+        isMountedRef.current = true;
 
+        const initializeChat = async () => {
             setLoadingMessages(true);
             setDebugInfo("Inicializando chat...");
 
             try {
-                // 1. Obter userId primeiro
+                // 1. Tentar carregar estado salvo primeiro
+                const savedRoomId = await loadSavedState();
+                
+                // 2. Obter userId
                 const userId = await getCurrentUserId();
                 if (!userId) throw new Error("Não foi possível identificar o usuário");
 
-                // 2. Buscar/Criar sala
-                const roomData = await fetchOrCreateRoom(userId);
-                const chatRoomId = roomData._id;
+                let chatRoomId = savedRoomId;
+                
+                // 3. Se não tem sala salva, buscar/criar
+                if (!chatRoomId) {
+                    const roomData = await fetchOrCreateRoom(userId);
+                    chatRoomId = roomData._id;
+                }
+                
                 console.log("📦 RoomId:", chatRoomId);
                 setRoomId(chatRoomId);
-                globalRoomId = chatRoomId;
 
-                // 3. Carregar mensagens
-                const apiMessages = await loadMessages(chatRoomId);
-                setMessages(apiMessages);
-                globalMessages = apiMessages;
+                // 4. Carregar mensagens da API se não tiver salvas ou se for sala nova
+                if (messages.length === 0 || !savedRoomId) {
+                    const apiMessages = await loadMessages(chatRoomId);
+                    setMessages(apiMessages);
+                }
 
-                // 4. Configurar WebSocket
+                // 5. Configurar WebSocket
                 setDebugInfo("Conectando WebSocket...");
                 
-                // Tentar conectar WebSocket
                 try {
                     await websocket.connect();
                     setIsConnected(true);
-                    globalIsConnected = true;
                     setDebugInfo("WebSocket conectado!");
                     
-                    // Entrar na sala
+                    // 🔥 IMPORTANTE: Entrar na sala
                     websocket.joinRoom(chatRoomId);
                     console.log("🚪 Entrou na sala:", chatRoomId);
                     
@@ -359,17 +398,14 @@ export default function ChatScreen() {
                     console.warn("⚠️ WebSocket não conectado:", wsError.message);
                     setDebugInfo(`WebSocket offline: ${wsError.message}`);
                     setIsConnected(false);
-                    globalIsConnected = false;
                 }
 
-                // 5. Configurar listener de mensagens
-                const messageHandler = setupMessageListener(chatRoomId, userId);
+                // 6. Configurar listeners
+                setupMessageListener(chatRoomId, userId);
 
-                // Configurar listeners de conexão
                 const handleConnected = () => {
                     console.log("✅ WebSocket conectado");
                     setIsConnected(true);
-                    globalIsConnected = true;
                     setDebugInfo("WebSocket conectado!");
                     if (chatRoomId) websocket.joinRoom(chatRoomId);
                 };
@@ -377,25 +413,17 @@ export default function ChatScreen() {
                 const handleDisconnected = () => {
                     console.log("❌ WebSocket desconectado");
                     setIsConnected(false);
-                    globalIsConnected = false;
                     setDebugInfo("WebSocket desconectado");
                 };
 
+                connectedHandlerRef.current = handleConnected;
+                disconnectedHandlerRef.current = handleDisconnected;
+                
                 websocket.on('connected', handleConnected);
                 websocket.on('disconnected', handleDisconnected);
 
                 // Marcar como inicializado
                 isInitialized = true;
-
-                // Cleanup - APENAS remove listeners, não limpa dados
-                return () => {
-                    console.log("🧹 Limpando listeners (mantendo dados)");
-                    websocket.off('newMessage', messageHandler);
-                    websocket.off('connected', handleConnected);
-                    websocket.off('disconnected', handleDisconnected);
-                    // 🔥 NÃO sair da sala
-                    // websocket.leaveRoom(chatRoomId);
-                };
 
             } catch (error) {
                 console.error("❌ Erro na inicialização:", error);
@@ -409,15 +437,43 @@ export default function ChatScreen() {
 
         initializeChat();
 
-        // Cleanup ao desmontar componente
+        // 🔥 SALVAR ESTADO PERIODICAMENTE
+        const saveInterval = setInterval(() => {
+            if (roomId && messages.length > 0) {
+                syncGlobalState();
+            }
+        }, 30000); // Salva a cada 30 segundos
+
+        // 🔥 LIMPEZA
         return () => {
-            console.log("🏠 Componente desmontado (mantendo estado global)");
+            console.log("🏠 Componente desmontado");
             isMountedRef.current = false;
-            // 🔥 NÃO resetar variáveis globais
+            clearInterval(saveInterval);
+            
+            // Remover listeners
+            if (messageHandlerRef.current) {
+                websocket.off('newMessage', messageHandlerRef.current);
+            }
+            if (connectedHandlerRef.current) {
+                websocket.off('connected', connectedHandlerRef.current);
+            }
+            if (disconnectedHandlerRef.current) {
+                websocket.off('disconnected', disconnectedHandlerRef.current);
+            }
+            
+            // Salvar estado final
+            syncGlobalState();
         };
     }, [providerId]);
 
-    // Efeito para rolar para o final
+    // 🔥 SINCRONIZAR ESTADO QUANDO MENSAGENS MUDAM
+    useEffect(() => {
+        if (messages.length > 0 && roomId) {
+            syncGlobalState();
+        }
+    }, [messages, roomId]);
+
+    // 🔥 ROLAR PARA O FINAL
     useEffect(() => {
         if (messages.length > 0 && flatListRef.current) {
             setTimeout(() => {
@@ -432,24 +488,16 @@ export default function ChatScreen() {
         console.log("RoomId:", roomId);
         console.log("UserId:", currentUserId);
         console.log("ProviderId:", providerId);
-        console.log("WebSocket conectado?", websocket.isConnected());
+        console.log("WebSocket conectado?", websocket.isSocketConnected());
         console.log("Mensagens:", messages.length);
-        console.log("Estado global:", {
-            globalMessages: globalMessages.length,
-            globalRoomId,
-            globalCurrentUserId,
-            globalIsConnected,
-            isInitialized
-        });
         
         Alert.alert(
             "Debug Chat",
             `RoomId: ${roomId || 'N/A'}\n` +
             `UserId: ${currentUserId || 'N/A'}\n` +
             `ProviderId: ${providerId || 'N/A'}\n` +
-            `WebSocket: ${websocket.isConnected() ? 'Conectado' : 'Desconectado'}\n` +
+            `WebSocket: ${websocket.isSocketConnected() ? 'Conectado' : 'Desconectado'}\n` +
             `Mensagens: ${messages.length}\n` +
-            `Estado Global: ${isInitialized ? 'Inicializado' : 'Não inicializado'}\n\n` +
             `Status: ${debugInfo}`,
             [{ text: "OK" }]
         );
@@ -488,6 +536,17 @@ export default function ChatScreen() {
                 </View>
             </View>
         );
+    };
+
+    // 🔥 BOTÃO LIMPAR CACHE
+    const clearCache = async () => {
+        try {
+            await AsyncStorage.removeItem(`${CHAT_STORAGE_KEY}${providerId}`);
+            setMessages([]);
+            Alert.alert("Sucesso", "Cache limpo!");
+        } catch (error) {
+            Alert.alert("Erro", "Falha ao limpar cache");
+        }
     };
 
     return (
@@ -532,6 +591,10 @@ export default function ChatScreen() {
                 <TouchableOpacity onPress={debugWebSocket} style={styles.debugButton}>
                     <Ionicons name="bug-outline" size={20} color="#2F8B88" />
                 </TouchableOpacity>
+                
+                <TouchableOpacity onPress={clearCache} style={styles.clearButton}>
+                    <Ionicons name="trash-outline" size={20} color="#F44336" />
+                </TouchableOpacity>
             </View>
 
             {/* Chat Area */}
@@ -540,7 +603,7 @@ export default function ChatScreen() {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
             >
-                {loadingMessages && !isInitialized ? (
+                {loadingMessages ? (
                     <View style={styles.loadingContainer}>
                         <ActivityIndicator size="large" color="#2F8B88" />
                         <Text style={styles.loadingText}>
@@ -587,15 +650,15 @@ export default function ChatScreen() {
                                 onChangeText={setText}
                                 multiline
                                 maxLength={500}
-                                editable={isConnected || !roomId}
+                                editable={isConnected && !!roomId}
                             />
                             <Pressable
                                 style={[
                                     styles.sendButton,
-                                    (!text.trim() || !isConnected) && styles.sendButtonDisabled
+                                    (!text.trim() || !isConnected || !roomId) && styles.sendButtonDisabled
                                 ]}
                                 onPress={sendMessage}
-                                disabled={!text.trim() || !isConnected}
+                                disabled={!text.trim() || !isConnected || !roomId}
                             >
                                 <Ionicons name="send" size={20} color="#fff" />
                             </Pressable>
@@ -610,7 +673,7 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#F7F7F7',
     },
     headerRow: {
         flexDirection: 'row',
@@ -636,7 +699,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#2F8B88',
+        backgroundColor: '#FFA500',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -650,8 +713,8 @@ const styles = StyleSheet.create({
     },
     providerName: {
         fontSize: 16,
-        fontWeight: '600',
-        color: '#333',
+        fontWeight: 'bold',
+        color: '#2F8B88',
     },
     connectionStatus: {
         fontSize: 11,
@@ -665,6 +728,10 @@ const styles = StyleSheet.create({
     },
     debugButton: {
         padding: 8,
+    },
+    clearButton: {
+        padding: 8,
+        marginLeft: 4,
     },
     chatContainer: {
         flex: 1,
