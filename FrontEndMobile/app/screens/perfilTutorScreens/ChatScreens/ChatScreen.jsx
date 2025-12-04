@@ -20,441 +20,387 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../../src/service/api";
 import websocket from "../../../../src/service/websocket";
 
+// 🔥 VARIÁVEIS GLOBAIS PARA MANTER O ESTADO
+let globalMessages = [];
+let globalRoomId = null;
+let globalCurrentUserId = null;
+let globalIsConnected = false;
+let isInitialized = false;
+
 export default function ChatScreen() {
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState(globalMessages);
     const [text, setText] = useState("");
     const [providerName, setProviderName] = useState("Prestador");
-    const [providerSpecialty, setProviderSpecialty] = useState("");
-    const [providerService, setProviderService] = useState("");
-    const [loadingProvider, setLoadingProvider] = useState(false);
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [providerPhoto, setProviderPhoto] = useState(null);
-    const [roomId, setRoomId] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
-    const [isTestingConnection, setIsTestingConnection] = useState(false);
-    
+    const [roomId, setRoomId] = useState(globalRoomId);
+    const [isConnected, setIsConnected] = useState(globalIsConnected);
+    const [currentUserId, setCurrentUserId] = useState(globalCurrentUserId);
+    const [debugInfo, setDebugInfo] = useState("");
+
     const router = useRouter();
-    const { providerId, providerName: pName, providerType: pType, providerPhoto: pPhoto } = useLocalSearchParams();
-    
+    const { providerId, providerName: pName, providerPhoto: pPhoto } = useLocalSearchParams();
+
     const flatListRef = useRef(null);
-    const wsInitialized = useRef(false);
+    const isMountedRef = useRef(true);
 
-    // Testar conexão WebSocket
-    const testWebSocketConnection = useCallback(async () => {
-        console.log("🧪 Testando conexão WebSocket...");
-        setIsTestingConnection(true);
-        
+    // 🔥 SINCRONIZAR ESTADO GLOBAL
+    const syncGlobalState = useCallback(() => {
+        globalMessages = [...messages];
+        globalRoomId = roomId;
+        globalCurrentUserId = currentUserId;
+        globalIsConnected = isConnected;
+    }, [messages, roomId, currentUserId, isConnected]);
+
+    // 🔥 OBTER USERID
+    const getCurrentUserId = useCallback(async () => {
         try {
-            // Testa se está conectado
-            if (!websocket.isConnected()) {
-                console.log("🔄 Não está conectado, tentando conectar...");
-                await websocket.connect();
-                
-                // Aguarda conexão (máximo 3 segundos)
-                await new Promise((resolve, reject) => {
-                    let attempts = 0;
-                    const maxAttempts = 30;
-                    
-                    const checkConnection = () => {
-                        if (websocket.isConnected()) {
-                            console.log("✅ Conectado!");
-                            resolve();
-                            return;
-                        }
-                        
-                        attempts++;
-                        if (attempts >= maxAttempts) {
-                            console.warn("⏰ Timeout na conexão");
-                            reject(new Error("Timeout na conexão WebSocket"));
-                            return;
-                        }
-                        
-                        setTimeout(checkConnection, 100);
-                    };
-                    
-                    checkConnection();
-                });
-            }
+            let userId = await AsyncStorage.getItem("userId");
             
-            console.log("✅ Conexão WebSocket testada com sucesso");
-            setIsConnected(true);
-            return true;
-        } catch (error) {
-            console.error("❌ Erro ao testar conexão:", error.message);
-            setIsConnected(false);
-            return false;
-        } finally {
-            setIsTestingConnection(false);
-        }
-    }, []);
-
-    // Gerar roomId simples
-    const generateRoomId = useCallback(async () => {
-        if (!providerId) return null;
-        
-        try {
-            const userId = await AsyncStorage.getItem("userId");
             if (!userId) {
                 const token = await AsyncStorage.getItem("userToken");
                 if (token) {
-                    try {
-                        const userResponse = await api.get("/users/me", {
-                            headers: { Authorization: `Bearer ${token}` },
-                        });
-                        const fetchedUserId = userResponse.data?._id || userResponse.data?.id;
-                        if (fetchedUserId) {
-                            await AsyncStorage.setItem("userId", fetchedUserId);
-                            return `chat_${fetchedUserId}_${providerId}`;
-                        }
-                    } catch (error) {
-                        console.log("⚠️ Não foi possível obter userId:", error.message);
+                    const userResponse = await api.get("/users/me", {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    userId = userResponse.data?._id || userResponse.data?.id;
+                    if (userId) {
+                        await AsyncStorage.setItem("userId", userId);
                     }
                 }
-                return `chat_${Date.now()}_${providerId}`;
             }
             
-            return `chat_${userId}_${providerId}`;
+            console.log("✅ UserId obtido:", userId);
+            setCurrentUserId(userId);
+            globalCurrentUserId = userId;
+            return userId;
+            
         } catch (error) {
-            console.error("Erro ao gerar roomId:", error);
-            return `chat_fallback_${providerId}`;
+            console.error("❌ Erro ao obter userId:", error);
+            return null;
         }
-    }, [providerId]);
+    }, []);
 
-    // Carregar mensagens locais
-    const loadLocalMessages = useCallback(async (roomId) => {
-        if (!roomId) return [];
-        
+    // 🔥 BUSCAR/CRIAR SALA
+    const fetchOrCreateRoom = useCallback(async (userId) => {
         try {
-            const savedMessages = await AsyncStorage.getItem(`chat_messages_${roomId}`);
-            return savedMessages ? JSON.parse(savedMessages) : [];
+            if (!userId) throw new Error("Usuário não identificado");
+            if (!providerId) throw new Error("Provider não identificado");
+
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) throw new Error("Token não encontrado");
+
+            // 1. Buscar salas existentes
+            setDebugInfo("Buscando salas existentes...");
+            const roomsResponse = await api.get("/chat/rooms", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            console.log(`📦 ${roomsResponse.data.length} salas encontradas`);
+
+            // 2. Procurar sala com ambos os usuários
+            const existingRoom = roomsResponse.data.find(room => {
+                const participants = room.participants || [];
+                const participantIds = participants.map(p => p._id || p.id);
+                return participantIds.includes(userId) && participantIds.includes(providerId);
+            });
+
+            if (existingRoom) {
+                console.log("✅ Sala existente encontrada:", existingRoom._id);
+                setDebugInfo(`Sala existente: ${existingRoom._id}`);
+                return existingRoom;
+            }
+
+            // 3. Criar nova sala (COM AMBOS OS USUÁRIOS)
+            setDebugInfo("Criando nova sala...");
+            console.log("🆕 Criando nova sala...");
+            const payload = {
+                participants: [userId, providerId], // 🔥 AMBOS OS USUÁRIOS
+                name: `Chat com ${pName || 'Cliente'}`,
+            };
+
+            const newRoom = await api.post("/chat/rooms", payload, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            console.log("✅ Nova sala criada:", newRoom.data._id);
+            setDebugInfo(`Nova sala criada: ${newRoom.data._id}`);
+            return newRoom.data;
+
         } catch (error) {
-            console.error("Erro ao carregar mensagens:", error);
+            console.error("❌ Erro ao buscar/criar sala:", error.message);
+            setDebugInfo(`Erro: ${error.message}`);
+            throw error;
+        }
+    }, [providerId, pName]);
+
+    // 🔥 CARREGAR MENSAGENS
+    const loadMessages = useCallback(async (roomId) => {
+        if (!roomId) return [];
+
+        try {
+            setDebugInfo(`Carregando mensagens da sala ${roomId}...`);
+            const token = await AsyncStorage.getItem("userToken");
+            const response = await api.get(`/chat/rooms/${roomId}/messages`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            console.log(`📝 ${response.data.length} mensagens carregadas`);
+            setDebugInfo(`${response.data.length} mensagens carregadas`);
+
+            return response.data.map(msg => ({
+                id: msg._id,
+                text: msg.content,
+                senderId: msg.senderId,
+                timestamp: msg.createdAt,
+                isSending: false,
+                failed: false,
+            }));
+
+        } catch (error) {
+            console.error("❌ Erro ao carregar mensagens:", error.message);
+            setDebugInfo(`Erro ao carregar: ${error.message}`);
             return [];
         }
     }, []);
 
-    // Salvar mensagens localmente
-    const saveMessagesLocally = useCallback(async (roomId, messages) => {
-        if (!roomId) return;
-        
-        try {
-            await AsyncStorage.setItem(`chat_messages_${roomId}`, JSON.stringify(messages));
-        } catch (error) {
-            console.error("Erro ao salvar mensagens:", error);
-        }
-    }, []);
+    // 🔥 ENVIAR MENSAGEM
+    const sendMessage = async () => {
+        if (!text.trim() || !roomId || !currentUserId) return;
 
-    // Enviar via API REST (fallback)
-    const sendViaRestAPI = async (roomId, content, tempMessageId) => {
+        const tempMessageId = `temp_${Date.now()}`;
+        const messageText = text.trim();
+
+        // Adiciona localmente
+        const newMessage = {
+            id: tempMessageId,
+            text: messageText,
+            senderId: currentUserId,
+            timestamp: new Date().toISOString(),
+            isSending: true,
+        };
+
+        const updatedMessages = [...messages, newMessage];
+        setMessages(updatedMessages);
+        globalMessages = updatedMessages;
+        setText("");
+        setDebugInfo(`Enviando: "${messageText.substring(0, 20)}..."`);
+
         try {
-            console.log("📤 Tentando enviar via API REST...");
-            const token = await AsyncStorage.getItem("userToken");
-            
-            if (!token) {
-                throw new Error("Token não encontrado");
+            // Verifica se WebSocket está conectado
+            if (!websocket.isConnected()) {
+                console.log("🔄 WebSocket não conectado, tentando conectar...");
+                await websocket.connect();
             }
+
+            // Envia via WebSocket
+            await websocket.sendMessage(roomId, messageText);
+            console.log("✅ Mensagem enviada via WebSocket");
+            setDebugInfo("Mensagem enviada via WebSocket");
             
-            // Tenta enviar via API REST
-            const response = await api.post('/chats/messages', {
-                roomId: roomId,
-                content: content,
-                receiverId: providerId
-            }, {
-                headers: { Authorization: `Bearer ${token}` },
-                timeout: 5000
-            });
+        } catch (error) {
+            console.error("❌ Erro ao enviar mensagem:", error.message);
+            setDebugInfo(`Erro no envio: ${error.message}`);
             
-            console.log("✅ Mensagem enviada via API REST:", response.data);
-            
-            // Atualiza status
-            setMessages(prev => {
-                const updated = prev.map(msg => 
-                    msg.id === tempMessageId 
+            // Fallback para API REST
+            try {
+                const token = await AsyncStorage.getItem("userToken");
+                await api.post(`/chat/rooms/${roomId}/messages`, {
+                    content: messageText,
+                }, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                console.log("✅ Mensagem enviada via API REST");
+                setDebugInfo("Mensagem enviada via API REST (fallback)");
+
+                // Atualiza para mensagem real
+                const updated = messages.map(msg =>
+                    msg.id === tempMessageId
                         ? { ...msg, isSending: false, id: `api_${Date.now()}` }
                         : msg
                 );
-                saveMessagesLocally(roomId, updated);
-                return updated;
-            });
-            
-            return true;
-            
-        } catch (apiError) {
-            console.error("❌ Erro na API REST:", apiError.message);
-            
-            if (apiError.response?.status === 404) {
-                // API não existe - modo offline
-                return false;
-            }
-            throw apiError;
-        }
-    };
+                setMessages(updated);
+                globalMessages = updated;
 
-    // Enviar mensagem
-    const sendMessage = async () => {
-        if (!text.trim()) {
-            console.warn("⚠️ Mensagem vazia");
-            return;
-        }
-
-        if (!roomId) {
-            Alert.alert("Erro", "Sala de chat não configurada");
-            return;
-        }
-
-        console.log("📤 Tentando enviar mensagem:", text.trim());
-        
-        const tempMessageId = `temp_${Date.now()}`;
-        const newMessage = {
-            id: tempMessageId,
-            text: text.trim(),
-            sender: "me",
-            timestamp: new Date().toISOString(),
-            isSending: true
-        };
-
-        // Adiciona localmente
-        setMessages(prev => {
-            const newMessages = [...prev, newMessage];
-            saveMessagesLocally(roomId, newMessages);
-            return newMessages;
-        });
-        
-        const messageText = text.trim();
-        setText("");
-
-        try {
-            // Verifica conexão
-            const isWsConnected = websocket.isConnected();
-            console.log("📡 Status do WebSocket:", isWsConnected ? "✅ Conectado" : "❌ Desconectado");
-            
-            if (!isWsConnected) {
-                console.log("🔄 Tentando reconectar...");
-                await testWebSocketConnection();
+            } catch (apiError) {
+                console.error("❌ Erro no fallback API:", apiError.message);
+                setDebugInfo(`Erro no fallback: ${apiError.message}`);
                 
-                if (!websocket.isConnected()) {
-                    console.log("⚠️ Não conseguiu conectar, usando modo offline");
-                    throw new Error("offline_mode");
-                }
-            }
-
-            console.log("🚀 Enviando mensagem via WebSocket...");
-            
-            // Tenta enviar via WebSocket com timeout
-            try {
-                const sendPromise = websocket.sendMessage(roomId, messageText);
-                
-                // Timeout de 3 segundos
-                const timeoutPromise = new Promise((_, reject) => {
-                    setTimeout(() => reject(new Error("Timeout WebSocket")), 3000);
-                });
-                
-                await Promise.race([sendPromise, timeoutPromise]);
-                
-                console.log("✅ Mensagem enviada com sucesso via WebSocket");
-                
-                // Atualiza status
-                setMessages(prev => {
-                    const updated = prev.map(msg => 
-                        msg.id === tempMessageId 
-                            ? { ...msg, isSending: false, id: `sent_${Date.now()}` }
-                            : msg
-                    );
-                    saveMessagesLocally(roomId, updated);
-                    return updated;
-                });
-                
-            } catch (wsError) {
-                console.warn("⚠️ Erro no WebSocket:", wsError.message);
-                
-                // Fallback para API REST
-                const apiSuccess = await sendViaRestAPI(roomId, messageText, tempMessageId);
-                
-                if (!apiSuccess) {
-                    throw new Error("offline_mode");
-                }
-            }
-
-        } catch (error) {
-            console.error("❌ Erro geral ao enviar:", error.message);
-            
-            if (error.message === "offline_mode" || error.message.includes("offline")) {
-                // Modo offline - apenas salva localmente
-                setMessages(prev => {
-                    const updated = prev.map(msg => 
-                        msg.id === tempMessageId 
-                            ? { ...msg, isSending: false, id: `local_${Date.now()}` }
-                            : msg
-                    );
-                    saveMessagesLocally(roomId, updated);
-                    return updated;
-                });
-                
-                Alert.alert(
-                    "Modo Offline",
-                    "Mensagem salva localmente. Será enviada quando houver conexão.",
-                    [{ text: "OK" }]
-                );
-            } else {
                 // Marca como falha
-                setMessages(prev => {
-                    const updated = prev.map(msg => 
-                        msg.id === tempMessageId 
-                            ? { 
-                                ...msg, 
-                                isSending: false, 
-                                failed: true, 
-                                error: error.message
-                            }
-                            : msg
-                    );
-                    saveMessagesLocally(roomId, updated);
-                    return updated;
-                });
-                
-                Alert.alert(
-                    "Erro ao enviar",
-                    error.message || "Não foi possível enviar a mensagem",
-                    [
-                        { text: "OK" },
-                        { 
-                            text: "Tentar novamente", 
-                            onPress: () => sendRetry(tempMessageId, messageText)
-                        }
-                    ]
-                );
-            }
-        }
-    };
-
-    // Retry de mensagem
-    const sendRetry = async (messageId, messageText) => {
-        try {
-            setMessages(prev => {
-                const updated = prev.map(msg => 
-                    msg.id === messageId 
-                        ? { ...msg, isSending: true, failed: false }
-                        : msg
-                );
-                return updated;
-            });
-            
-            await websocket.sendMessage(roomId, messageText);
-            
-            setMessages(prev => {
-                const updated = prev.map(msg => 
-                    msg.id === messageId 
-                        ? { ...msg, isSending: false, id: `retry_sent_${Date.now()}` }
-                        : msg
-                );
-                saveMessagesLocally(roomId, updated);
-                return updated;
-            });
-        } catch (error) {
-            console.error("❌ Erro no retry:", error);
-            setMessages(prev => {
-                const updated = prev.map(msg => 
-                    msg.id === messageId 
+                const updated = messages.map(msg =>
+                    msg.id === tempMessageId
                         ? { ...msg, isSending: false, failed: true }
                         : msg
                 );
-                return updated;
-            });
+                setMessages(updated);
+                globalMessages = updated;
+            }
         }
     };
 
-    // Debug WebSocket
-    const debugWebSocket = async () => {
-        console.log("🔧 Debug do WebSocket:");
-        await testWebSocketConnection();
-        
-        if (websocket.isConnected()) {
-            websocket.testBackendEvents();
-        }
-        
-        Alert.alert(
-            "Debug WebSocket",
-            `Status: ${websocket.isConnected() ? 'Conectado' : 'Desconectado'}\n` +
-            `RoomId: ${roomId}\n` +
-            `Mensagens: ${messages.length}`,
-            [{ text: "OK" }]
-        );
-    };
+    // 🔥 LISTENER DE NOVAS MENSAGENS (GLOBAL)
+    const setupMessageListener = useCallback((chatRoomId, userId) => {
+        const handleNewMessage = (message) => {
+            console.log("📩 Nova mensagem recebida via WebSocket:", message);
+            setDebugInfo(`Nova mensagem: ${message.content.substring(0, 30)}...`);
+            
+            if (message.roomId === chatRoomId && isMountedRef.current) {
+                const isFromMe = message.senderId === userId;
+                const newMsg = {
+                    id: message._id,
+                    text: message.content,
+                    senderId: message.senderId,
+                    timestamp: message.createdAt,
+                    isSending: false,
+                    failed: false,
+                };
 
-    // Inicializar chat
+                // Atualiza estado local e global
+                setMessages(prev => {
+                    // Substituir mensagem temporária se existir
+                    const existingTempIndex = prev.findIndex(msg => 
+                        msg.isSending && msg.text === newMsg.text
+                    );
+                    
+                    if (existingTempIndex > -1) {
+                        const updated = [...prev];
+                        updated[existingTempIndex] = newMsg;
+                        globalMessages = updated;
+                        console.log("🔄 Mensagem temporária substituída");
+                        return updated;
+                    }
+                    
+                    // Adicionar se não existir
+                    if (!prev.some(msg => msg.id === newMsg.id)) {
+                        const updated = [...prev, newMsg];
+                        globalMessages = updated;
+                        console.log("➕ Nova mensagem adicionada");
+                        return updated;
+                    }
+                    
+                    return prev;
+                });
+            }
+        };
+
+        // Remove listener anterior se existir
+        websocket.off('newMessage', handleNewMessage);
+        websocket.on('newMessage', handleNewMessage);
+
+        return handleNewMessage;
+    }, []);
+
+    // 🔥 INICIALIZAR CHAT APENAS UMA VEZ
     useEffect(() => {
         console.log("🚀 Inicializando chat...");
-        
+        console.log("ProviderId:", providerId);
+        console.log("ProviderName:", pName);
+        console.log("Já inicializado?", isInitialized);
+
+        isMountedRef.current = true;
+
+        // Restaurar estado global se já inicializado
+        if (isInitialized && globalMessages.length > 0) {
+            console.log("🔄 Restaurando estado global...");
+            setMessages(globalMessages);
+            setRoomId(globalRoomId);
+            setCurrentUserId(globalCurrentUserId);
+            setIsConnected(globalIsConnected);
+            setDebugInfo("Estado restaurado");
+            return;
+        }
+
         if (pName) setProviderName(pName);
-        if (pType) setProviderSpecialty(pType);
         if (pPhoto) setProviderPhoto(pPhoto);
 
         const initializeChat = async () => {
             if (!providerId) {
-                console.error("❌ providerId não definido");
+                Alert.alert("Erro", "Prestador não identificado");
+                router.back();
                 return;
             }
 
             setLoadingMessages(true);
-            
+            setDebugInfo("Inicializando chat...");
+
             try {
-                // 1. Gerar roomId
-                const chatRoomId = await generateRoomId();
-                console.log("📦 RoomId gerado:", chatRoomId);
-                
-                if (!chatRoomId) {
-                    throw new Error("Não foi possível gerar roomId");
-                }
-                
+                // 1. Obter userId primeiro
+                const userId = await getCurrentUserId();
+                if (!userId) throw new Error("Não foi possível identificar o usuário");
+
+                // 2. Buscar/Criar sala
+                const roomData = await fetchOrCreateRoom(userId);
+                const chatRoomId = roomData._id;
+                console.log("📦 RoomId:", chatRoomId);
                 setRoomId(chatRoomId);
+                globalRoomId = chatRoomId;
+
+                // 3. Carregar mensagens
+                const apiMessages = await loadMessages(chatRoomId);
+                setMessages(apiMessages);
+                globalMessages = apiMessages;
+
+                // 4. Configurar WebSocket
+                setDebugInfo("Conectando WebSocket...");
                 
-                // 2. Carregar mensagens salvas localmente
-                const localMessages = await loadLocalMessages(chatRoomId);
-                console.log(`📄 ${localMessages.length} mensagens carregadas`);
-                setMessages(localMessages);
-                
-                // 3. Testar conexão WebSocket
-                const connectionSuccess = await testWebSocketConnection();
-                
-                if (connectionSuccess && chatRoomId) {
+                // Tentar conectar WebSocket
+                try {
+                    await websocket.connect();
+                    setIsConnected(true);
+                    globalIsConnected = true;
+                    setDebugInfo("WebSocket conectado!");
+                    
                     // Entrar na sala
                     websocket.joinRoom(chatRoomId);
+                    console.log("🚪 Entrou na sala:", chatRoomId);
                     
-                    // Configurar listener para novas mensagens
-                    const handleNewMessage = (message) => {
-                        console.log("📩 Nova mensagem recebida:", message);
-                        
-                        if (message.roomId === chatRoomId) {
-                            const newMsg = {
-                                id: message._id || message.id || `ws_${Date.now()}`,
-                                text: message.content || message.text || "",
-                                sender: message.senderId === providerId ? "provider" : "me",
-                                timestamp: message.createdAt || message.timestamp || new Date().toISOString(),
-                            };
-                            
-                            setMessages(prev => {
-                                // Evitar duplicação
-                                if (prev.some(msg => msg.id === newMsg.id)) {
-                                    return prev;
-                                }
-                                const newMessages = [...prev, newMsg];
-                                saveMessagesLocally(chatRoomId, newMessages);
-                                return newMessages;
-                            });
-                        }
-                    };
-                    
-                    websocket.on('newMessage', handleNewMessage);
-                    
-                    // Cleanup function
-                    return () => {
-                        websocket.off('newMessage', handleNewMessage);
-                        websocket.leaveRoom(chatRoomId);
-                    };
+                } catch (wsError) {
+                    console.warn("⚠️ WebSocket não conectado:", wsError.message);
+                    setDebugInfo(`WebSocket offline: ${wsError.message}`);
+                    setIsConnected(false);
+                    globalIsConnected = false;
                 }
-                
+
+                // 5. Configurar listener de mensagens
+                const messageHandler = setupMessageListener(chatRoomId, userId);
+
+                // Configurar listeners de conexão
+                const handleConnected = () => {
+                    console.log("✅ WebSocket conectado");
+                    setIsConnected(true);
+                    globalIsConnected = true;
+                    setDebugInfo("WebSocket conectado!");
+                    if (chatRoomId) websocket.joinRoom(chatRoomId);
+                };
+
+                const handleDisconnected = () => {
+                    console.log("❌ WebSocket desconectado");
+                    setIsConnected(false);
+                    globalIsConnected = false;
+                    setDebugInfo("WebSocket desconectado");
+                };
+
+                websocket.on('connected', handleConnected);
+                websocket.on('disconnected', handleDisconnected);
+
+                // Marcar como inicializado
+                isInitialized = true;
+
+                // Cleanup - APENAS remove listeners, não limpa dados
+                return () => {
+                    console.log("🧹 Limpando listeners (mantendo dados)");
+                    websocket.off('newMessage', messageHandler);
+                    websocket.off('connected', handleConnected);
+                    websocket.off('disconnected', handleDisconnected);
+                    // 🔥 NÃO sair da sala
+                    // websocket.leaveRoom(chatRoomId);
+                };
+
             } catch (error) {
                 console.error("❌ Erro na inicialização:", error);
+                setDebugInfo(`Erro: ${error.message}`);
+                Alert.alert("Erro", "Não foi possível carregar a conversa");
             } finally {
                 setLoadingMessages(false);
                 console.log("✅ Chat inicializado");
@@ -463,11 +409,11 @@ export default function ChatScreen() {
 
         initializeChat();
 
+        // Cleanup ao desmontar componente
         return () => {
-            console.log("🧹 Cleanup do chat");
-            if (roomId) {
-                websocket.leaveRoom(roomId);
-            }
+            console.log("🏠 Componente desmontado (mantendo estado global)");
+            isMountedRef.current = false;
+            // 🔥 NÃO resetar variáveis globais
         };
     }, [providerId]);
 
@@ -480,36 +426,68 @@ export default function ChatScreen() {
         }
     }, [messages]);
 
-    // Funções auxiliares
-    const getFirstInitial = (name) => {
-        if (!name || name.trim().length === 0) return "P";
-        return name.trim().charAt(0).toUpperCase();
+    // 🔥 DEBUG WEBSOCKET
+    const debugWebSocket = async () => {
+        console.log("🔧 Debug do WebSocket:");
+        console.log("RoomId:", roomId);
+        console.log("UserId:", currentUserId);
+        console.log("ProviderId:", providerId);
+        console.log("WebSocket conectado?", websocket.isConnected());
+        console.log("Mensagens:", messages.length);
+        console.log("Estado global:", {
+            globalMessages: globalMessages.length,
+            globalRoomId,
+            globalCurrentUserId,
+            globalIsConnected,
+            isInitialized
+        });
+        
+        Alert.alert(
+            "Debug Chat",
+            `RoomId: ${roomId || 'N/A'}\n` +
+            `UserId: ${currentUserId || 'N/A'}\n` +
+            `ProviderId: ${providerId || 'N/A'}\n` +
+            `WebSocket: ${websocket.isConnected() ? 'Conectado' : 'Desconectado'}\n` +
+            `Mensagens: ${messages.length}\n` +
+            `Estado Global: ${isInitialized ? 'Inicializado' : 'Não inicializado'}\n\n` +
+            `Status: ${debugInfo}`,
+            [{ text: "OK" }]
+        );
     };
 
-    const renderMessageTime = (timestamp) => {
-        try {
-            const date = new Date(timestamp);
-            return date.toLocaleTimeString("pt-BR", {
-                hour: "2-digit",
-                minute: "2-digit",
-            });
-        } catch {
-            return "--:--";
-        }
-    };
-
-    const renderMessageStatus = (message) => {
-        if (message.failed) {
-            return (
-                <TouchableOpacity onPress={() => sendRetry(message.id, message.text)}>
-                    <Ionicons name="refresh-circle" size={16} color="#F44336" />
-                </TouchableOpacity>
-            );
-        }
-        if (message.isSending) {
-            return <ActivityIndicator size="small" color="#666" />;
-        }
-        return null;
+    // 🔥 RENDERIZAR MENSAGEM
+    const renderMessage = ({ item }) => {
+        const isMyMessage = item.senderId === currentUserId;
+        
+        return (
+            <View
+                style={[
+                    styles.messageBubble,
+                    isMyMessage ? styles.myMessage : styles.otherMessage
+                ]}
+            >
+                <Text style={styles.messageText}>{item.text}</Text>
+                <View style={styles.messageFooter}>
+                    <Text style={styles.messageTime}>
+                        {new Date(item.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })}
+                    </Text>
+                    {isMyMessage && item.isSending && (
+                        <ActivityIndicator size="small" color="#666" />
+                    )}
+                    {isMyMessage && item.failed && (
+                        <TouchableOpacity onPress={() => {
+                            setText(item.text);
+                            sendMessage();
+                        }}>
+                            <Ionicons name="refresh-circle" size={16} color="#F44336" />
+                        </TouchableOpacity>
+                    )}
+                </View>
+            </View>
+        );
     };
 
     return (
@@ -522,15 +500,15 @@ export default function ChatScreen() {
 
                 <View style={styles.avatarContainer}>
                     {providerPhoto ? (
-                        <Image 
-                            source={{ uri: providerPhoto }} 
-                            style={styles.providerAvatar} 
+                        <Image
+                            source={{ uri: providerPhoto }}
+                            style={styles.providerAvatar}
                             onError={() => setProviderPhoto(null)}
                         />
                     ) : (
                         <View style={styles.avatarPlaceholder}>
                             <Text style={styles.avatarText}>
-                                {getFirstInitial(providerName)}
+                                {providerName[0]?.toUpperCase() || "P"}
                             </Text>
                         </View>
                     )}
@@ -540,15 +518,14 @@ export default function ChatScreen() {
                     <Text style={styles.providerName} numberOfLines={1}>
                         {providerName}
                     </Text>
-                    <Text style={styles.serviceInfo}>
-                        {providerService || providerSpecialty || "Prestador de serviços"}
-                    </Text>
                     <Text style={[
                         styles.connectionStatus,
                         { color: isConnected ? '#4CAF50' : '#F44336' }
                     ]}>
                         • {isConnected ? 'Online' : 'Offline'}
-                        {isTestingConnection && ' (Conectando...)'}
+                    </Text>
+                    <Text style={styles.debugInfo} numberOfLines={1}>
+                        {debugInfo}
                     </Text>
                 </View>
 
@@ -558,17 +535,18 @@ export default function ChatScreen() {
             </View>
 
             {/* Chat Area */}
-            <KeyboardAvoidingView 
+            <KeyboardAvoidingView
                 style={styles.chatContainer}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
             >
-                {loadingMessages ? (
+                {loadingMessages && !isInitialized ? (
                     <View style={styles.loadingContainer}>
                         <ActivityIndicator size="large" color="#2F8B88" />
                         <Text style={styles.loadingText}>
-                            {isTestingConnection ? "Conectando..." : "Carregando conversa..."}
+                            Carregando conversa...
                         </Text>
+                        <Text style={styles.debugText}>{debugInfo}</Text>
                     </View>
                 ) : (
                     <>
@@ -577,22 +555,7 @@ export default function ChatScreen() {
                             data={messages}
                             keyExtractor={(item) => item.id}
                             contentContainerStyle={styles.chatListContent}
-                            renderItem={({ item }) => (
-                                <View
-                                    style={[
-                                        styles.messageBubble,
-                                        item.sender === "me" ? styles.myMessage : styles.otherMessage
-                                    ]}
-                                >
-                                    <Text style={styles.messageText}>{item.text}</Text>
-                                    <View style={styles.messageFooter}>
-                                        <Text style={styles.messageTime}>
-                                            {renderMessageTime(item.timestamp)}
-                                        </Text>
-                                        {item.sender === "me" && renderMessageStatus(item)}
-                                    </View>
-                                </View>
-                            )}
+                            renderItem={renderMessage}
                             ListEmptyComponent={
                                 <View style={styles.emptyChatContainer}>
                                     <Ionicons name="chatbubble-ellipses-outline" size={60} color="#C4EDE6" />
@@ -600,11 +563,7 @@ export default function ChatScreen() {
                                     <Text style={styles.emptyChatText}>
                                         Envie uma mensagem para {providerName}
                                     </Text>
-                                    {!isConnected && (
-                                        <Text style={styles.connectionWarning}>
-                                            Conexão offline. As mensagens serão salvas localmente.
-                                        </Text>
-                                    )}
+                                    <Text style={styles.debugText}>{debugInfo}</Text>
                                 </View>
                             }
                             onContentSizeChange={() => {
@@ -621,34 +580,24 @@ export default function ChatScreen() {
                             <TextInput
                                 style={[
                                     styles.input,
-                                    (!isConnected || isTestingConnection) && styles.inputDisabled
+                                    !isConnected && styles.inputDisabled
                                 ]}
-                                placeholder={
-                                    isTestingConnection ? "Conectando..." :
-                                    !isConnected ? "Offline - Conectando..." :
-                                    "Digite uma mensagem..."
-                                }
+                                placeholder={isConnected ? "Digite uma mensagem..." : "Conectando..."}
                                 value={text}
                                 onChangeText={setText}
                                 multiline
                                 maxLength={500}
-                                editable={isConnected && !isTestingConnection}
+                                editable={isConnected || !roomId}
                             />
                             <Pressable
                                 style={[
                                     styles.sendButton,
-                                    (!text.trim() || !isConnected || isTestingConnection) && styles.sendButtonDisabled
+                                    (!text.trim() || !isConnected) && styles.sendButtonDisabled
                                 ]}
                                 onPress={sendMessage}
-                                disabled={!text.trim() || !isConnected || isTestingConnection}
+                                disabled={!text.trim() || !isConnected}
                             >
-                                {isTestingConnection ? (
-                                    <ActivityIndicator size="small" color="#fff" />
-                                ) : isConnected ? (
-                                    <Ionicons name="send" size={20} color="#fff" />
-                                ) : (
-                                    <Ionicons name="cloud-offline" size={20} color="#fff" />
-                                )}
+                                <Ionicons name="send" size={20} color="#fff" />
                             </Pressable>
                         </View>
                     </>
@@ -659,139 +608,167 @@ export default function ChatScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#f4f4f4" },
-    chatContainer: { flex: 1 },
-    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    loadingText: { marginTop: 10, color: '#666', fontSize: 14 },
-    
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
     headerRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 15,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
         paddingVertical: 12,
-        backgroundColor: "#fff",
         borderBottomWidth: 1,
-        borderBottomColor: "#e0e0e0",
+        borderBottomColor: '#e5e5e5',
+        backgroundColor: '#fff',
     },
-    backBtn: { padding: 8, marginRight: 12 },
-    avatarContainer: { marginRight: 12 },
-    providerAvatar: { width: 40, height: 40, borderRadius: 20 },
+    backBtn: {
+        marginRight: 12,
+    },
+    avatarContainer: {
+        marginRight: 12,
+    },
+    providerAvatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+    },
     avatarPlaceholder: {
-        width: 40, height: 40, borderRadius: 20,
-        justifyContent: "center", alignItems: "center",
-        backgroundColor: "#FFA500"
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#2F8B88',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    avatarText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
-    providerInfo: { flex: 1 },
-    providerName: { fontSize: 16, fontWeight: "bold", color: "#2F8B88", marginBottom: 2 },
-    serviceInfo: { fontSize: 12, color: "#666" },
-    connectionStatus: { fontSize: 11, fontWeight: '500' },
-    debugButton: { padding: 8, marginLeft: 8 },
-    
+    avatarText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 18,
+    },
+    providerInfo: {
+        flex: 1,
+    },
+    providerName: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+    },
+    connectionStatus: {
+        fontSize: 11,
+        marginTop: 2,
+    },
+    debugInfo: {
+        fontSize: 10,
+        color: '#666',
+        marginTop: 2,
+        fontStyle: 'italic',
+    },
+    debugButton: {
+        padding: 8,
+    },
+    chatContainer: {
+        flex: 1,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 12,
+        color: '#666',
+    },
+    debugText: {
+        fontSize: 12,
+        color: '#888',
+        marginTop: 8,
+        textAlign: 'center',
+        paddingHorizontal: 20,
+    },
     chatListContent: {
-        padding: 15,
-        paddingTop: 20,
-        paddingBottom: 10,
-        flexGrow: 1,
+        padding: 16,
+        paddingBottom: 8,
     },
     messageBubble: {
+        maxWidth: '80%',
         padding: 12,
-        borderRadius: 16,
-        maxWidth: "80%",
-        marginBottom: 10,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
+        borderRadius: 18,
+        marginBottom: 8,
     },
     myMessage: {
-        backgroundColor: "#fff",
-        alignSelf: "flex-end",
-        borderTopRightRadius: 4,
+        alignSelf: 'flex-end',
+        backgroundColor: '#2F8B88',
+        borderBottomRightRadius: 4,
     },
     otherMessage: {
-        backgroundColor: "#DCF8C6",
-        alignSelf: "flex-start",
-        borderTopLeftRadius: 4,
+        alignSelf: 'flex-start',
+        backgroundColor: '#e5e5e5',
+        borderBottomLeftRadius: 4,
     },
     messageText: {
-        fontSize: 15,
-        color: "#333",
-        marginBottom: 4,
+        color: '#fff',
+        fontSize: 16,
         lineHeight: 20,
     },
     messageFooter: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         alignItems: 'center',
+        marginTop: 4,
     },
     messageTime: {
         fontSize: 11,
-        color: "#888",
+        color: 'rgba(255,255,255,0.7)',
+        marginRight: 4,
     },
-    
-    inputArea: {
-        flexDirection: "row",
-        padding: 15,
-        backgroundColor: "#fff",
-        borderTopWidth: 1,
-        borderTopColor: "#e0e0e0",
-        alignItems: "flex-end",
-    },
-    input: {
-        flex: 1,
-        backgroundColor: "#f0f0f0",
-        borderRadius: 20,
-        paddingHorizontal: 15,
-        paddingVertical: 10,
-        maxHeight: 100,
-        minHeight: 40,
-        fontSize: 15,
-    },
-    inputDisabled: {
-        backgroundColor: "#e0e0e0",
-        color: "#999",
-    },
-    sendButton: {
-        backgroundColor: "#2F8B88",
-        marginLeft: 10,
-        padding: 12,
-        borderRadius: 25,
-        justifyContent: "center",
-        alignItems: "center",
-        width: 50,
-        height: 50,
-    },
-    sendButtonDisabled: {
-        backgroundColor: "#A8D8D7",
-    },
-    
     emptyChatContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingVertical: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 60,
     },
     emptyChatTitle: {
-        marginTop: 16,
         fontSize: 18,
-        fontWeight: "600",
-        color: "#555",
-        marginBottom: 8,
+        fontWeight: '600',
+        color: '#333',
+        marginTop: 16,
     },
     emptyChatText: {
         fontSize: 14,
-        color: "#777",
-        textAlign: "center",
-        paddingHorizontal: 20,
-        marginBottom: 10,
+        color: '#666',
+        marginTop: 8,
+        textAlign: 'center',
     },
-    connectionWarning: {
-        fontSize: 12,
-        color: "#F44336",
-        textAlign: "center",
-        paddingHorizontal: 20,
-        fontStyle: 'italic',
+    inputArea: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        padding: 12,
+        borderTopWidth: 1,
+        borderTopColor: '#e5e5e5',
+        backgroundColor: '#fff',
+    },
+    input: {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 20,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        maxHeight: 100,
+        fontSize: 16,
+    },
+    inputDisabled: {
+        backgroundColor: '#f0f0f0',
+        color: '#999',
+    },
+    sendButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: '#2F8B88',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 8,
+    },
+    sendButtonDisabled: {
+        backgroundColor: '#ccc',
     },
 });
