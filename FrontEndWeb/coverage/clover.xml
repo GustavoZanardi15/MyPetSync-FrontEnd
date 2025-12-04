@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1764801007520" clover="3.2.0">
-  <project timestamp="1764801007521" name="All files">
-    <metrics statements="1297" coveredstatements="890" conditionals="867" coveredconditionals="480" methods="282" coveredmethods="175" elements="2446" coveredelements="1545" complexity="0" loc="1297" ncloc="1297" packages="16" files="60" classes="60"/>
+<coverage generated="1764807658482" clover="3.2.0">
+  <project timestamp="1764807658482" name="All files">
+    <metrics statements="1297" coveredstatements="916" conditionals="867" coveredconditionals="495" methods="282" coveredmethods="187" elements="2446" coveredelements="1598" complexity="0" loc="1297" ncloc="1297" packages="16" files="60" classes="60"/>
     <package name="components.agenda">
       <metrics statements="244" coveredstatements="191" conditionals="204" coveredconditionals="109" methods="64" coveredmethods="49"/>
       <file name="AgendaCalendar.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\agenda\AgendaCalendar.jsx">
@@ -555,31 +555,31 @@
       </file>
     </package>
     <package name="components.home">
-      <metrics statements="45" coveredstatements="0" conditionals="28" coveredconditionals="0" methods="16" coveredmethods="0"/>
+      <metrics statements="45" coveredstatements="26" conditionals="28" coveredconditionals="15" methods="16" coveredmethods="12"/>
       <file name="AppointmentItem.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\AppointmentItem.jsx">
-        <metrics statements="8" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
-        <line num="1" count="0" type="stmt"/>
-        <line num="2" count="0" type="stmt"/>
-        <line num="3" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="5" count="0" type="stmt"/>
-        <line num="7" count="0" type="stmt"/>
-        <line num="9" count="0" type="stmt"/>
+        <metrics statements="8" coveredstatements="7" conditionals="4" coveredconditionals="3" methods="2" coveredmethods="2"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="4" type="stmt"/>
+        <line num="3" count="4" type="cond" truecount="3" falsecount="1"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
+        <line num="15" count="4" type="stmt"/>
       </file>
       <file name="DashboardStats.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\DashboardStats.jsx">
-        <metrics statements="6" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="3" coveredmethods="0"/>
-        <line num="1" count="0" type="stmt"/>
-        <line num="2" count="0" type="stmt"/>
-        <line num="24" count="0" type="stmt"/>
-        <line num="25" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="27" count="0" type="stmt"/>
-        <line num="31" count="0" type="stmt"/>
+        <metrics statements="6" coveredstatements="6" conditionals="6" coveredconditionals="6" methods="3" coveredmethods="3"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="25" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="31" count="3" type="stmt"/>
       </file>
       <file name="HomeSidePanel.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\HomeSidePanel.jsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="5" count="0" type="stmt"/>
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="4" type="stmt"/>
       </file>
       <file name="NextAppointments.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\NextAppointments.jsx">
         <metrics statements="18" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="4" coveredmethods="0"/>
@@ -603,24 +603,24 @@
         <line num="58" count="0" type="stmt"/>
       </file>
       <file name="QuickActions.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\QuickActions.jsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="5" count="0" type="stmt"/>
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="4" type="stmt"/>
       </file>
       <file name="RecentActivities.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\RecentActivities.jsx">
-        <metrics statements="7" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="4" coveredmethods="0"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="9" count="0" type="stmt"/>
-        <line num="11" count="0" type="stmt"/>
-        <line num="12" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="13" count="0" type="stmt"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="32" count="0" type="stmt"/>
+        <metrics statements="7" coveredstatements="7" conditionals="8" coveredconditionals="6" methods="4" coveredmethods="4"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="11" count="4" type="stmt"/>
+        <line num="12" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="32" count="3" type="stmt"/>
       </file>
       <file name="WelcomeBanner.jsx" path="C:\Users\annap\OneDrive\Área de Trabalho\MyPetSync-FrontEnd\FrontEndWeb\src\components\home\WelcomeBanner.jsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="3" count="0" type="stmt"/>
-        <line num="4" count="0" type="stmt"/>
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
       </file>
     </package>
     <package name="components.landing">
