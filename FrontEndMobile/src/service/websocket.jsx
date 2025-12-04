@@ -12,6 +12,34 @@ class WebSocketService {
         this.connected = false;
         this.currentRoomId = null;
         this.connecting = false; // evita múltiplas conexões
+        
+        // 🔥 ADICIONAR BINDINGS
+        this.restoreRoomFromStorage = this.restoreRoomFromStorage.bind(this);
+        this.saveRoomToStorage = this.saveRoomToStorage.bind(this);
+        
+        // Restaurar sala ao iniciar
+        this.restoreRoomFromStorage();
+    }
+
+    // 🔥 MÉTODO PARA SALVAR NO STORAGE
+    async saveRoomToStorage(roomId) {
+        try {
+            await AsyncStorage.setItem('lastChatRoom', roomId);
+        } catch (error) {
+            console.error("❌ Erro ao salvar sala:", error);
+        }
+    }
+
+    // 🔥 MÉTODO PARA RESTAURAR DO STORAGE
+    async restoreRoomFromStorage() {
+        try {
+            const savedRoom = await AsyncStorage.getItem('lastChatRoom');
+            if (savedRoom) {
+                this.currentRoomId = savedRoom;
+            }
+        } catch (error) {
+            console.error("❌ Erro ao restaurar sala:", error);
+        }
     }
 
     // 🔥 Conecta apenas uma vez
@@ -106,6 +134,9 @@ class WebSocketService {
         if (!roomId) return;
 
         this.currentRoomId = roomId;
+        
+        // 🔥 SALVAR NO STORAGE
+        this.saveRoomToStorage(roomId);
 
         if (!this.connected) {
             console.log("⏳ [WS] Aguardando conexão para entrar na sala...");
@@ -124,7 +155,13 @@ class WebSocketService {
 
         if (this.currentRoomId === roomId) {
             this.currentRoomId = null;
+            // 🔥 REMOVER DO STORAGE
+            AsyncStorage.removeItem('lastChatRoom');
         }
+    }
+
+    getCurrentRoom() {
+        return this.currentRoomId;
     }
 
     // ------------------------------
@@ -167,6 +204,23 @@ class WebSocketService {
         }
 
         this.listeners.get(event).push(callback);
+    }
+
+    // 🔥 ADICIONAR MÉTODO off() QUE FALTAVA
+    off(event, callbackToRemove) {
+        if (!this.listeners.has(event)) {
+            return;
+        }
+
+        if (callbackToRemove) {
+            // Remove callback específico
+            const callbacks = this.listeners.get(event);
+            const filtered = callbacks.filter(cb => cb !== callbackToRemove);
+            this.listeners.set(event, filtered);
+        } else {
+            // Remove todos os callbacks do evento
+            this.listeners.delete(event);
+        }
     }
 
     emitToListeners(event, data) {

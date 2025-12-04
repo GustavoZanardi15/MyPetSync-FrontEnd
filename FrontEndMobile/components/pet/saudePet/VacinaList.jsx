@@ -32,7 +32,7 @@ export default function VacinaList({ vacinas, petName }) {
                                         { color: v.isCompleted ? "#4CAF50" : "#F57C00" }
                                     ]}
                                 >
-                                    {v.isCompleted ? "Completa" : "Pendente"}
+                                    {v.isCompleted ? "Completa" : "Incompleta"}
                                 </Text>
                             </View>
 
