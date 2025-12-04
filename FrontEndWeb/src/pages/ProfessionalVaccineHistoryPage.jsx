@@ -35,7 +35,8 @@ const ProfessionalVaccineHistoryPage = () => {
         setError(null);
 
         const data = await getProviderVaccineHistory(providerId);
-        setVaccines(data);
+
+        setVaccines(data.items || []);
       } catch (err) {
         console.error("Falha na API ao buscar histórico:", err);
 
@@ -65,11 +66,9 @@ const ProfessionalVaccineHistoryPage = () => {
     if (loading) {
       return <p className="text-gray-600">Carregando dados e histórico...</p>;
     }
-
     if (error) {
       return <p className="text-red-500 font-medium">Erro: {error}</p>;
     }
-
     if (vaccines.length === 0) {
       return (
         <p className="text-gray-600">
@@ -77,7 +76,6 @@ const ProfessionalVaccineHistoryPage = () => {
         </p>
       );
     }
-
     return (
       <div className="space-y-4">
         {vaccines.map((vac) => (
