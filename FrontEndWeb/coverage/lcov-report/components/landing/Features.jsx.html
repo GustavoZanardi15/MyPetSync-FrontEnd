@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -205,7 +205,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -238,7 +238,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -259,8 +259,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -274,7 +274,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">40x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -304,7 +304,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -338,7 +338,7 @@ import gerenciamentoPerfil from "../../assets/gerenciamentoPerfil.png";
 import avaliacaoCliente from "../../assets/avaliacaoCliente.png";
 import agendaExclusiva from "../../assets/agendaExclusiva.png";
 &nbsp;
-const AppFeatures = <span class="cstat-no" title="statement not covered" >[</span>
+const AppFeatures = [
   {
     title: "Cadastro de Pets",
     description:
@@ -371,7 +371,7 @@ const AppFeatures = <span class="cstat-no" title="statement not covered" >[</spa
   },
 ];
 &nbsp;
-const PortalFeatures = <span class="cstat-no" title="statement not covered" >[</span>
+const PortalFeatures = [
   {
     title: "Gerenciamento do Perfil",
     description:
@@ -392,8 +392,8 @@ const PortalFeatures = <span class="cstat-no" title="statement not covered" >[</
   },
 ];
 &nbsp;
-const Features = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  return (</span>
+const Features = () =&gt; {
+  return (
     &lt;div id="funcionalidades" className="bg-[#A8E6CF] py-20 px-4"&gt;
       &lt;div className="container mx-auto"&gt;
         &lt;div className="mb-20"&gt;
@@ -406,8 +406,8 @@ const Features = <span class="cstat-no" title="statement not covered" ><span cla
             dia a dia.
           &lt;/p&gt;
           &lt;div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 justify-items-center"&gt;
-            {AppFeatures.map(<span class="fstat-no" title="function not covered" >(i</span>tem, index) =&gt; (
-<span class="cstat-no" title="statement not covered" >              &lt;div</span>
+            {AppFeatures.map((item, index) =&gt; (
+              &lt;div
                 key={index}
                 className="bg-[#058789] p-6 rounded-3xl shadow-2xl text-center w-64"
               &gt;
@@ -436,8 +436,8 @@ const Features = <span class="cstat-no" title="statement not covered" ><span cla
             setor pet.
           &lt;/p&gt;
           &lt;div className="flex flex-wrap gap-8 justify-center"&gt;
-            {PortalFeatures.map(<span class="fstat-no" title="function not covered" >(i</span>tem, index) =&gt; (
-<span class="cstat-no" title="statement not covered" >              &lt;div</span>
+            {PortalFeatures.map((item, index) =&gt; (
+              &lt;div
                 key={index}
                 className="bg-[#058789] p-6 rounded-3xl shadow-2xl text-center w-72"
               &gt;
@@ -469,7 +469,7 @@ export default Features;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-02T21:57:07.935Z
+                at 2025-12-04T00:20:58.372Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

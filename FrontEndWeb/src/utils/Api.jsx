@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/";
+const API_URL = "https://mypetsync-escoladeti-production.up.railway.app";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -32,9 +32,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
       console.warn(
-        "Sessão expirada ou acesso negado. Redirecionando para login."
+        "Sessão expirada ou acesso negado. Deixando o AuthContext lidar com o logout."
       );
-      localStorage.removeItem("myPetSyncToken");
     }
     return Promise.reject(error);
   }

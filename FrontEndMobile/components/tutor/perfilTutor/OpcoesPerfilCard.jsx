@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function OpcoesPerfilCard({ onLogout, onEndereco, onServicos, onLembretes }) {
+export default function OpcoesPerfilCard({ onLogout, onEndereco, onServicos, onMensagens }) {
   return (
     <View style={styles.card}>
       <Pressable style={styles.option} onPress={onEndereco}>
@@ -16,14 +16,14 @@ export default function OpcoesPerfilCard({ onLogout, onEndereco, onServicos, onL
         <View style={[styles.iconWrapper, { backgroundColor: "#E5D4FF" }]}>
           <Image source={require("../../../assets/images/home/NavBarServico.png")} style={styles.iconImage} />
         </View>
-        <Text style={styles.optionText}>Serviços</Text>
+        <Text style={styles.optionText}>Histórico de Serviços</Text>
       </Pressable>
 
-      <Pressable style={styles.option} onPress={onLembretes}>
+      <Pressable style={styles.option} onPress={onMensagens}>
         <View style={[styles.iconWrapper, { backgroundColor: "#C8E8E0" }]}>
-          <Image source={require("../../../assets/images/home/NavBarCalendar.png")} style={styles.iconImage} />
+          <Ionicons name="chatbubble-ellipses-outline" size={24} color="#2F7A67" />
         </View>
-        <Text style={styles.optionText}>Lembretes</Text>
+        <Text style={styles.optionText}>Mensagens</Text>
       </Pressable>
 
       <Pressable onPress={onLogout} style={styles.logoutButton}>
@@ -73,9 +73,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
     backgroundColor: "#FF3B30",
     paddingVertical: 10,
-    paddingHorizontal: 70, 
-    borderRadius: 12, 
-    alignSelf: "center", 
+    paddingHorizontal: 70,
+    borderRadius: 12,
+    alignSelf: "center",
   },
   logoutButtonText: {
     color: "#FFFFFF",

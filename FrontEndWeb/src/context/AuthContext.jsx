@@ -1,6 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { isAuthenticated, logout as apiLogout } from "../services/authService";
-import { fetchCurrentUser } from "../services/userService";
+import {
+  fetchCurrentUser,
+  fetchProviderProfile,
+} from "../services/userService";
 import api from "../utils/Api";
 
 const AuthContext = createContext();
@@ -34,6 +37,14 @@ export const AuthProvider = ({ children }) => {
       cleanedUser.name = cleanedUser.nome || cleanedUser.name;
       cleanedUser.email = cleanedUser.email;
 
+      const providerProfile = await fetchProviderProfile();
+
+      if (providerProfile && providerProfile._id) {
+        cleanedUser.providerId = providerProfile._id;
+      } else {
+        cleanedUser.providerId = null;
+      }
+
       setUser(cleanedUser);
       return cleanedUser;
     } catch (error) {
@@ -50,18 +61,22 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       const authStatus = isAuthenticated();
-      if (authStatus) {
-        try {
-          await loadUser();
-        } catch (e) {
-          apiLogout();
-          setIsLoggedIn(false);
-        }
-      } else {
+      if (!authStatus) {
         delete api.defaults.headers.common["Authorization"];
+        setIsLoggedIn(false);
+        setUser(null);
+        setIsLoading(false);
+        return;
       }
 
-      setIsLoggedIn(authStatus);
+      try {
+        await loadUser();
+        setIsLoggedIn(true);
+      } catch (e) {
+        apiLogout();
+        setIsLoggedIn(false);
+      }
+
       setIsLoading(false);
     };
     checkAuth();
@@ -69,9 +84,9 @@ export const AuthProvider = ({ children }) => {
 
   const loginContext = async () => {
     setIsLoading(true);
-    setIsLoggedIn(true);
     try {
       await loadUser();
+      setIsLoggedIn(true);
     } catch (e) {
       console.error("Login falhou ao carregar perfil:", e);
       apiLogout();
