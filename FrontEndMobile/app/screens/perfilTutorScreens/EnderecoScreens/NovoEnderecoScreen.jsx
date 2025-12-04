@@ -50,7 +50,7 @@ export default function NovoEnderecoScreen() {
 
     setIsLoading(true);
     try {
-      const response = await fetch(https://viacep.com.br/ws/${cepLimpo}/json/);
+      const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
       const data = await response.json();
 
       if (data.erro) {
@@ -87,7 +87,7 @@ export default function NovoEnderecoScreen() {
       }
 
       const res = await api.get("/tutors/mine", {
-        headers: { Authorization: Bearer ${token} },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const tutor = res.data;
 
@@ -104,7 +104,7 @@ export default function NovoEnderecoScreen() {
       await api.put(
         "/tutors/mine",
         { addresses: updatedAddresses },
-        { headers: { Authorization: Bearer ${token} } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       Alert.alert("Sucesso", "Endereço adicionado com sucesso!");
