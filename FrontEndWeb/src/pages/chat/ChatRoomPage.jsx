@@ -2,26 +2,39 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useChatSocket } from "../../hooks/useChatSocket";
 import api from "../../utils/Api";
+import { useAuth } from "../../context/AuthContext";
 
 function ChatRoomPage() {
   const { roomId } = useParams();
-  const { messages, sendMessage, isConnected, setHistory, currentUserId } =
+  const { user } = useAuth();
+  const currentUserId = user?.userId;
+
+  const { messages, sendMessage, isConnected, setHistory} =
     useChatSocket(roomId);
 
   const [inputContent, setInputContent] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [room, setRoom] = useState(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (!roomId) return;
 
-    api
-      .get(`/chat/rooms/${roomId}/messages`)
-      .then((response) => {
-        setHistory(response.data);
-      })
-      .catch((error) => console.error("Erro ao carregar histórico:", error))
-      .finally(() => setIsLoading(false));
+    const loadRoomAndMessages = async () => {
+      try {
+        const roomRes = await api.get(`/chat/rooms/${roomId}`);
+        setRoom(roomRes.data);
+
+        const messagesRes = await api.get(`/chat/rooms/${roomId}/messages`);
+        setHistory(messagesRes.data);
+      } catch (error) {
+        console.error("Erro ao carregar sala ou histórico:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRoomAndMessages();
   }, [roomId, setHistory]);
 
   useEffect(() => {
@@ -36,17 +49,39 @@ function ChatRoomPage() {
     }
   };
 
+  const displayName = (() => {
+    if (!room || !room.participants || !currentUserId) {
+      return `Conversa na Sala ${roomId.substring(0, 8)}`;
+    }
+
+    const participants = room.participants;
+
+    const otherParticipant =
+      participants.find(
+        (p) => p._id !== currentUserId && p.tipo_usuario === "tutor"
+      ) ||
+      participants.find((p) => p._id !== currentUserId) ||
+      null;
+
+    return (
+      otherParticipant?.nome ||
+      room.name ||
+      `Conversa na Sala ${roomId.substring(0, 8)}`
+    );
+  })();
+
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-full">
         Carregando chat...
       </div>
     );
+
   return (
     <div className="flex flex-col h-full w-full border-x border-gray-200">
       <header className="p-4 border-b bg-slate-200 sticky top-0 z-10">
         <h1 className="text-xl font-bold text-[#045f61]">
-          Conversa na Sala {roomId.substring(0, 8)}
+          {displayName}
         </h1>
         <p
           className={`text-xs ${
