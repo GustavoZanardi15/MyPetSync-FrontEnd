@@ -2,12 +2,11 @@ import React from "react";
 import { View, Text, ScrollView, Image, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import AvatarLetra from "./AvatarLetra";
 
 export default function VeterinariosSection({ vets = [] }) {
-  const renderStars = (rating) => {
-    const full = Math.floor(rating);
-    const half = rating % 1 >= 0.5;
+  const renderStars = (rating, count) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
 
     return (
       <View style={styles.starRow}>
@@ -15,19 +14,26 @@ export default function VeterinariosSection({ vets = [] }) {
           let icon = "star-outline";
           let color = "#C4C4C4";
 
-          if (i <= full) {
+          if (i <= fullStars) {
             icon = "star";
             color = "#FFD700";
-          } else if (i === full + 1 && half) {
-            icon = "star-half";
+          } else if (i === fullStars + 1 && hasHalfStar) {
+            icon = "star-half"; 
             color = "#FFD700";
           }
 
-          return <Ionicons key={i} name={icon} size={14} color={color} />;
+          return (
+            <Ionicons
+              key={i}
+              name={icon}
+              size={14}
+              color={color}
+            />
+          );
         })}
 
         <Text style={styles.starCount}>
-          ({rating ? rating.toFixed(1) : "0.0"})
+          {rating ? `(${rating.toFixed(1)})` : `(0.0)`}
         </Text>
       </View>
     );
@@ -37,9 +43,7 @@ export default function VeterinariosSection({ vets = [] }) {
     <View style={{ marginTop: 40 }}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Prestadores</Text>
-        <Pressable
-          onPress={() => router.push("/screens/servicoScreens/ServicoVetScreen")}
-        >
+        <Pressable onPress={() => router.push("/screens/servicoScreens/ServicoVetScreen")}>
           <Text style={styles.verTudo}>Ver tudo</Text>
         </Pressable>
       </View>
@@ -50,17 +54,21 @@ export default function VeterinariosSection({ vets = [] }) {
         contentContainerStyle={styles.vetScrollContainer}
       >
         {vets.map((vet) => (
-          <View key={vet.id} style={styles.vetCard}>
+          <View style={styles.vetCard} key={vet.id}>
             {vet.imageUrl ? (
               <Image source={{ uri: vet.imageUrl }} style={styles.vetImage} />
             ) : (
-              <AvatarLetra nome={vet.name} />
+              <View style={styles.placeholderAvatar}>
+                <Text style={styles.initial}>
+                  {vet.name ? vet.name.charAt(0).toUpperCase() : "V"}
+                </Text>
+              </View>
             )}
 
             <View style={styles.vetOverlay}>
               <Text style={styles.vetName}>{vet.name}</Text>
               <Text style={styles.vetSpecialty}>{vet.specialty}</Text>
-              {renderStars(vet.rating)}
+              {renderStars(vet.rating, vet.reviewCount)}
             </View>
           </View>
         ))}
@@ -77,13 +85,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   sectionTitle: {
-    fontSize: 22,
-    fontWeight: "700",
+    fontSize: 20,
+    fontWeight: "600",
     color: "#2F8B88",
   },
   verTudo: {
     color: "#87CEEB",
     fontSize: 15,
+    fontWeight: "400",
   },
   vetScrollContainer: {
     paddingHorizontal: 20,
@@ -91,35 +100,49 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   vetCard: {
-    width: 140,
-    height: 190,
+    width: 130,
+    height: 160,
     marginRight: 15,
-    borderRadius: 18,
+    marginTop: 10,
+    borderRadius: 10,
+    overflow: "hidden",
+    justifyContent: "flex-end",
     backgroundColor: "#fff",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    paddingTop: 18,
-
     shadowColor: "#000",
-    shadowOpacity: 0.07,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 6,
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 3,
+    alignItems: "center",
+    paddingBottom: 10,
   },
   vetImage: {
-    width: 85,
-    height: 85,
-    borderRadius: 42,
-    resizeMode: "cover",
-    marginBottom: 6,
+    width: 90,
+    height: 90,
+    borderRadius: 40,
+    marginTop: 12,
+  },
+  placeholderAvatar: {
+    width: 65,
+    height: 65,
+    borderRadius: 35,
+    backgroundColor: "#FFA500",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 12,
+  },
+  initial: {
+    color: "#fff",
+    fontSize: 32,
+    fontWeight: "700",
   },
   vetOverlay: {
     alignItems: "center",
-    paddingHorizontal: 6,
-    marginTop: 6,
+    marginTop: 10,
+    paddingHorizontal: 5,
+    width: "100%",
   },
   vetName: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
     color: "#2F8B88",
     textAlign: "center",
@@ -134,6 +157,7 @@ const styles = StyleSheet.create({
   starRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 3,
   },
   starCount: {
