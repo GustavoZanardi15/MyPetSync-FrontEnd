@@ -20,6 +20,7 @@ import ChatListPage from "./pages/chat/ChatListPage.jsx";
 import ChatRoomPage from "./pages/chat/ChatRoomPage.jsx";
 import PetRecordPage from "./pages/PetRecordPage.jsx";
 import InitiateChatPage from "./pages/chat/InitiateChatPage.jsx";
+import ProfessionalVaccineHistoryPage from "./pages/ProfessionalVaccineHistoryPage.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
 
@@ -47,6 +48,14 @@ const router = createBrowserRouter([
         element: (
           <LayoutWrapper>
             <AgendaPage />
+          </LayoutWrapper>
+        ),
+      },
+      {
+        path: "/vacinas/historico",
+        element: (
+          <LayoutWrapper>
+            <ProfessionalVaccineHistoryPage />
           </LayoutWrapper>
         ),
       },
