@@ -1,30 +1,23 @@
 import React from "react";
-import { View, Image, Pressable, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Image, Pressable, Text, StyleSheet, ScrollView } from "react-native"; 
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function PetSelector({ pets, selectedPet, setSelectedPet }) {
+  const router = useRouter();
+
   return (
-    <View style={{ marginTop: 30 }}>
+    <View style={{ marginTop: 20 }}>
       <Text style={styles.sectionPet}>Selecione seu Pet</Text>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.petsRow}
-      >
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.petsRow} >
         {pets.map((pet, index) => (
           <Pressable key={pet.id} onPress={() => setSelectedPet(index)}>
-            <View
-              style={[
-                styles.petAvatar,
-                { backgroundColor: pet.color || "#F0F0F0" },
-                selectedPet === index && styles.petAvatarSelected,
+            <View style={[ styles.petAvatar, { backgroundColor: pet.color || '#F0F0F0' },
+                selectedPet === index && styles.petAvatarSelected
               ]}
             >
-              <Image
-                source={pet.image}
-                resizeMode="contain"
-                style={styles.petImage}
-              />
+              <Image source={pet.image} resizeMode="contain" style={styles.petImage} />
             </View>
           </Pressable>
         ))}
@@ -37,30 +30,42 @@ const styles = StyleSheet.create({
   sectionPet: {
     fontSize: 20,
     color: "#2F8B88",
-    fontWeight: "700",
-    marginLeft: 20,
-    marginBottom: 10,
+    fontWeight: "600",
+    lineHeight: 18,
+    right: -25
   },
   petsRow: {
     flexDirection: "row",
     alignItems: "center",
     marginLeft: 20,
+    marginTop: 15,
   },
   petAvatar: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    marginRight: 12,
+    marginRight: 10,
     justifyContent: "center",
     alignItems: "center",
-    overflow: "hidden",
+    overflow: "hidden"
   },
   petImage: {
     width: 40,
-    height: 40,
+    height: 40
   },
   petAvatarSelected: {
     borderWidth: 3,
-    borderColor: "#89CFF0",
+    borderColor: "#89CFF0"
   },
+  addPet: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 1.5,
+    borderColor: "#2F8B88",
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 10,
+    marginRight: 20
+  }
 });
