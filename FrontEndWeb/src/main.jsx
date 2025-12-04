@@ -19,6 +19,7 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import ChatListPage from "./pages/chat/ChatListPage.jsx";
 import ChatRoomPage from "./pages/chat/ChatRoomPage.jsx";
 import PetRecordPage from "./pages/PetRecordPage.jsx";
+import InitiateChatPage from "./pages/chat/InitiateChatPage.jsx";
 
 const LayoutWrapper = ({ children }) => <MainLayout>{children}</MainLayout>;
 
@@ -78,6 +79,14 @@ const router = createBrowserRouter([
         element: (
           <LayoutWrapper>
             <ChatListPage />
+          </LayoutWrapper>
+        ),
+      },
+      {
+        path: "/app/chat/new",
+        element: (
+          <LayoutWrapper>
+            <InitiateChatPage />
           </LayoutWrapper>
         ),
       },
