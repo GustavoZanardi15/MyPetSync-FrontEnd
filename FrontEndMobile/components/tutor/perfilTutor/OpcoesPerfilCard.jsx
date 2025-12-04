@@ -16,7 +16,7 @@ export default function OpcoesPerfilCard({ onLogout, onEndereco, onServicos, onM
         <View style={[styles.iconWrapper, { backgroundColor: "#E5D4FF" }]}>
           <Image source={require("../../../assets/images/home/NavBarServico.png")} style={styles.iconImage} />
         </View>
-        <Text style={styles.optionText}>Serviços</Text>
+        <Text style={styles.optionText}>Histórico de Serviços</Text>
       </Pressable>
 
       <Pressable style={styles.option} onPress={onMensagens}>
