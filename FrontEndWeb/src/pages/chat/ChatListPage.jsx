@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/Api";
+import { useAuth } from "../../context/AuthContext";
 
 function ChatListPage() {
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const currentUserId = user?.userId;
 
   useEffect(() => {
     api
@@ -79,19 +82,34 @@ function ChatListPage() {
           </p>
         </div>
       ) : (
-        rooms.map((room) => (
+        rooms.map((room) => {
+        const participants = room.participants || [];
+
+        const otherParticipant =
+          participants.find(
+            (p) =>
+              p._id !== currentUserId && p.tipo_usuario === "tutor"
+          ) ||
+          participants.find((p) => p._id !== currentUserId) ||
+          null;
+
+        const displayName =
+          otherParticipant?.nome ||
+          room.name ||
+          `Conversa com Tutor (ID: ${room._id.substring(0, 4)}...)`;
+
+        return (
           <div
             key={room._id}
             onClick={() => navigateToChatRoom(room._id)}
             className="flex items-center p-4 mb-3 bg-white rounded-xl shadow-sm hover:shadow-md cursor-pointer transition-all duration-200 border-l-4 border-[#2BB6A8] hover:border-[#058789]"
           >
             <div className="w-10 h-10 bg-[#A5E5D9] rounded-full flex items-center justify-center text-[#058789] font-bold text-sm mr-3 flex-shrink-0">
-              {room.name ? room.name[0].toUpperCase() : "C"}
+              {displayName[0]?.toUpperCase() || "C"}
             </div>
             <div className="flex-grow">
               <p className="font-semibold text-gray-800 truncate">
-                {room.name ||
-                  `Conversa com Tutor (ID: ${room._id.substring(0, 4)}...)`}
+                {displayName}
               </p>
             </div>
             <small className="text-gray-500 text-xs flex-shrink-0 ml-4">
@@ -101,7 +119,8 @@ function ChatListPage() {
               })}
             </small>
           </div>
-        ))
+        );
+      })
       )}
     </div>
   );

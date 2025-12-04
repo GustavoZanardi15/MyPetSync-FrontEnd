@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { getToken } from "../services/authService";
 import api from "../utils/Api";
 
-const SOCKET_URL = "http://localhost:3000/chat";
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "https://mypetsync-escoladeti-production.up.railway.app/chat";
 
 export function useChatSocket(roomId) {
   const { user } = useAuth();
@@ -31,7 +31,8 @@ export function useChatSocket(roomId) {
     if (!currentToken || !roomId) return;
 
     const newSocket = io(SOCKET_URL, {
-      query: { token: currentToken },
+      auth: { token: currentToken },
+      transports: ["websocket", "polling"],
     });
 
     newSocket.on("connect", () => {
