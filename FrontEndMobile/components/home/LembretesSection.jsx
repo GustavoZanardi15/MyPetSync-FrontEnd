@@ -5,9 +5,9 @@ import { router } from "expo-router";
 
 const translateRepeatStatus = (status) => {
   if (!status) return "";
-  const lowerCaseStatus = status.toLowerCase();
+  const lower = status.toLowerCase();
 
-  switch (lowerCaseStatus) {
+  switch (lower) {
     case "scheduled":
       return "Agendado";
     case "confirmed":
@@ -19,161 +19,111 @@ const translateRepeatStatus = (status) => {
   }
 };
 
-const EmptyStateMessage = () => (
-  <View style={styles.emptyContainer}>
-    <Text style={styles.emptyText}>Nenhum lembrete agendado.</Text>
-  </View>
-);
-
 export default function LembretesSection({ reminders }) {
   return (
     <View style={{ marginTop: 40 }}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Lembretes</Text>
         <Pressable
-          onPress={() =>
-            router.push("/screens/lembreteScreens/LembreteScreen")
-          }
+          onPress={() => router.push("/screens/lembreteScreens/LembreteScreen")}
         >
           <Text style={styles.verTudo}>Ver tudo</Text>
         </Pressable>
       </View>
 
-      {reminders && reminders.length > 0 ? (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.reminderScrollContainer}
-        >
-          {reminders.map((reminder, index) => {
-            const translatedRepeat = translateRepeatStatus(reminder.repeat);
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.reminderScrollContainer}
+      >
+        {reminders?.map((item, index) => (
+          <View key={index} style={styles.card}>
+            <View style={styles.cardVerticalBar} />
 
-            return (
-              <View style={styles.card} key={index}>
-                <View style={styles.cardVerticalBar} />
+            <View style={{ paddingLeft: 14, flex: 1 }}>
+              <Text style={styles.cardTitle}>{item.title}</Text>
+              <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
 
-                <View
-                  style={{
-                    paddingLeft: 10,
-                    flex: 1,
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <View>
-                    <Text style={styles.cardTitle}>{reminder.title}</Text>
-                    <Text style={styles.cardSubtitle}>{reminder.subtitle}</Text>
-                  </View>
-
-                  <View style={styles.cardFooter}>
-                    <Ionicons name="time-outline" size={16} color="#2F8B88" />
-                    <View style={{ marginLeft: 5 }}>
-                      <Text style={styles.cardTime}>{reminder.time}</Text>
-                      <Text style={styles.cardRepeatText}>{translatedRepeat}</Text>
-                    </View>
-                  </View>
+              <View style={styles.cardFooter}>
+                <Ionicons name="time-outline" size={16} color="#2F8B88" />
+                <View style={{ marginLeft: 5 }}>
+                  <Text style={styles.cardTime}>{item.time}</Text>
+                  <Text style={styles.cardRepeatText}>
+                    {translateRepeatStatus(item.repeat)}
+                  </Text>
                 </View>
               </View>
-            );
-          })}
-        </ScrollView>
-      ) : (
-        <EmptyStateMessage />
-      )}
+            </View>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  emptyContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 30,
-    marginHorizontal: 20,
-    marginTop: 10,
-    backgroundColor: "#F7F7F7",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#eee",
-  },
-  emptyText: {
-    marginTop: 10,
-    fontSize: 14,
-    color: "#999",
-    fontWeight: "400",
-  },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: 20,
-    alignItems: "center",
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: "600",
+    fontSize: 22,
+    fontWeight: "700",
     color: "#2F8B88",
-    lineHeight: 27,
   },
   verTudo: {
     color: "#87CEEB",
     fontSize: 15,
-    fontWeight: "400",
   },
   reminderScrollContainer: {
-    paddingHorizontal: 20,
+    paddingLeft: 20,
     paddingVertical: 10,
-    paddingBottom: 20,
   },
   card: {
     backgroundColor: "#fff",
     width: 238,
     height: 143,
-    borderRadius: 10,
-    padding: 10,
+    borderRadius: 16,
+    padding: 14,
     marginRight: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 2,
     flexDirection: "row",
     alignItems: "center",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
   },
   cardVerticalBar: {
     width: 4,
-    height: 59,
+    height: 60,
     backgroundColor: "#A8E6CF",
     borderRadius: 16,
     position: "absolute",
-    left: 20,
-    top: 12,
+    left: 14,
+    top: 14,
   },
   cardTitle: {
-    fontWeight: "500",
+    fontSize: 16,
+    fontWeight: "700",
     color: "#2F8B88",
-    fontSize: 15,
-    marginLeft: 10,
   },
   cardSubtitle: {
-    fontWeight: "400",
     fontSize: 13,
     color: "#555",
-    marginLeft: 10,
-    marginTop: 2,
+    marginBottom: 20,
   },
   cardFooter: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 25,
-    marginLeft: -5,
   },
   cardTime: {
-    fontSize: 13,
-    fontWeight: "400",
     color: "#2F8B88",
+    fontWeight: "600",
   },
   cardRepeatText: {
-    fontSize: 13,
     color: "#2F8B88",
-    fontWeight: "400",
-    marginTop: 2,
   },
 });

@@ -9,13 +9,16 @@ export default function SpaCard() {
     <View style={styles.spaCard}>
       <View style={styles.spaTextWrapper}>
         <Text style={styles.spaTitle}>Hora do Spa do seu pet!</Text>
+
         <Text style={styles.spaSubtitle}>
           Agende Banho & Tosa com{"\n"}profissionais de confiança
         </Text>
 
         <Pressable
           style={styles.spaButton}
-          onPress={() => router.push("/screens/servicoScreens/ServicoPetScreen")}
+          onPress={() =>
+            router.push("/screens/servicoScreens/ServicoPetScreen")
+          }
         >
           <Text style={styles.spaButtonText}>Agende agora</Text>
         </Pressable>
@@ -32,63 +35,54 @@ export default function SpaCard() {
 const styles = StyleSheet.create({
   spaCard: {
     backgroundColor: "#A8E6CF",
-    height: 170,
+    minHeight: 190,
     marginHorizontal: 20,
-    marginTop: 18,
-    borderRadius: 16,
+    marginTop: 25,
+    borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 16,
+    paddingVertical: 22,
     paddingLeft: 18,
-    overflow: "hidden",
-    position: "relative",
-    elevation: 3,
+
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    elevation: 3,
   },
   spaTextWrapper: {
     flex: 1,
-    paddingRight: 110
+    paddingRight: 110,
   },
   spaTitle: {
-    fontSize: 20,
-    fontWeight: "600",
+    fontSize: 22,
+    fontWeight: "700",
     color: "#2F8B88",
     marginBottom: 6,
-    letterSpacing: 0.3
   },
   spaSubtitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "400",
     color: "#4B887C",
-    lineHeight: 18,
-    marginBottom: 10
+    marginBottom: 12,
   },
   spaButton: {
     backgroundColor: "#2F8B88",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 16,
-    alignSelf: "flex-start",
-    justifyContent: "center",
-    alignItems: "center"
   },
   spaButtonText: {
     color: "#fff",
-    fontWeight: "400",
     fontSize: 13,
-    textAlign: "center",
-    letterSpacing: 0.3
+    fontWeight: "600",
   },
   spaImage: {
     position: "absolute",
     right: 5,
-    bottom: -4,
-    width: 131.89,
-    height: 169.63,
+    bottom: 0,
+    width: 130,
+    height: 165,
     resizeMode: "contain",
-    zIndex: 1
-  }
+  },
 });

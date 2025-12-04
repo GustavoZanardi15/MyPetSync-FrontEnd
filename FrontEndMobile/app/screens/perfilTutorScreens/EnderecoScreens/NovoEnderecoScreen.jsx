@@ -102,10 +102,10 @@ export default function NovoEnderecoScreen() {
       const updatedAddresses = [...(tutor?.addresses || []), enderecoData];
 
       await api.put(
-        "/tutors/mine",
-        { addresses: updatedAddresses },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  "/tutors/mine",
+  { addresses: updatedAddresses },
+  { headers: { Authorization: `Bearer ${token}` } }
+);
 
       Alert.alert("Sucesso", "Endereço adicionado com sucesso!");
       router.replace("/screens/perfilTutorScreens/EnderecoScreens/EnderecoScreen");
