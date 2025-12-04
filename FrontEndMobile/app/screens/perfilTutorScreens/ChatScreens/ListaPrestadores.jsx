@@ -99,6 +99,7 @@ const fetchTutoresData = async () => {
         } else {
           uniqueProviders.set(providerId, {
             id: providerId,
+            userId: providerUserId,
             nome: provider.name || provider.fullName || "Prestador",
             especialidade: provider.providerType || 
                          appointment.service?.name || 
@@ -189,6 +190,7 @@ export default function ListaPrestadores() {
       pathname: "./ChatScreen",
       params: {
         providerId: tutor.id,
+        providerUserId: tutor.userId,
         providerName: tutor.nome,
         providerPhoto: tutor.foto || "",
         providerType: tutor.especialidade
