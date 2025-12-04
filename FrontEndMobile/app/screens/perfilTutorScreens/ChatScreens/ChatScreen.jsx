@@ -133,60 +133,36 @@ export default function ChatScreen() {
     }, []);
 
     // 🔥 BUSCAR/CRIAR SALA
-    const fetchOrCreateRoom = useCallback(async (userId) => {
-        try {
-            if (!userId) throw new Error("Usuário não identificado");
-            if (!providerId) throw new Error("Provider não identificado");
+    const fetchOrCreateRoom = useCallback(
+        async () => {
+            try {
+            if (!providerId) throw new Error("Prestador não identificado");
 
             const token = await AsyncStorage.getItem("userToken");
             if (!token) throw new Error("Token não encontrado");
 
-            // 1. Buscar salas existentes
-            setDebugInfo("Buscando salas existentes...");
-            const roomsResponse = await api.get("/chat/rooms", {
+            setDebugInfo("Iniciando ou buscando sala com prestador...");
+
+            const response = await api.post(
+                "/chat/rooms/start-with-provider",
+                { providerId }, // 👈 só isso
+                {
                 headers: { Authorization: `Bearer ${token}` },
-            });
+                }
+            );
 
-            console.log(`📦 ${roomsResponse.data.length} salas encontradas`);
-
-            // 2. Procurar sala com ambos os usuários
-            const existingRoom = roomsResponse.data.find(room => {
-                const participants = room.participants || [];
-                const participantIds = participants.map(p => p._id || p.id);
-                return (
-                    participantIds.includes(userId) && 
-                    participantIds.includes(providerUserId)
-                );
-            });
-
-            if (existingRoom) {
-                console.log("✅ Sala existente encontrada:", existingRoom._id);
-                setDebugInfo(`Sala existente: ${existingRoom._id}`);
-                return existingRoom;
-            }
-
-            // 3. Criar nova sala (COM AMBOS OS USUÁRIOS)
-            setDebugInfo("Criando nova sala...");
-            console.log("🆕 Criando nova sala...");
-            const payload = {
-                participants: [userId, providerUserId], // 🔥 AMBOS OS USUÁRIOS
-                name: `Chat com ${pName || 'Cliente'}`,
-            };
-
-            const newRoom = await api.post("/chat/rooms", payload, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            console.log("✅ Nova sala criada:", newRoom.data._id);
-            setDebugInfo(`Nova sala criada: ${newRoom.data._id}`);
-            return newRoom.data;
-
-        } catch (error) {
-            console.error("❌ Erro ao buscar/criar sala:", error.message);
+            const room = response.data;
+            console.log("✅ Sala obtida:", room._id);
+            setDebugInfo(`Sala ativa: ${room._id}`);
+            return room;
+            } catch (error) {
+            console.error("❌ Erro ao iniciar sala com prestador:", error.message);
             setDebugInfo(`Erro: ${error.message}`);
             throw error;
-        }
-    }, [providerUserId, pName]);
+            }
+        },
+        [providerId]
+        );
 
     // 🔥 CARREGAR MENSAGENS DA API
     const loadMessages = useCallback(async (roomId) => {
@@ -372,7 +348,7 @@ export default function ChatScreen() {
                 
                 // 3. Se não tem sala salva, buscar/criar
                 if (!chatRoomId) {
-                    const roomData = await fetchOrCreateRoom(userId);
+                    const roomData = await fetchOrCreateRoom();
                     chatRoomId = roomData._id;
                 }
                 
