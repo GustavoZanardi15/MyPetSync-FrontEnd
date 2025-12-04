@@ -32,7 +32,13 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : value;
 
-    setFormData((prev) => ({ ...prev, [name]: newValue }));
+    setFormData((prev) => {
+      let newState = { ...prev, [name]: newValue };
+      if (name === "isCompleted" && newValue === true) {
+        newState.nextDoseAt = "";
+      }
+      return newState;
+    });
     if (error && name === "name") setError(null);
   };
 
@@ -153,13 +159,20 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
               onChange={handleChange}
               required
             />
-            <InputWithIcon
-              label="Data da Próxima Dose (Opcional)"
-              name="nextDoseAt"
-              type="datetime-local"
-              value={formData.nextDoseAt}
-              onChange={handleChange}
-            />
+            {formData.isCompleted ? (
+              <div className="p-3 border border-dashed border-gray-300 rounded-lg flex items-center justify-center text-sm text-gray-500 bg-gray-50 h-full min-h-[44px] md:col-span-1">
+                <p className="text-center">Vacinação marcada como concluída.</p>
+              </div>
+            ) : (
+              <InputWithIcon
+                label="Data da Próxima Dose (Opcional)"
+                name="nextDoseAt"
+                type="datetime-local"
+                value={formData.nextDoseAt}
+                onChange={handleChange}
+              />
+            )}
+
             <div>
               <label
                 htmlFor="route"
