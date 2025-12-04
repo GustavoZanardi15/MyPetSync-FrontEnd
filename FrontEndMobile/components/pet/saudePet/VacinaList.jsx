@@ -38,83 +38,71 @@ export default function VacinaList({ vacinas, petName, onAdd }) {
 }
 
 const styles = StyleSheet.create({
-    section: {
-        marginBottom: 25,
-    },
-    titleRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 12,
-        paddingRight: 8,
-        marginBottom: 25,
-    },
-    titleRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 12,
-        paddingRight: 8,
-    },
-    sectionTitle: {
-        fontSize: 22,
-        fontWeight: "bold",
-        fontSize: 22,
-        fontWeight: "bold",
-        color: "#2F8B88",
-    },
-    addButton: {
-        width: 34,
-        height: 34,
-        borderRadius: 17,
-        backgroundColor: "#2F8B88",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    emptyText: {
-        fontSize: 14,
-        color: "#999",
-        marginTop: 5,
-        fontSize: 14,
-        color: "#999",
-        marginTop: 5,
-    },
-    card: {
-    card: {
-        backgroundColor: "#FFFFFF",
-        borderRadius: 16,
-        paddingVertical: 14,
-        paddingHorizontal: 18,
-        marginBottom: 12,
-        borderRadius: 16,
-        paddingVertical: 14,
-        paddingHorizontal: 18,
-        marginBottom: 12,
-        shadowColor: "#000",
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 3 },
-        elevation: 2,
-    },
-    vacinaName: {
-        fontSize: 17,
-        fontWeight: "bold",
-        color: "#2F8B88",
-        marginBottom: 6,
-    },
-    row: {
-        flexDirection: "row",
-        marginBottom: 3,
-    },
-    label: {
-        color: "#777",
-        fontWeight: "600",
-        width: 70,
-    },
-    value: {
-        color: "#444",
-    },
+  section: {
+    marginBottom: 25,
+  },
+
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+    paddingRight: 8,
+  },
+
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#2F8B88",
+  },
+
+  addButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: "#2F8B88",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  emptyText: {
+    fontSize: 14,
+    color: "#999",
+    marginTop: 5,
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
+  },
+
+  vacinaName: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "#2F8B88",
+    marginBottom: 6,
+  },
+
+  row: {
+    flexDirection: "row",
+    marginBottom: 3,
+  },
+
+  label: {
+    color: "#777",
+    fontWeight: "600",
+    width: 70,
+  },
+
+  value: {
+    color: "#444",
+  },
 });
