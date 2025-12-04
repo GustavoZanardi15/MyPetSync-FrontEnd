@@ -42,7 +42,7 @@ export default function ChatScreen() {
     const [debugInfo, setDebugInfo] = useState("");
 
     const router = useRouter();
-    const { providerId, providerUserId, providerName: pName, providerPhoto: pPhoto } = useLocalSearchParams();
+    const { providerId, providerName: pName, providerPhoto: pPhoto } = useLocalSearchParams();
 
     const flatListRef = useRef(null);
     const isMountedRef = useRef(true);
@@ -155,7 +155,7 @@ export default function ChatScreen() {
                 const participantIds = participants.map(p => p._id || p.id);
                 return (
                     participantIds.includes(userId) && 
-                    participantIds.includes(providerUserId)
+                    participantIds.includes(providerId)
                 );
             });
 
@@ -169,7 +169,7 @@ export default function ChatScreen() {
             setDebugInfo("Criando nova sala...");
             console.log("🆕 Criando nova sala...");
             const payload = {
-                participants: [userId, providerUserId], // 🔥 AMBOS OS USUÁRIOS
+                participants: [userId, providerId], // 🔥 AMBOS OS USUÁRIOS
                 name: `Chat com ${pName || 'Cliente'}`,
             };
 
@@ -186,7 +186,7 @@ export default function ChatScreen() {
             setDebugInfo(`Erro: ${error.message}`);
             throw error;
         }
-    }, [providerUserId, pName]);
+    }, [providerId, pName]);
 
     // 🔥 CARREGAR MENSAGENS DA API
     const loadMessages = useCallback(async (roomId) => {

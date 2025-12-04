@@ -49,11 +49,18 @@ const AddVaccineForm = ({ petId, onSuccess, onClose }) => {
     setLoading(true);
 
     try {
-      const { doseMl, appliedAt, nextDoseAt, isCompleted, ...restOfData } =
-        formData;
+      const {
+        doseMl,
+        appliedAt,
+        nextDoseAt,
+        isCompleted,
+        route,
+        ...restOfData
+      } = formData;
 
       const dataToSend = {
         ...restOfData,
+        ...(route ? { route } : {}),
         doseMl: doseMl ? parseFloat(doseMl) : null,
         appliedAt: appliedAt || null,
         nextDoseAt: nextDoseAt || null,

@@ -84,7 +84,7 @@ const ProfessionalVaccineHistoryPage = () => {
             className="p-4 bg-white rounded-lg shadow-sm border border-gray-200"
           >
             <p className="font-semibold text-lg text-[#058789]">
-              Vacina: {vac.vaccineName || "Nome Indisponível"}
+              Vacina: {vac.name || vac.vaccineName || "Nome Indisponível"}
             </p>
             <p className="text-gray-700">
               Pet: {vac.pet?.name || "Pet Indisponível"} (
@@ -92,8 +92,9 @@ const ProfessionalVaccineHistoryPage = () => {
             </p>
             <p className="text-sm text-gray-500">
               Data:{" "}
-              {new Date(vac.date).toLocaleDateString("pt-BR") ||
-                "Data Indisponível"}
+              {vac.appliedAt
+                ? new Date(vac.appliedAt).toLocaleDateString("pt-BR")
+                : "Data Indisponível"}
             </p>
             <p className="text-sm text-gray-500">
               Lote: {vac.batch || "Não informado"}
