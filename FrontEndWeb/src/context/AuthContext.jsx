@@ -1,6 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { isAuthenticated, logout as apiLogout } from "../services/authService";
-import { fetchCurrentUser } from "../services/userService";
+import {
+  fetchCurrentUser,
+  fetchProviderProfile,
+} from "../services/userService";
 import api from "../utils/Api";
 
 const AuthContext = createContext();
@@ -33,6 +36,14 @@ export const AuthProvider = ({ children }) => {
       cleanedUser.userId = primaryId;
       cleanedUser.name = cleanedUser.nome || cleanedUser.name;
       cleanedUser.email = cleanedUser.email;
+
+      const providerProfile = await fetchProviderProfile();
+
+      if (providerProfile && providerProfile._id) {
+        cleanedUser.providerId = providerProfile._id;
+      } else {
+        cleanedUser.providerId = null;
+      }
 
       setUser(cleanedUser);
       return cleanedUser;

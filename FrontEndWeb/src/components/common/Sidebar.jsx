@@ -4,6 +4,7 @@ import {
   VscAccount,
   VscSignOut,
   VscComment,
+  VscHistory,
 } from "react-icons/vsc";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../assets/Logo.png";
@@ -11,6 +12,7 @@ import Logo from "../../assets/Logo.png";
 const navItems = [
   { name: "Home", icon: VscHome, path: "/homePage" },
   { name: "Agenda", icon: VscCalendar, path: "/agenda" },
+  { name: "Histórico Vacinas", icon: VscHistory, path: "/vacinas/historico" },
   { name: "Perfil", icon: VscAccount, path: "/profile" },
   { name: "Mensagens", icon: VscComment, path: "/app/chat" },
 ];

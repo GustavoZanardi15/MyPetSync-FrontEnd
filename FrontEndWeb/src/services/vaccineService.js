@@ -1,4 +1,4 @@
-import api from "../utils/Api.jsx";
+import api from "../utils/Api";
 
 const BASE_URL = "/vaccines";
 
@@ -19,5 +19,22 @@ export const getPetVaccines = async (petId) => {
   } catch (error) {
     console.error("Erro ao buscar vacinas do pet:", error);
     return [];
+  }
+};
+
+export const getProviderVaccineHistory = async (providerId) => {
+  try {
+    const response = await api.get(BASE_URL, {
+      params: {
+        provider: providerId,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Erro ao buscar histórico de vacinas do profissional:",
+      error
+    );
+    throw error;
   }
 };
