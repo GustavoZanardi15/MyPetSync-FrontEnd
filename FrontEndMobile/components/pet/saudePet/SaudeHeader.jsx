@@ -38,12 +38,12 @@ const styles = StyleSheet.create({
     color: "#2F8B88",
   },
  editCircleButton: {
-    width: 40,
-    height: 40,
+    width: 42,
+    height: 42,
     borderRadius: 21,
     borderWidth: 1.6,
     borderColor: "#2F8B88",
-    backgroundColor: "#F7F7F7",
+    backgroundColor: "#E9F7F6",
     justifyContent: "center",
     alignItems: "center",
 }
